@@ -14,7 +14,7 @@ const events = [
     description:
       "Ngày gặp gỡ đầu tiên dành cho tân sinh viên: làm quen với mentor, tìm hiểu FPTU và bắt đầu hành trình cùng nhà Faerie.",
     tag: "Welcome day",
-    location: "Hola Park",
+    location: "FPTU HCMC Campus",
     tone: "mint",
   },
   {
@@ -24,7 +24,7 @@ const events = [
     description:
       "Một buổi chiều đầy trò chơi, thử thách đồng đội và những câu chuyện để các thành viên mới thật sự thuộc về nhau.",
     tag: "Bonding",
-    location: "Dom A Courtyard",
+    location: "Campus Courtyard",
     tone: "orange",
   },
   {
@@ -44,7 +44,7 @@ const events = [
     description:
       "Cùng nhau tạo một ngày sống xanh bằng hoạt động đổi rác lấy cây và làm mới các góc nhỏ trong khuôn viên trường.",
     tag: "Community",
-    location: "FPT University",
+    location: "FPTU HCMC Campus",
     tone: "green",
   },
   {
@@ -64,7 +64,7 @@ const events = [
     description:
       "Khép lại một năm bằng chuyến đi ấm áp với mini game, lửa trại, âm nhạc và khoảnh khắc nhìn lại hành trình đã qua.",
     tag: "Camp",
-    location: "Ba Vì, Hà Nội",
+    location: "Cần Giờ, TP.HCM",
     tone: "blue",
   },
 ];
@@ -112,8 +112,8 @@ const roleLabels: Record<MemberRole, string> = {
 
 function roleForIndex(index: number): MemberRole {
   if (index === 0) return "Mentor";
-  if (index <= 3) return "Supporter";
-  if (index <= 7) return "Leader";
+  if (index === 1) return "Supporter";
+  if (index === 2) return "Leader";
   return "Member";
 }
 
@@ -176,14 +176,14 @@ export default function Home() {
           </button>
         </nav>
 
-        <div className="header-note">EST. 2024 · HÒA LẠC</div>
+        <div className="header-note">EST. 2024 · TP.HCM</div>
       </header>
 
       {tab === "news" ? (
         <div role="tabpanel" className="page-enter">
           <section className="hero section-shell">
             <div className="hero-copy">
-              <p className="eyebrow"><span /> Brothers &amp; Sisters · FPT University</p>
+              <p className="eyebrow"><span /> Brothers &amp; Sisters · FPTU HCMC Campus</p>
               <h1>Grow together.<br /><em>Shine together.</em></h1>
               <p className="hero-lead">
                 Faerie là một mái nhà nhỏ trong đại gia đình Brosis — nơi mỗi tân sinh viên
@@ -267,7 +267,7 @@ export default function Home() {
               <h2>Đi cùng nhau,<br />lớn lên <em>cùng nhau.</em></h2>
               <div className="about-columns">
                 <p>
-                  Brothers &amp; Sisters là chương trình đồng hành sinh viên tại Đại học FPT,
+                  Brothers &amp; Sisters là chương trình đồng hành sinh viên tại Đại học FPT campus TP.HCM,
                   kết nối những người đi trước với các tân sinh viên trong những ngày đầu còn nhiều bỡ ngỡ.
                 </p>
                 <p>
@@ -339,7 +339,7 @@ export default function Home() {
               </button>
               {roleOrder.map((item) => (
                 <button key={item} className={role === item ? "active" : ""} onClick={() => setRole(item)}>
-                  {roleLabels[item]} <span>{item === "Mentor" ? 1 : item === "Supporter" ? 3 : item === "Leader" ? 4 : 22}</span>
+                  {roleLabels[item]} <span>{item === "Member" ? 27 : 1}</span>
                 </button>
               ))}
             </div>
@@ -376,7 +376,7 @@ export default function Home() {
 
       <footer>
         <div className="footer-brand"><span>✦</span><strong>FAERIE</strong></div>
-        <p>Brothers &amp; Sisters · FPT University<br />Hòa Lạc Campus, Hà Nội</p>
+        <p>Brothers &amp; Sisters · FPT University<br />TP.HCM Campus</p>
         <p className="footer-note">MADE WITH KINDNESS<br />FOR EVERY NEW CHAPTER.</p>
         <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Lên đầu trang ↑</button>
       </footer>
