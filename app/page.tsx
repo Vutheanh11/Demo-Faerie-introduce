@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Tab = "Introduce" | "members" | "top20";
 type EventYear = 2024 | 2025 | 2026;
@@ -282,10 +282,24 @@ export default function Home() {
   const [year, setYear] = useState<RosterYear>(2026);
   const [eventYear, setEventYear] = useState<EventYear>(2026);
   const [topYear, setTopYear] = useState<TopYear>(2025);
+  const [heroCardIndex, setHeroCardIndex] = useState(0);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
 
   const topMembers = topByYear[topYear];
+
+  useEffect(() => {
+    if (tab !== "members") return;
+
+    setHeroCardIndex(0);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const timer = window.setInterval(() => {
+      setHeroCardIndex((current) => (current + 1) % rosters[year].length);
+    }, 2000);
+
+    return () => window.clearInterval(timer);
+  }, [tab, year]);
 
   const members = useMemo(
     () =>
@@ -494,9 +508,16 @@ export default function Home() {
               <div className="members-stat"><strong>{totalMembers}</strong><span>members<br />&amp; growing</span></div>
             </div>
 
-            <div className="member-hero-deck" aria-label={`Một số thành viên Faerie Roster ${year}`}>
-              {rosters[year].slice(0, 9).map((person, index) => (
-                <article className="hero-member-card" key={`hero-${year}-${person.name}`}>
+            <div className="member-hero-deck" aria-label={`Toàn bộ thành viên Faerie Roster ${year}`}>
+              {rosters[year].map((person, index, roster) => {
+                const position = index / Math.max(roster.length - 1, 1);
+
+                return (
+                <article
+                  className={`hero-member-card ${index === heroCardIndex ? "auto-active" : ""}`}
+                  key={`hero-${year}-${person.name}`}
+                  style={{ left: `${position * 100}%`, transform: `translateX(-${position * 100}%)` }}
+                >
                   <button
                     type="button"
                     className="hero-member-card-button"
@@ -523,7 +544,8 @@ export default function Home() {
                     </div>
                   </button>
                 </article>
-              ))}
+                );
+              })}
             </div>
           </section>
 
