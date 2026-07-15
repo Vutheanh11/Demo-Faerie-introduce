@@ -289,6 +289,11 @@ h1 em, h2 em, blockquote em { color: var(--accent); font-weight: inherit; }
 .top-hero { min-height: 620px; display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: 8vw; overflow: hidden; background: var(--lime); border-bottom: 1px solid var(--line); }
 .top-hero-copy h1 { margin: 0; font-size: clamp(72px, 8vw, 126px); line-height: .8; letter-spacing: -.055em; }
 .top-hero-copy > p:last-child { max-width: 590px; margin: 36px 0 0 10%; font-size: 13px; line-height: 1.85; color: rgba(23,58,45,.72); }
+.top-year-tabs { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 34px; }
+.top-year-tabs button { min-width: 112px; display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 12px 14px; border: 1px solid rgba(23,58,45,.3); background: transparent; color: var(--ink); cursor: pointer; transition: .2s ease; }
+.top-year-tabs button strong { font-family: var(--font-display); font-size: 22px; font-weight: 400; }
+.top-year-tabs button span { font-size: 7px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.top-year-tabs button.active { background: var(--ink); color: var(--cream); box-shadow: 5px 5px 0 var(--accent); }
 .champion-card { position: relative; width: min(390px, 100%); min-height: 470px; display: flex; flex-direction: column; align-items: center; justify-content: center; justify-self: center; padding: 45px 30px 34px; transform: rotate(3deg); background: var(--ink); color: var(--cream); border: 10px solid var(--paper); box-shadow: 22px 24px 0 var(--accent); text-align: center; }
 .champion-rank { position: absolute; top: 20px; left: 22px; font-family: var(--font-display); font-size: 26px; color: var(--lime); }
 .champion-avatar { width: 145px; height: 145px; display: grid; place-items: center; margin-bottom: 24px; border-radius: 50%; background: var(--mint); color: var(--ink); font-family: var(--font-display); font-size: 48px; box-shadow: inset 0 0 0 12px rgba(255,255,255,.28); }
@@ -394,6 +399,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   .top-hero { min-height: auto; grid-template-columns: 1fr; padding-top: 75px; padding-bottom: 90px; }
   .top-hero-copy h1 { font-size: clamp(65px, 18vw, 90px); }
   .top-hero-copy > p:last-child { margin-left: 0; }
+  .top-year-tabs button { flex: 1 1 100px; }
   .champion-card { min-height: 410px; margin: 15px auto 0; transform: rotate(2deg) scale(.92); }
   .leaderboard { padding-top: 80px; padding-bottom: 80px; }
   .leaderboard-heading { align-items: start; flex-direction: column; }

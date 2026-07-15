@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 
 type Tab = "news" | "members" | "top20";
-type EventYear = 2024 | 2025 | 2026;
-type RosterYear = 2023 | 2024 | 2025 | 2026;
+type Year = 2024 | 2025 | 2026;
+type TopYear = 2023 | 2024 | 2025;
 type MemberGroup = "Mentor" | "Supporter" | "Leadership" | "Member";
 
 type MemberProfile = {
@@ -13,7 +13,7 @@ type MemberProfile = {
   group: MemberGroup;
 };
 
-const eventsByYear: Record<EventYear, Array<{
+const eventsByYear: Record<Year, Array<{
   date: string;
   year: string;
   title: string;
@@ -49,9 +49,9 @@ const eventsByYear: Record<EventYear, Array<{
 };
 
 const roster2023: MemberProfile[] = [
-  { name: "Việt Phương", title: "Mentor", group: "Mentor" },
-  { name: "Hạ My", title: "Supporter", group: "Supporter" },
-  { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
+  { name: "Nguyễn Thành Phát", title: "Mentor", group: "Mentor" },
+  { name: "Lý Quốc Lâm", title: "Supporter", group: "Supporter" },
+  { name: "Trần Mai", title: "Leader Nhà", group: "Leadership" },
   { name: "Vũ Thế Anh", title: "Sub Leader Nhà", group: "Leadership" },
   { name: "Trần Văn Quỳnh", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
   { name: "Cao Minh Thư", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
@@ -86,11 +86,10 @@ const roster2023: MemberProfile[] = [
   { name: "Nguyễn Hoàng Bảo Oanh", title: "Member", group: "Member" },
 ];
 
-
 const roster2024: MemberProfile[] = [
-  { name: "Việt Phương", title: "Mentor", group: "Mentor" },
-  { name: "Hạ My", title: "Supporter", group: "Supporter" },
-  { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
+  { name: "Anh Quốc", title: "Mentor", group: "Mentor" },
+  { name: "Nguyễn Hoàng Đức Phương", title: "Supporter", group: "Supporter" },
+  { name: "Trần Mai", title: "Leader Nhà", group: "Leadership" },
   { name: "Vũ Thế Anh", title: "Sub Leader Nhà", group: "Leadership" },
   { name: "Trần Văn Quỳnh", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
   { name: "Cao Minh Thư", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
@@ -127,6 +126,54 @@ const roster2024: MemberProfile[] = [
 
 
 const roster2025: MemberProfile[] = [
+  { name: "Phùng Duy Tuấn", title: "Mentor", group: "Mentor" },
+  { name: "Hạ My", title: "Supporter", group: "Supporter" },
+  { name: "Lê Thị Khánh Linh", title: "Leader Nhà", group: "Leadership" },
+  { name: "Yến Khoa", title: "Leader Event", group: "Leadership" },
+  { name: "Bảo Anh", title: "Member", group: "Leadership" },
+  { name: "Cao Minh Thư", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
+  { name: "Trần Thu Anh", title: "Leader Ban Media", group: "Leadership" },
+  { name: "Trịnh Hoàng Khang", title: "Leader Ban Kỹ Thuật", group: "Leadership" },
+  { name: "Lê Thùy Dương", title: "Leader Ban Nghệ Thuật", group: "Leadership" },
+  { name: "Vương Nguyễn Hồng Linh", title: "Sub Leader Ban Event", group: "Leadership" },
+  { name: "Dương Nguyễn Đông Quân", title: "Member", group: "Member" },
+  { name: "Lê Ngọc Trang", title: "Member", group: "Member" },
+  { name: "Nguyễn Ngọc Huy", title: "Member", group: "Member" },
+  { name: "Lưu Trí Tâm", title: "Member", group: "Member" },
+  { name: "Nguyễn Quốc Huy", title: "Member", group: "Member" },
+  { name: "Huỳnh Như Ý", title: "Member", group: "Member" },
+  { name: "Triệu Trần Như Huỳnh", title: "Member", group: "Member" },
+  { name: "Huỳnh Thị Trang Tường", title: "Member", group: "Member" },
+  { name: "Đồng Thành Đạt", title: "Member", group: "Member" },
+  { name: "Trương Thảo Vi", title: "Member", group: "Member" },
+  { name: "Phạm Thị Thu Hằng", title: "Member", group: "Member" },
+  { name: "Nguyễn Gia Linh", title: "Member", group: "Member" },
+  { name: "Nguyễn Võ Gia Hiếu", title: "Member", group: "Member" },
+  { name: "Lê Võ Gia Bảo", title: "Member", group: "Member" },
+  { name: "Võ Khôi Nguyên", title: "Member", group: "Member" },
+  { name: "Huỳnh Quốc Bảo", title: "Member", group: "Member" },
+  { name: "Đặng Tiến Hưng", title: "Member", group: "Member" },
+  { name: "Hoàng Văn Đức Nhân", title: "Member", group: "Member" },
+  { name: "Nguyễn Thanh Nhật Tân", title: "Member", group: "Member" },
+  { name: "Nguyễn Thành Nhân", title: "Member", group: "Member" },
+  { name: "Phou Mảu Quang", title: "Member", group: "Member" },
+  { name: "Hoàng Thị Quỳnh Lan", title: "Member", group: "Member" },
+  { name: "Trần Nhất Huy", title: "Member", group: "Member" },
+  { name: "Lê Hoàng Phước", title: "Member", group: "Member" },
+  { name: "Nguyễn Hoàng Bảo Oanh", title: "Member", group: "Member" },
+];
+
+
+function makeMockRoster(names: string[]): MemberProfile[] {
+  return names.map((name, index) => {
+    if (index === 0) return { name, title: "Mentor", group: "Mentor" };
+    if (index === 1) return { name, title: "Supporter", group: "Supporter" };
+    if (index === 2) return { name, title: "Leader Nhà", group: "Leadership" };
+    return { name, title: "Member", group: "Member" };
+  });
+}
+
+const roster2026: MemberProfile[] = [
   { name: "Việt Phương", title: "Mentor", group: "Mentor" },
   { name: "Hạ My", title: "Supporter", group: "Supporter" },
   { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
@@ -164,16 +211,11 @@ const roster2025: MemberProfile[] = [
   { name: "Nguyễn Hoàng Bảo Oanh", title: "Member", group: "Member" },
 ];
 
-const roster2026: MemberProfile[] = roster2025.map((person) => ({ ...person }));
-
-const rosters: Record<RosterYear, MemberProfile[]> = {
-  2023: roster2023,
+const rosters: Record<Year, MemberProfile[]> = {
   2024: roster2024,
   2025: roster2025,
   2026: roster2026,
 };
-
-const totalMembers = Object.values(rosters).reduce((total, roster) => total + roster.length, 0);
 
 const groupOrder: MemberGroup[] = ["Mentor", "Supporter", "Leadership", "Member"];
 const groupLabels: Record<MemberGroup, string> = {
@@ -183,16 +225,24 @@ const groupLabels: Record<MemberGroup, string> = {
   Member: "Member",
 };
 
-const top20 = roster2026.slice(0, 20).map((person, index) => ({
-  ...person,
-  rank: index + 1,
-  points: 980 - index * 23,
-  activities: 8 - (index % 4),
-  streak: 12 - (index % 5),
-}));
+function makeRanking(roster: MemberProfile[], limit: number) {
+  return roster.slice(0, limit).map((person, index) => ({
+    ...person,
+    rank: index + 1,
+    points: 980 - index * 23,
+    activities: 8 - (index % 4),
+    streak: 12 - (index % 5),
+  }));
+}
+
+const topByYear = {
+  2023: makeRanking(roster2023, 20),
+  2024: makeRanking(roster2024, 12),
+  2025: makeRanking(roster2025, 8),
+} satisfies Record<TopYear, ReturnType<typeof makeRanking>>;
 
 function initials(name: string) {
-  const parts = String(name ?? "").trim().split(" ");
+  const parts = name.trim().split(" ");
   return `${parts[parts.length - 2]?.[0] ?? ""}${parts[parts.length - 1]?.[0] ?? ""}`;
 }
 
@@ -200,18 +250,21 @@ const avatarTones = ["sage", "sun", "sky", "lilac", "coral", "lime"];
 
 export default function Home() {
   const [tab, setTab] = useState<Tab>("news");
-  const [year, setYear] = useState<RosterYear>(2026);
-  const [eventYear, setEventYear] = useState<EventYear>(2026);
+  const [year, setYear] = useState<Year>(2026);
+  const [eventYear, setEventYear] = useState<Year>(2026);
+  const [topYear, setTopYear] = useState<TopYear>(2025);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
+
+  const topMembers = topByYear[topYear];
 
   const members = useMemo(
     () =>
       rosters[year]
-        .map((person, index) => ({ ...normalizeProfile(person, index), index }))
+        .map((person, index) => ({ ...person, index }))
         .filter((person) => role === "All" || person.group === role)
         .filter((person) =>
-          String(person.name ?? "").toLocaleLowerCase("vi").includes(query.trim().toLocaleLowerCase("vi")),
+          person.name.toLocaleLowerCase("vi").includes(query.trim().toLocaleLowerCase("vi")),
         ),
     [year, role, query],
   );
@@ -247,7 +300,7 @@ export default function Home() {
             className={tab === "members" ? "active" : ""}
             onClick={() => switchTab("members")}
           >
-            Members <span>{totalMembers}</span>
+            Members <span>95</span>
           </button>
           <button
             role="tab"
@@ -303,7 +356,7 @@ export default function Home() {
 
           <section className="stats-strip" aria-label="Faerie highlights">
             <div><strong>03</strong><span>thế hệ tiếp nối</span></div>
-            <div><strong>{totalMembers}</strong><span>mảnh ghép Faerie</span></div>
+            <div><strong>95+</strong><span>mảnh ghép Faerie</span></div>
             <div><strong>02</strong><span>hoạt động năm 2026</span></div>
             <p>TOGETHER WE MAKE<br />ORDINARY DAYS MAGIC <b>✦</b></p>
           </section>
@@ -318,7 +371,7 @@ export default function Home() {
             </div>
 
             <div className="event-year-tabs" aria-label="Chọn năm sự kiện" role="tablist">
-              {([2024, 2025, 2026] as EventYear[]).map((item) => (
+              {([2024, 2025, 2026] as Year[]).map((item) => (
                 <button
                   key={item}
                   role="tab"
@@ -406,21 +459,21 @@ export default function Home() {
                 Mỗi thế hệ là một màu sắc riêng, cùng góp lại thành câu chuyện Faerie.
                 Tìm những gương mặt đã đồng hành với ngôi nhà qua từng năm.
               </p>
-              <div className="members-stat"><strong>{totalMembers}</strong><span>members<br />&amp; growing</span></div>
+              <div className="members-stat"><strong>95</strong><span>members<br />&amp; growing</span></div>
             </div>
           </section>
 
           <section className="directory section-shell">
             <div className="directory-toolbar">
               <div className="year-picker" aria-label="Chọn năm">
-                {([2023, 2024, 2025, 2026] as RosterYear[]).map((item) => (
+                {([2024, 2025, 2026] as Year[]).map((item) => (
                   <button
                     key={item}
                     className={year === item ? "active" : ""}
                     onClick={() => { setYear(item); setRole("All"); }}
                     aria-pressed={year === item}
                   >
-                    Roster {item} <span>{year === item ? "✦" : ""}</span>
+                    {item} <span>{year === item ? "✦" : ""}</span>
                   </button>
                 ))}
               </div>
@@ -449,7 +502,7 @@ export default function Home() {
             </div>
 
             <div className="directory-title">
-              <h2>Faerie <em>Roster {year}</em></h2>
+              <h2>Faerie class of <em>{year}</em></h2>
               <span>{members.length.toString().padStart(2, "0")} kết quả</span>
             </div>
 
@@ -464,7 +517,7 @@ export default function Home() {
                     <div className="member-info">
                       <div>
                         <h3>{person.name}</h3>
-                        <p>Faerie · Roster {year}</p>
+                        <p>Faerie · Gen {year.toString().slice(-2)}</p>
                       </div>
                       <span className={`role-badge ${person.group.toLowerCase()}`}>{person.title}</span>
                     </div>
@@ -480,38 +533,52 @@ export default function Home() {
         <div role="tabpanel" className="top-page page-enter">
           <section className="top-hero section-shell">
             <div className="top-hero-copy">
-              <p className="eyebrow"><span /> Faerie activity board · 2026</p>
-              <h1>Top <em>20</em><br />shining souls.</h1>
+              <p className="eyebrow"><span /> Faerie outstanding brosis · {topYear}</p>
+              <h1>Top <em>{topMembers.length}</em><br />shining souls.</h1>
+              <div className="top-year-tabs" role="tablist" aria-label="Chọn năm bảng thành viên xuất sắc">
+                {([2023, 2024, 2025] as TopYear[]).map((item) => (
+                  <button
+                    key={item}
+                    role="tab"
+                    aria-selected={topYear === item}
+                    className={topYear === item ? "active" : ""}
+                    onClick={() => setTopYear(item)}
+                  >
+                    <strong>{item}</strong>
+                    <span>Top {topByYear[item].length}</span>
+                  </button>
+                ))}
+              </div>
               <p>
-                Hai mươi gương mặt nổi bật trên hành trình kết nối, sẻ chia và tạo nên năng lượng
-                cho nhà Faerie. Điểm số hiện là dữ liệu mẫu và sẽ được cập nhật theo hoạt động thực tế.
+                Những gương mặt nổi bật trên hành trình kết nối, sẻ chia và tạo nên năng lượng
+                cho nhà Faerie năm {topYear}. Điểm số hiện là dữ liệu mẫu và sẽ được cập nhật theo hoạt động thực tế.
               </p>
             </div>
             <div className="champion-card">
               <span className="champion-rank">#01</span>
-              <div className="champion-avatar">{initials(top20[0].name)}</div>
+              <div className="champion-avatar">{initials(topMembers[0].name)}</div>
               <small>LEADING THE MAGIC</small>
-              <h2>{top20[0].name}</h2>
-              <p>{top20[0].title}</p>
-              <strong>{top20[0].points} <i>PTS</i></strong>
+              <h2>{topMembers[0].name}</h2>
+              <p>{topMembers[0].title}</p>
+              <strong>{topMembers[0].points} <i>PTS</i></strong>
             </div>
           </section>
 
           <section className="leaderboard section-shell">
             <div className="leaderboard-heading">
               <div>
-                <p className="eyebrow"><span /> Updated 15.07.2026</p>
-                <h2>Bảng xếp hạng <em>tháng 07</em></h2>
+                <p className="eyebrow"><span /> Faerie Hall of Fame · {topYear}</p>
+                <h2>Brosis xuất sắc <em>{topYear}</em></h2>
               </div>
-              <p>Điểm hoạt động mẫu · Faerie Gen 2026</p>
+              <p>{topMembers.length} gương mặt nổi bật · Faerie Gen {topYear}</p>
             </div>
 
-            <div className="leaderboard-table" role="table" aria-label="Top 20 thành viên Faerie">
+            <div className="leaderboard-table" role="table" aria-label={`Top ${topMembers.length} brosis xuất sắc năm ${topYear}`}>
               <div className="leaderboard-row leaderboard-labels" role="row">
                 <span>Hạng</span><span>Thành viên</span><span>Hoạt động</span><span>Chuỗi ngày</span><span>Điểm</span>
               </div>
-              {top20.map((person, index) => (
-                <article className={`leaderboard-row ${index < 3 ? "podium" : ""}`} role="row" key={person.name}>
+              {topMembers.map((person, index) => (
+                <article className={`leaderboard-row ${index < 3 ? "podium" : ""}`} role="row" key={`${topYear}-${person.name}`}>
                   <div className="rank-number">{person.rank.toString().padStart(2, "0")}</div>
                   <div className="rank-person">
                     <span className={`rank-avatar ${avatarTones[index % avatarTones.length]}`}>{initials(person.name)}</span>
