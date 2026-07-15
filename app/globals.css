@@ -264,17 +264,22 @@ h1 em, h2 em, blockquote em { color: var(--accent); font-weight: inherit; }
 .members-stat { display: flex; align-items: center; gap: 18px; padding-top: 22px; border-top: 1px solid var(--line); }
 .members-stat strong { font-family: var(--font-display); font-size: 60px; line-height: 1; }
 .members-stat span { font-size: 9px; font-weight: 700; line-height: 1.4; letter-spacing: .1em; text-transform: uppercase; }
-.member-hero-deck { position: absolute; left: max(6vw, 34px); right: max(2vw, 18px); bottom: -122px; z-index: 3; height: 300px; }
-.hero-member-card { position: absolute; bottom: 0; width: clamp(118px, 12vw, 168px); height: 245px; perspective: 1000px; }
+.member-hero-deck { position: absolute; left: max(6vw, 34px); right: max(2vw, 18px); bottom: -122px; z-index: 3; height: 300px; overflow-x: auto; overflow-y: hidden; scroll-behavior: smooth; scrollbar-width: none; touch-action: pan-x; }
+.member-hero-deck::-webkit-scrollbar { display: none; }
+.member-hero-track { min-width: max-content; height: 100%; display: flex; align-items: flex-end; padding-top: 34px; }
+.hero-member-card { position: relative; flex: 0 0 clamp(118px, 12vw, 168px); width: clamp(118px, 12vw, 168px); height: 245px; margin-left: -96px; perspective: 1000px; transition: margin-left .35s cubic-bezier(.2,.75,.25,1); }
+.hero-member-card:first-child { margin-left: 0; }
+.member-hero-deck:hover .hero-member-card { margin-left: -62px; }
+.member-hero-deck:hover .hero-member-card:first-child { margin-left: 0; }
 .hero-member-card:hover { z-index: 60; }
 .hero-member-card.auto-active { z-index: 50; }
 .hero-member-card-button { width: 100%; height: 100%; display: block; padding: 0; border: 0; outline: 0; background: transparent; color: inherit; cursor: pointer; transition: transform .32s cubic-bezier(.2,.75,.25,1), filter .32s ease; }
-.hero-member-card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .68s cubic-bezier(.2,.75,.25,1); }
+.hero-member-card-inner { position: relative; width: 100%; height: 100%; transform: rotateY(180deg); transform-style: preserve-3d; transition: transform .68s cubic-bezier(.2,.75,.25,1); }
 .hero-member-card-face { position: absolute; inset: 0; overflow: hidden; border: 1px solid rgba(255,255,255,.7); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .hero-member-card:hover .hero-member-card-button, .hero-member-card-button:focus-visible { z-index: 5; transform: translateY(-22px) rotate(1.5deg); filter: drop-shadow(10px 13px 0 rgba(23,58,45,.22)); }
 .hero-member-card.auto-active .hero-member-card-button { transform: translateY(-28px); filter: drop-shadow(11px 15px 0 rgba(23,58,45,.24)); }
-.hero-member-card.auto-active .hero-member-card-front { box-shadow: inset 0 0 0 3px var(--lime); }
-.hero-member-card:hover .hero-member-card-inner, .hero-member-card-button:focus .hero-member-card-inner { transform: rotateY(180deg); }
+.hero-member-card.auto-active .hero-member-card-back { box-shadow: inset 0 0 0 3px var(--lime); }
+.hero-member-card:hover .hero-member-card-inner, .hero-member-card-button:focus .hero-member-card-inner { transform: rotateY(0deg); }
 .hero-member-card-button:focus-visible .hero-member-card-face { outline: 3px solid var(--deep); outline-offset: -4px; }
 .hero-member-card-front { display: grid; place-items: center; }
 .hero-member-card-front.sage { background: #80b783; }
@@ -458,7 +463,10 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   .members-hero h1 { font-size: clamp(58px, 16vw, 80px); }
   .members-intro { padding-bottom: 0; }
   .member-hero-deck { left: 18px; right: 18px; bottom: -120px; height: 260px; }
-  .hero-member-card { width: 120px; height: 210px; }
+  .member-hero-track { padding-top: 32px; }
+  .hero-member-card { flex-basis: 120px; width: 120px; height: 210px; margin-left: -82px; }
+  .member-hero-deck:hover .hero-member-card { margin-left: -54px; }
+  .member-hero-deck:hover .hero-member-card:first-child { margin-left: 0; }
   .hero-member-card:hover .hero-member-card-button, .hero-member-card-button:focus-visible, .hero-member-card.auto-active .hero-member-card-button { transform: translateY(-14px); filter: drop-shadow(7px 9px 0 rgba(23,58,45,.2)); }
   .hero-card-caption strong { font-size: 17px; }
   .hero-member-card-back > strong { font-size: 22px; }

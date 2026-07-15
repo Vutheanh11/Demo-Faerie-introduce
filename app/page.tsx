@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Tab = "Introduce" | "members" | "top20";
 type EventYear = 2024 | 2025 | 2026;
@@ -283,15 +283,19 @@ export default function Home() {
   const [eventYear, setEventYear] = useState<EventYear>(2026);
   const [topYear, setTopYear] = useState<TopYear>(2025);
   const [heroCardIndex, setHeroCardIndex] = useState(0);
+  const [isHeroDeckHovered, setIsHeroDeckHovered] = useState(false);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
+  const heroDeckRef = useRef<HTMLDivElement>(null);
 
   const topMembers = topByYear[topYear];
 
   useEffect(() => {
-    if (tab !== "members") return;
-
     setHeroCardIndex(0);
+  }, [year]);
+
+  useEffect(() => {
+    if (tab !== "members" || isHeroDeckHovered) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const timer = window.setInterval(() => {
@@ -299,7 +303,18 @@ export default function Home() {
     }, 2000);
 
     return () => window.clearInterval(timer);
-  }, [tab, year]);
+  }, [tab, year, isHeroDeckHovered]);
+
+  useEffect(() => {
+    if (tab !== "members" || isHeroDeckHovered) return;
+
+    const deck = heroDeckRef.current;
+    const card = deck?.querySelector<HTMLElement>(`[data-hero-card-index="${heroCardIndex}"]`);
+    if (!deck || !card) return;
+
+    const target = card.offsetLeft - (deck.clientWidth - card.offsetWidth) / 2;
+    deck.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+  }, [heroCardIndex, isHeroDeckHovered, tab, year]);
 
   const members = useMemo(
     () =>
@@ -508,44 +523,60 @@ export default function Home() {
               <div className="members-stat"><strong>{totalMembers}</strong><span>members<br />&amp; growing</span></div>
             </div>
 
-            <div className="member-hero-deck" aria-label={`Toàn bộ thành viên Faerie Roster ${year}`}>
-              {rosters[year].map((person, index, roster) => {
-                const position = index / Math.max(roster.length - 1, 1);
+            <div
+              className="member-hero-deck"
+              ref={heroDeckRef}
+              aria-label={`Toàn bộ thành viên Faerie Roster ${year}`}
+              onPointerEnter={(event) => {
+                if (event.pointerType === "mouse") setIsHeroDeckHovered(true);
+              }}
+              onPointerMove={(event) => {
+                if (event.pointerType !== "mouse") return;
 
-                return (
-                <article
-                  className={`hero-member-card ${index === heroCardIndex ? "auto-active" : ""}`}
-                  key={`hero-${year}-${person.name}`}
-                  style={{ left: `${position * 100}%`, transform: `translateX(-${position * 100}%)` }}
-                >
-                  <button
-                    type="button"
-                    className="hero-member-card-button"
-                    aria-label={`Xem vai trò của ${person.name}: ${person.title}`}
+                const deck = event.currentTarget;
+                const bounds = deck.getBoundingClientRect();
+                const pointerPosition = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
+                deck.scrollLeft = pointerPosition * (deck.scrollWidth - deck.clientWidth);
+              }}
+              onPointerLeave={() => setIsHeroDeckHovered(false)}
+              onFocusCapture={() => setIsHeroDeckHovered(true)}
+              onBlurCapture={() => setIsHeroDeckHovered(false)}
+            >
+              <div className="member-hero-track">
+                {rosters[year].map((person, index) => (
+                  <article
+                    className={`hero-member-card ${index === heroCardIndex ? "auto-active" : ""}`}
+                    data-hero-card-index={index}
+                    key={`hero-${year}-${person.name}`}
                   >
-                    <div className="hero-member-card-inner">
-                      <div className={`hero-member-card-face hero-member-card-front ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[index % avatarTones.length]}`}>
-                        {memberPhoto(year, person.name) ? (
-                          <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
-                        ) : (
-                          <span className="hero-card-initials">{initials(person.name)}</span>
-                        )}
-                        <div className="hero-card-caption">
-                          <strong>{person.name}</strong>
-                          <small>Roster {year}</small>
+                    <button
+                      type="button"
+                      className="hero-member-card-button"
+                      aria-label={`Xem ảnh và tên của ${person.name}, vai trò ${person.title}`}
+                    >
+                      <div className="hero-member-card-inner">
+                        <div className={`hero-member-card-face hero-member-card-front ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[index % avatarTones.length]}`}>
+                          {memberPhoto(year, person.name) ? (
+                            <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
+                          ) : (
+                            <span className="hero-card-initials">{initials(person.name)}</span>
+                          )}
+                          <div className="hero-card-caption">
+                            <strong>{person.name}</strong>
+                            <small>Roster {year}</small>
+                          </div>
+                        </div>
+                        <div className={`hero-member-card-face hero-member-card-back ${person.group.toLowerCase()}`}>
+                          <span>ROLE</span>
+                          <i aria-hidden="true">✦</i>
+                          <strong>{person.title}</strong>
+                          <small>{person.name}</small>
                         </div>
                       </div>
-                      <div className={`hero-member-card-face hero-member-card-back ${person.group.toLowerCase()}`}>
-                        <span>ROLE</span>
-                        <i aria-hidden="true">✦</i>
-                        <strong>{person.title}</strong>
-                        <small>{person.name}</small>
-                      </div>
-                    </div>
-                  </button>
-                </article>
-                );
-              })}
+                    </button>
+                  </article>
+                ))}
+              </div>
             </div>
           </section>
 
