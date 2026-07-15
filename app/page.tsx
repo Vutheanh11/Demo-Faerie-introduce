@@ -47,35 +47,103 @@ const eventsByYear: Record<Year, Array<{
   ],
 };
 
-const names2024 = [
-  "Nguyễn Minh Anh", "Trần Gia Hân", "Lê Hoàng Nam", "Phạm Thuỳ Dương",
-  "Đỗ Đức Anh", "Vũ Khánh Linh", "Bùi Minh Quân", "Hoàng Ngọc Mai",
-  "Nguyễn Quốc Bảo", "Trần Phương Thảo", "Lê Anh Tuấn", "Phạm Gia Linh",
-  "Đặng Hải Yến", "Ngô Nhật Minh", "Dương Quỳnh Anh", "Trịnh Đức Long",
-  "Lý Thanh Huyền", "Mai Trung Kiên", "Võ Hà My", "Cao Quang Huy",
-  "Tạ Bảo Ngọc", "Chu Minh Khang", "Đinh Thảo Vy", "Hà Tuấn Anh",
-  "Ninh Khánh An", "Quách Hoài Nam", "Tô Diệu Linh", "Lương Việt Dũng",
-  "Kiều Ngọc Anh", "La Thành Công",
+const names2024: MemberProfile[] = [
+  { name: "Việt Phương", title: "Mentor", group: "Mentor" },
+  { name: "Hạ My", title: "Supporter", group: "Supporter" },
+  { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
+  { name: "Vũ Thế Anh", title: "Sub Leader Nhà", group: "Leadership" },
+  { name: "Trần Văn Quỳnh", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
+  { name: "Cao Minh Thư", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
+  { name: "Trần Thu Anh", title: "Leader Ban Media", group: "Leadership" },
+  { name: "Trịnh Hoàng Khang", title: "Leader Ban Kỹ Thuật", group: "Leadership" },
+  { name: "Lê Thùy Dương", title: "Leader Ban Nghệ Thuật", group: "Leadership" },
+  { name: "Vương Nguyễn Hồng Linh", title: "Sub Leader Ban Event", group: "Leadership" },
+  { name: "Dương Nguyễn Đông Quân", title: "Member", group: "Member" },
+  { name: "Lê Ngọc Trang", title: "Member", group: "Member" },
+  { name: "Nguyễn Ngọc Huy", title: "Member", group: "Member" },
+  { name: "Lưu Trí Tâm", title: "Member", group: "Member" },
+  { name: "Nguyễn Quốc Huy", title: "Member", group: "Member" },
+  { name: "Huỳnh Như Ý", title: "Member", group: "Member" },
+  { name: "Triệu Trần Như Huỳnh", title: "Member", group: "Member" },
+  { name: "Huỳnh Thị Trang Tường", title: "Member", group: "Member" },
+  { name: "Đồng Thành Đạt", title: "Member", group: "Member" },
+  { name: "Trương Thảo Vi", title: "Member", group: "Member" },
+  { name: "Phạm Thị Thu Hằng", title: "Member", group: "Member" },
+  { name: "Nguyễn Gia Linh", title: "Member", group: "Member" },
+  { name: "Nguyễn Võ Gia Hiếu", title: "Member", group: "Member" },
+  { name: "Lê Võ Gia Bảo", title: "Member", group: "Member" },
+  { name: "Võ Khôi Nguyên", title: "Member", group: "Member" },
+  { name: "Huỳnh Quốc Bảo", title: "Member", group: "Member" },
+  { name: "Đặng Tiến Hưng", title: "Member", group: "Member" },
+  { name: "Hoàng Văn Đức Nhân", title: "Member", group: "Member" },
+  { name: "Nguyễn Thanh Nhật Tân", title: "Member", group: "Member" },
+  { name: "Nguyễn Thành Nhân", title: "Member", group: "Member" },
+  { name: "Phou Mảu Quang", title: "Member", group: "Member" },
+  { name: "Hoàng Thị Quỳnh Lan", title: "Member", group: "Member" },
+  { name: "Trần Nhất Huy", title: "Member", group: "Member" },
+  { name: "Lê Hoàng Phước", title: "Member", group: "Member" },
+  { name: "Nguyễn Hoàng Bảo Oanh", title: "Member", group: "Member" },
 ];
 
-const names2025 = [
-  "Vũ Thanh Tâm", "Nguyễn Hà Phương", "Trần Đăng Khoa", "Lê Bảo Trâm",
-  "Phạm Minh Đức", "Đỗ Ngọc Hân", "Bùi Hoàng Sơn", "Hoàng Thu Trang",
-  "Nguyễn Tuấn Kiệt", "Trần Khánh Ly", "Lê Quốc Khánh", "Phạm Anh Thư",
-  "Đặng Minh Châu", "Ngô Gia Huy", "Dương Linh Chi", "Trịnh Hoàng Anh",
-  "Lý Đức Thịnh", "Mai Bảo Uyên", "Võ Minh Nhật", "Cao Thảo Nguyên",
-  "Tạ Hải Đăng", "Chu Quỳnh Như", "Đinh Gia Bảo", "Hà Phương Linh",
-  "Ninh Tuệ Minh", "Quách Đức Mạnh", "Tô Khánh Vy", "Lương Anh Khoa",
-  "Kiều Mai Anh", "La Nhật Nam",
+
+const names2025: MemberProfile[] = [
+  { name: "Việt Phương", title: "Mentor", group: "Mentor" },
+  { name: "Hạ My", title: "Supporter", group: "Supporter" },
+  { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
+  { name: "Vũ Thế Anh", title: "Sub Leader Nhà", group: "Leadership" },
+  { name: "Trần Văn Quỳnh", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
+  { name: "Cao Minh Thư", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
+  { name: "Trần Thu Anh", title: "Leader Ban Media", group: "Leadership" },
+  { name: "Trịnh Hoàng Khang", title: "Leader Ban Kỹ Thuật", group: "Leadership" },
+  { name: "Lê Thùy Dương", title: "Leader Ban Nghệ Thuật", group: "Leadership" },
+  { name: "Vương Nguyễn Hồng Linh", title: "Sub Leader Ban Event", group: "Leadership" },
+  { name: "Dương Nguyễn Đông Quân", title: "Member", group: "Member" },
+  { name: "Lê Ngọc Trang", title: "Member", group: "Member" },
+  { name: "Nguyễn Ngọc Huy", title: "Member", group: "Member" },
+  { name: "Lưu Trí Tâm", title: "Member", group: "Member" },
+  { name: "Nguyễn Quốc Huy", title: "Member", group: "Member" },
+  { name: "Huỳnh Như Ý", title: "Member", group: "Member" },
+  { name: "Triệu Trần Như Huỳnh", title: "Member", group: "Member" },
+  { name: "Huỳnh Thị Trang Tường", title: "Member", group: "Member" },
+  { name: "Đồng Thành Đạt", title: "Member", group: "Member" },
+  { name: "Trương Thảo Vi", title: "Member", group: "Member" },
+  { name: "Phạm Thị Thu Hằng", title: "Member", group: "Member" },
+  { name: "Nguyễn Gia Linh", title: "Member", group: "Member" },
+  { name: "Nguyễn Võ Gia Hiếu", title: "Member", group: "Member" },
+  { name: "Lê Võ Gia Bảo", title: "Member", group: "Member" },
+  { name: "Võ Khôi Nguyên", title: "Member", group: "Member" },
+  { name: "Huỳnh Quốc Bảo", title: "Member", group: "Member" },
+  { name: "Đặng Tiến Hưng", title: "Member", group: "Member" },
+  { name: "Hoàng Văn Đức Nhân", title: "Member", group: "Member" },
+  { name: "Nguyễn Thanh Nhật Tân", title: "Member", group: "Member" },
+  { name: "Nguyễn Thành Nhân", title: "Member", group: "Member" },
+  { name: "Phou Mảu Quang", title: "Member", group: "Member" },
+  { name: "Hoàng Thị Quỳnh Lan", title: "Member", group: "Member" },
+  { name: "Trần Nhất Huy", title: "Member", group: "Member" },
+  { name: "Lê Hoàng Phước", title: "Member", group: "Member" },
+  { name: "Nguyễn Hoàng Bảo Oanh", title: "Member", group: "Member" },
 ];
 
-function makeMockRoster(names: string[]): MemberProfile[] {
-  return names.map((name, index) => {
-    if (index === 0) return { name, title: "Mentor", group: "Mentor" };
-    if (index === 1) return { name, title: "Supporter", group: "Supporter" };
-    if (index === 2) return { name, title: "Leader Nhà", group: "Leadership" };
-    return { name, title: "Member", group: "Member" };
-  });
+
+function normalizeProfile(entry: string | MemberProfile, index: number): MemberProfile {
+  if (typeof entry === "object" && entry !== null) {
+    const validGroups: MemberGroup[] = ["Mentor", "Supporter", "Leadership", "Member"];
+    return {
+      name: String(entry.name ?? ""),
+      title: String(entry.title ?? "Member"),
+      group: validGroups.includes(entry.group) ? entry.group : "Member",
+    };
+  }
+
+  const name = String(entry ?? "");
+  if (index === 0) return { name, title: "Mentor", group: "Mentor" };
+  if (index === 1) return { name, title: "Supporter", group: "Supporter" };
+  if (index === 2) return { name, title: "Leader Nhà", group: "Leadership" };
+  return { name, title: "Member", group: "Member" };
+}
+
+function makeMockRoster(entries: Array<string | MemberProfile>): MemberProfile[] {
+  return entries.map(normalizeProfile);
 }
 
 const roster2026: MemberProfile[] = [
@@ -139,7 +207,7 @@ const top20 = roster2026.slice(0, 20).map((person, index) => ({
 }));
 
 function initials(name: string) {
-  const parts = name.trim().split(" ");
+  const parts = String(name ?? "").trim().split(" ");
   return `${parts[parts.length - 2]?.[0] ?? ""}${parts[parts.length - 1]?.[0] ?? ""}`;
 }
 
@@ -155,10 +223,10 @@ export default function Home() {
   const members = useMemo(
     () =>
       rosters[year]
-        .map((person, index) => ({ ...person, index }))
+        .map((person, index) => ({ ...normalizeProfile(person, index), index }))
         .filter((person) => role === "All" || person.group === role)
         .filter((person) =>
-          person.name.toLocaleLowerCase("vi").includes(query.trim().toLocaleLowerCase("vi")),
+          String(person.name ?? "").toLocaleLowerCase("vi").includes(query.trim().toLocaleLowerCase("vi")),
         ),
     [year, role, query],
   );
