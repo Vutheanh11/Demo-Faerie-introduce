@@ -282,10 +282,16 @@ h1 em, h2 em, blockquote em { color: var(--accent); font-weight: inherit; }
 .directory-title h2 { margin: 0; font-family: var(--font-display); font-size: clamp(38px, 4vw, 58px); font-weight: 400; letter-spacing: -.03em; }
 .directory-title h2 em { color: var(--accent); }
 .directory-title > span { font-size: 8px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-.member-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px 18px; }
-.member-card { min-width: 0; }
-.avatar { position: relative; height: 220px; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--line); transition: transform .25s ease; }
-.member-card:hover .avatar { transform: translateY(-5px); }
+.member-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 34px 18px; }
+.member-card { min-width: 0; height: 370px; perspective: 1200px; }
+.member-card-button { width: 100%; height: 100%; display: block; padding: 0; border: 0; outline: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; transition: transform .35s cubic-bezier(.2,.75,.25,1), filter .35s ease; }
+.member-card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .72s cubic-bezier(.2,.75,.25,1); }
+.member-card-face { position: absolute; inset: 0; overflow: hidden; border: 1px solid var(--line); background: var(--paper); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.member-card:hover .member-card-button, .member-card-button:focus-visible { transform: translateY(-13px) rotate(1deg); filter: drop-shadow(13px 17px 0 rgba(111,159,87,.26)); }
+.member-card:hover .member-card-inner, .member-card-button:focus .member-card-inner { transform: rotateY(180deg); }
+.member-card-button:focus-visible .member-card-face { outline: 3px solid var(--accent); outline-offset: 3px; }
+.member-card-front { display: grid; grid-template-rows: minmax(0, 1fr) auto; }
+.avatar { position: relative; height: 100%; display: grid; place-items: center; overflow: hidden; border-bottom: 1px solid var(--line); }
 .avatar::before, .avatar::after { content: ""; position: absolute; border: 1px solid rgba(23,58,45,.23); border-radius: 50%; }
 .avatar::before { width: 150px; height: 150px; }
 .avatar::after { width: 110px; height: 110px; background: rgba(255,255,255,.2); }
@@ -300,13 +306,20 @@ h1 em, h2 em, blockquote em { color: var(--accent); font-weight: inherit; }
 .avatar.has-photo > img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .avatar small { position: absolute; top: 14px; left: 15px; font-size: 8px; font-weight: 800; }
 .avatar.has-photo small { z-index: 2; padding: 5px 7px; background: rgba(11,41,29,.78); color: var(--cream); backdrop-filter: blur(7px); }
-.member-info { display: flex; justify-content: space-between; align-items: start; gap: 10px; padding-top: 15px; border-top: 1px solid var(--line); }
-.member-info h3 { margin: 0; font-family: var(--font-display); font-size: 18px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.member-info p { margin: 5px 0 0; font-size: 8px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .55; }
-.role-badge { flex: 0 1 auto; max-width: 52%; padding: 6px 8px; border: 1px solid var(--line); border-radius: 999px; font-size: 7px; font-weight: 800; line-height: 1.35; text-align: center; text-transform: uppercase; }
-.role-badge.mentor { background: var(--ink); color: white; }
-.role-badge.supporter { background: var(--accent); border-color: var(--accent); }
-.role-badge.leadership { background: var(--lime); border-color: var(--lime); }
+.member-front-info { min-width: 0; padding: 17px 16px 16px; background: var(--paper); }
+.member-front-info strong { display: block; overflow: hidden; font-family: var(--font-display); font-size: 22px; font-weight: 400; white-space: nowrap; text-overflow: ellipsis; }
+.member-front-info span { display: flex; justify-content: space-between; gap: 8px; margin-top: 7px; font-size: 7px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; opacity: .58; }
+.member-front-info i { font-size: 12px; font-style: normal; }
+.member-card-back { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 24px; transform: rotateY(180deg); background: var(--ink); color: var(--cream); text-align: center; }
+.member-card-back.mentor { background: var(--deep); }
+.member-card-back.supporter { background: var(--green); }
+.member-card-back.leadership { background: #315f49; }
+.member-card-back.member { background: var(--ink); }
+.member-back-kicker { position: absolute; top: 20px; left: 20px; right: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.22); font-size: 7px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.member-card-back > i { margin-bottom: 20px; color: var(--lime); font-family: var(--font-display); font-size: 38px; font-style: normal; }
+.member-back-role { max-width: 100%; font-family: var(--font-display); font-size: clamp(28px, 2.5vw, 39px); font-weight: 400; line-height: 1.02; }
+.member-back-name { margin-top: 20px; font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .72; }
+.member-card-back small { position: absolute; bottom: 20px; font-size: 7px; font-weight: 800; letter-spacing: .16em; color: var(--lime); }
 .empty-state { min-height: 300px; display: grid; place-items: center; align-content: center; text-align: center; }
 .empty-state > span { font-size: 35px; color: var(--accent); }
 .empty-state h3 { margin: 12px 0 5px; font-family: var(--font-display); font-size: 25px; font-weight: 400; }
@@ -418,9 +431,11 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   .year-picker button { flex: 1 1 calc(50% - 8px); min-width: 120px; }
   .search-box { width: 100%; }
   .member-grid { grid-template-columns: repeat(2, 1fr); gap: 27px 12px; }
-  .avatar { height: 180px; }
-  .member-info { display: block; }
-  .role-badge { display: inline-block; margin-top: 9px; }
+  .member-card { height: 330px; }
+  .member-card:hover .member-card-button, .member-card-button:focus-visible { transform: translateY(-8px); filter: drop-shadow(8px 11px 0 rgba(111,159,87,.24)); }
+  .member-front-info { padding: 14px 12px 13px; }
+  .member-front-info strong { font-size: 18px; }
+  .member-back-role { font-size: clamp(24px, 5.5vw, 34px); }
   .top-hero { min-height: auto; grid-template-columns: 1fr; padding-top: 75px; padding-bottom: 90px; }
   .top-hero-copy h1 { font-size: clamp(65px, 18vw, 90px); }
   .top-hero-copy > p:last-child { margin-left: 0; }
@@ -445,7 +460,11 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   .event-content { grid-template-columns: 58px 1fr; }
   .directory { padding-left: 16px; padding-right: 16px; }
   .year-picker button { padding: 10px 8px; font-size: 10px; }
-  .member-info h3 { font-size: 16px; }
+  .member-card { height: 300px; }
+  .member-front-info strong { font-size: 16px; }
+  .member-front-info span { font-size: 6px; }
+  .member-back-kicker { top: 15px; left: 15px; right: 15px; }
+  .member-card-back small { bottom: 15px; }
   .event-year-tabs button small { font-size: 6px; }
   .champion-card { width: 330px; min-height: 390px; transform: rotate(2deg) scale(.88); }
   .rank-number { font-size: 21px; }

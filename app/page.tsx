@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-type Tab = "news" | "members" | "top20";
+type Tab = "Introduce" | "members" | "top20";
 type EventYear = 2024 | 2025 | 2026;
 type RosterYear = 2023 | 2024 | 2025 | 2026;
 type TopYear = 2023 | 2024 | 2025;
@@ -278,7 +278,7 @@ function initials(name: string) {
 const avatarTones = ["sage", "sun", "sky", "lilac", "coral", "lime"];
 
 export default function Home() {
-  const [tab, setTab] = useState<Tab>("news");
+  const [tab, setTab] = useState<Tab>("Introduce");
   const [year, setYear] = useState<RosterYear>(2026);
   const [eventYear, setEventYear] = useState<EventYear>(2026);
   const [topYear, setTopYear] = useState<TopYear>(2025);
@@ -306,7 +306,7 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <button className="brand" onClick={() => switchTab("news")} aria-label="Faerie home">
+        <button className="brand" onClick={() => switchTab("Introduce")} aria-label="Faerie home">
           <span className="brand-mark" aria-hidden="true"><img src="/images/faerie-icon.png" alt="" /></span>
           <span>
             <strong>FAERIE</strong>
@@ -317,11 +317,11 @@ export default function Home() {
         <nav className="main-nav" aria-label="Điều hướng chính" role="tablist">
           <button
             role="tab"
-            aria-selected={tab === "news"}
-            className={tab === "news" ? "active" : ""}
-            onClick={() => switchTab("news")}
+            aria-selected={tab === "Introduce"}
+            className={tab === "Introduce" ? "active" : ""}
+            onClick={() => switchTab("Introduce")}
           >
-            News <span>02</span>
+            Introduce <span>02</span>
           </button>
           <button
             role="tab"
@@ -344,7 +344,7 @@ export default function Home() {
         <div className="header-note">EST. 2024 · TP.HCM</div>
       </header>
 
-      {tab === "news" ? (
+      {tab === "Introduce" ? (
         <div role="tabpanel" className="page-enter">
           <section className="hero section-shell">
             <div className="hero-copy">
@@ -542,21 +542,36 @@ export default function Home() {
               <div className="member-grid">
                 {members.map((person) => (
                   <article className="member-card" key={`${year}-${person.name}`}>
-                    <div className={`avatar ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[person.index % avatarTones.length]}`}>
-                      {memberPhoto(year, person.name) ? (
-                        <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
-                      ) : (
-                        <span>{initials(person.name)}</span>
-                      )}
-                      <small>{(person.index + 1).toString().padStart(2, "0")}</small>
-                    </div>
-                    <div className="member-info">
-                      <div>
-                        <h3>{person.name}</h3>
-                        <p>Faerie · Gen {year.toString().slice(-2)}</p>
+                    <button
+                      type="button"
+                      className="member-card-button"
+                      aria-label={`Xem vai trò của ${person.name}: ${person.title}`}
+                    >
+                      <div className="member-card-inner">
+                        <div className="member-card-face member-card-front">
+                          <div className={`avatar ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[person.index % avatarTones.length]}`}>
+                            {memberPhoto(year, person.name) ? (
+                              <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
+                            ) : (
+                              <span>{initials(person.name)}</span>
+                            )}
+                            <small>{(person.index + 1).toString().padStart(2, "0")}</small>
+                          </div>
+                          <div className="member-front-info">
+                            <strong>{person.name}</strong>
+                            <span>Faerie · Roster {year} <i aria-hidden="true">↻</i></span>
+                          </div>
+                        </div>
+
+                        <div className={`member-card-face member-card-back ${person.group.toLowerCase()}`}>
+                          <span className="member-back-kicker">ROLE / {groupLabels[person.group]}</span>
+                          <i aria-hidden="true">✦</i>
+                          <strong className="member-back-role">{person.title}</strong>
+                          <span className="member-back-name">{person.name}</span>
+                          <small>FAERIE · {year}</small>
+                        </div>
                       </div>
-                      <span className={`role-badge ${person.group.toLowerCase()}`}>{person.title}</span>
-                    </div>
+                    </button>
                   </article>
                 ))}
               </div>
