@@ -283,10 +283,14 @@ export default function Home() {
   const [eventYear, setEventYear] = useState<EventYear>(2026);
   const [topYear, setTopYear] = useState<TopYear>(2025);
   const [heroCardIndex, setHeroCardIndex] = useState(0);
-  const [isHeroDeckHovered, setIsHeroDeckHovered] = useState(false);
+  const [isHeroDeckInteracting, setIsHeroDeckInteracting] = useState(false);
+  const [isHeroDeckFocused, setIsHeroDeckFocused] = useState(false);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
   const heroDeckRef = useRef<HTMLDivElement>(null);
+  const heroDeckIdleTimerRef = useRef<number | null>(null);
+  const heroDeckAnimationRef = useRef<number | null>(null);
+  const heroDeckScrollTargetRef = useRef(0);
 
   const topMembers = topByYear[topYear];
 
@@ -295,7 +299,7 @@ export default function Home() {
   }, [year]);
 
   useEffect(() => {
-    if (tab !== "members" || isHeroDeckHovered) return;
+    if (tab !== "members" || isHeroDeckInteracting || isHeroDeckFocused) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const timer = window.setInterval(() => {
@@ -303,10 +307,10 @@ export default function Home() {
     }, 2000);
 
     return () => window.clearInterval(timer);
-  }, [tab, year, isHeroDeckHovered]);
+  }, [tab, year, isHeroDeckFocused, isHeroDeckInteracting]);
 
   useEffect(() => {
-    if (tab !== "members" || isHeroDeckHovered) return;
+    if (tab !== "members" || isHeroDeckInteracting || isHeroDeckFocused) return;
 
     const deck = heroDeckRef.current;
     const card = deck?.querySelector<HTMLElement>(`[data-hero-card-index="${heroCardIndex}"]`);
@@ -314,7 +318,44 @@ export default function Home() {
 
     const target = card.offsetLeft - (deck.clientWidth - card.offsetWidth) / 2;
     deck.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
-  }, [heroCardIndex, isHeroDeckHovered, tab, year]);
+  }, [heroCardIndex, isHeroDeckFocused, isHeroDeckInteracting, tab, year]);
+
+  useEffect(
+    () => () => {
+      if (heroDeckIdleTimerRef.current !== null) window.clearTimeout(heroDeckIdleTimerRef.current);
+      if (heroDeckAnimationRef.current !== null) window.cancelAnimationFrame(heroDeckAnimationRef.current);
+    },
+    [],
+  );
+
+  const glideHeroDeck = (deck: HTMLDivElement, target: number) => {
+    heroDeckScrollTargetRef.current = target;
+    if (heroDeckAnimationRef.current !== null) return;
+
+    const animate = () => {
+      const distance = heroDeckScrollTargetRef.current - deck.scrollLeft;
+      if (Math.abs(distance) < 0.75) {
+        deck.scrollLeft = heroDeckScrollTargetRef.current;
+        heroDeckAnimationRef.current = null;
+        return;
+      }
+
+      deck.scrollLeft += distance * 0.075;
+      heroDeckAnimationRef.current = window.requestAnimationFrame(animate);
+    };
+
+    heroDeckAnimationRef.current = window.requestAnimationFrame(animate);
+  };
+
+  const pauseHeroDeckAutomation = () => {
+    setIsHeroDeckInteracting(true);
+    if (heroDeckIdleTimerRef.current !== null) window.clearTimeout(heroDeckIdleTimerRef.current);
+
+    heroDeckIdleTimerRef.current = window.setTimeout(() => {
+      setIsHeroDeckInteracting(false);
+      heroDeckIdleTimerRef.current = null;
+    }, 900);
+  };
 
   const members = useMemo(
     () =>
@@ -527,55 +568,74 @@ export default function Home() {
               className="member-hero-deck"
               ref={heroDeckRef}
               aria-label={`Toàn bộ thành viên Faerie Roster ${year}`}
-              onPointerEnter={(event) => {
-                if (event.pointerType === "mouse") setIsHeroDeckHovered(true);
-              }}
               onPointerMove={(event) => {
                 if (event.pointerType !== "mouse") return;
 
                 const deck = event.currentTarget;
                 const bounds = deck.getBoundingClientRect();
                 const pointerPosition = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
-                deck.scrollLeft = pointerPosition * (deck.scrollWidth - deck.clientWidth);
+                pauseHeroDeckAutomation();
+                glideHeroDeck(deck, pointerPosition * (deck.scrollWidth - deck.clientWidth));
               }}
-              onPointerLeave={() => setIsHeroDeckHovered(false)}
-              onFocusCapture={() => setIsHeroDeckHovered(true)}
-              onBlurCapture={() => setIsHeroDeckHovered(false)}
+              onPointerLeave={() => {
+                if (heroDeckIdleTimerRef.current !== null) window.clearTimeout(heroDeckIdleTimerRef.current);
+                if (heroDeckAnimationRef.current !== null) window.cancelAnimationFrame(heroDeckAnimationRef.current);
+                heroDeckIdleTimerRef.current = null;
+                heroDeckAnimationRef.current = null;
+                setIsHeroDeckInteracting(false);
+              }}
+              onFocusCapture={() => setIsHeroDeckFocused(true)}
+              onBlurCapture={() => setIsHeroDeckFocused(false)}
             >
               <div className="member-hero-track">
-                {rosters[year].map((person, index) => (
-                  <article
-                    className={`hero-member-card ${index === heroCardIndex ? "auto-active" : ""}`}
-                    data-hero-card-index={index}
-                    key={`hero-${year}-${person.name}`}
-                  >
-                    <button
-                      type="button"
-                      className="hero-member-card-button"
-                      aria-label={`Xem ảnh và tên của ${person.name}, vai trò ${person.title}`}
+                {rosters[year].map((person, index) => {
+                  const distanceFromActive = Math.abs(index - heroCardIndex);
+                  const emphasisClass = distanceFromActive === 0
+                    ? "auto-active"
+                    : distanceFromActive === 1
+                      ? "near-active"
+                      : distanceFromActive === 2
+                        ? "far-active"
+                        : "";
+
+                  return (
+                    <article
+                      className={`hero-member-card ${emphasisClass}`}
+                      data-hero-card-index={index}
+                      key={`hero-${year}-${person.name}`}
                     >
-                      <div className="hero-member-card-inner">
-                        <div className={`hero-member-card-face hero-member-card-front ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[index % avatarTones.length]}`}>
-                          {memberPhoto(year, person.name) ? (
-                            <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
-                          ) : (
-                            <span className="hero-card-initials">{initials(person.name)}</span>
-                          )}
-                          <div className="hero-card-caption">
-                            <strong>{person.name}</strong>
-                            <small>Roster {year}</small>
+                      <button
+                        type="button"
+                        className="hero-member-card-button"
+                        aria-label={`Xem ảnh và tên của ${person.name}, vai trò ${person.title}`}
+                        onPointerEnter={(event) => {
+                          if (event.pointerType === "mouse") setHeroCardIndex(index);
+                        }}
+                        onFocus={() => setHeroCardIndex(index)}
+                      >
+                        <div className="hero-member-card-inner">
+                          <div className={`hero-member-card-face hero-member-card-front ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[index % avatarTones.length]}`}>
+                            {memberPhoto(year, person.name) ? (
+                              <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
+                            ) : (
+                              <span className="hero-card-initials">{initials(person.name)}</span>
+                            )}
+                            <div className="hero-card-caption">
+                              <strong>{person.name}</strong>
+                              <small>Roster {year}</small>
+                            </div>
+                          </div>
+                          <div className={`hero-member-card-face hero-member-card-back ${person.group.toLowerCase()}`}>
+                            <span>ROLE</span>
+                            <i aria-hidden="true">✦</i>
+                            <strong>{person.title}</strong>
+                            <small>{person.name}</small>
                           </div>
                         </div>
-                        <div className={`hero-member-card-face hero-member-card-back ${person.group.toLowerCase()}`}>
-                          <span>ROLE</span>
-                          <i aria-hidden="true">✦</i>
-                          <strong>{person.title}</strong>
-                          <small>{person.name}</small>
-                        </div>
-                      </div>
-                    </button>
-                  </article>
-                ))}
+                      </button>
+                    </article>
+                  );
+                })}
               </div>
             </div>
           </section>
