@@ -229,9 +229,6 @@ function makeRanking(roster: MemberProfile[], limit: number) {
   return roster.slice(0, limit).map((person, index) => ({
     ...person,
     rank: index + 1,
-    points: 980 - index * 23,
-    activities: 8 - (index % 4),
-    streak: 12 - (index % 5),
   }));
 }
 
@@ -551,7 +548,7 @@ export default function Home() {
               </div>
               <p>
                 Những gương mặt nổi bật trên hành trình kết nối, sẻ chia và tạo nên năng lượng
-                cho nhà Faerie năm {topYear}. Điểm số hiện là dữ liệu mẫu và sẽ được cập nhật theo hoạt động thực tế.
+                cho nhà Faerie năm {topYear}, cùng nhau lan tỏa tinh thần Brothers &amp; Sisters tại FPTU HCMC.
               </p>
             </div>
             <div className="champion-card">
@@ -560,7 +557,6 @@ export default function Home() {
               <small>LEADING THE MAGIC</small>
               <h2>{topMembers[0].name}</h2>
               <p>{topMembers[0].title}</p>
-              <strong>{topMembers[0].points} <i>PTS</i></strong>
             </div>
           </section>
 
@@ -575,7 +571,7 @@ export default function Home() {
 
             <div className="leaderboard-table" role="table" aria-label={`Top ${topMembers.length} brosis xuất sắc năm ${topYear}`}>
               <div className="leaderboard-row leaderboard-labels" role="row">
-                <span>Hạng</span><span>Thành viên</span><span>Hoạt động</span><span>Chuỗi ngày</span><span>Điểm</span>
+                <span>Hạng</span><span>Thành viên</span>
               </div>
               {topMembers.map((person, index) => (
                 <article className={`leaderboard-row ${index < 3 ? "podium" : ""}`} role="row" key={`${topYear}-${person.name}`}>
@@ -584,9 +580,6 @@ export default function Home() {
                     <span className={`rank-avatar ${avatarTones[index % avatarTones.length]}`}>{initials(person.name)}</span>
                     <div><h3>{person.name}</h3><p>{person.title}</p></div>
                   </div>
-                  <div className="rank-metric"><strong>{person.activities}</strong><small>events</small></div>
-                  <div className="rank-metric"><strong>{person.streak}</strong><small>days</small></div>
-                  <div className="rank-points">{person.points}<small>PTS</small></div>
                 </article>
               ))}
             </div>

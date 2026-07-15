@@ -294,23 +294,20 @@ h1 em, h2 em, blockquote em { color: var(--accent); font-weight: inherit; }
 .top-year-tabs button strong { font-family: var(--font-display); font-size: 22px; font-weight: 400; }
 .top-year-tabs button span { font-size: 7px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .top-year-tabs button.active { background: var(--ink); color: var(--cream); box-shadow: 5px 5px 0 var(--accent); }
-.champion-card { position: relative; width: min(390px, 100%); min-height: 470px; display: flex; flex-direction: column; align-items: center; justify-content: center; justify-self: center; padding: 45px 30px 34px; transform: rotate(3deg); background: var(--ink); color: var(--cream); border: 10px solid var(--paper); box-shadow: 22px 24px 0 var(--accent); text-align: center; }
+.champion-card { position: relative; width: min(390px, 100%); min-height: 430px; display: flex; flex-direction: column; align-items: center; justify-content: center; justify-self: center; padding: 45px 30px 34px; transform: rotate(3deg); background: var(--ink); color: var(--cream); border: 10px solid var(--paper); box-shadow: 22px 24px 0 var(--accent); text-align: center; }
 .champion-rank { position: absolute; top: 20px; left: 22px; font-family: var(--font-display); font-size: 26px; color: var(--lime); }
 .champion-avatar { width: 145px; height: 145px; display: grid; place-items: center; margin-bottom: 24px; border-radius: 50%; background: var(--mint); color: var(--ink); font-family: var(--font-display); font-size: 48px; box-shadow: inset 0 0 0 12px rgba(255,255,255,.28); }
 .champion-card small { font-size: 7px; font-weight: 800; letter-spacing: .18em; color: var(--lime); }
 .champion-card h2 { margin: 8px 0 2px; font-family: var(--font-display); font-size: 39px; font-weight: 400; }
 .champion-card p { margin: 0; font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
-.champion-card > strong { margin-top: 28px; font-family: var(--font-display); font-size: 48px; font-weight: 400; }
-.champion-card > strong i { font-family: var(--font-sans); font-size: 8px; font-style: normal; letter-spacing: .12em; }
 .leaderboard { padding-top: 110px; padding-bottom: 120px; }
 .leaderboard-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 45px; }
 .leaderboard-heading h2 { margin: 0; font-family: var(--font-display); font-size: clamp(47px, 5vw, 72px); font-weight: 400; letter-spacing: -.04em; }
 .leaderboard-heading h2 em { color: var(--accent); }
 .leaderboard-heading > p { margin: 0 0 8px; font-size: 8px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .leaderboard-table { border-top: 1px solid var(--ink); }
-.leaderboard-row { display: grid; grid-template-columns: 75px minmax(280px, 1fr) 120px 120px 110px; align-items: center; min-height: 92px; border-bottom: 1px solid var(--line); }
+.leaderboard-row { display: grid; grid-template-columns: 90px minmax(280px, 1fr); align-items: center; min-height: 92px; border-bottom: 1px solid var(--line); }
 .leaderboard-labels { min-height: 45px; font-size: 7px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; opacity: .55; }
-.leaderboard-labels span:nth-child(n+3) { text-align: center; }
 .rank-number { font-family: var(--font-display); font-size: 27px; color: rgba(23,58,45,.5); }
 .rank-person { display: flex; align-items: center; gap: 17px; min-width: 0; }
 .rank-avatar { flex: 0 0 auto; width: 50px; height: 50px; display: grid; place-items: center; border-radius: 50%; font-family: var(--font-display); font-size: 18px; }
@@ -322,12 +319,8 @@ h1 em, h2 em, blockquote em { color: var(--accent); font-weight: inherit; }
 .rank-avatar.lime { background: #d9e99b; }
 .rank-person h3 { margin: 0; font-family: var(--font-display); font-size: 20px; font-weight: 400; }
 .rank-person p { margin: 3px 0 0; font-size: 7px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .55; }
-.rank-metric, .rank-points { display: flex; align-items: baseline; justify-content: center; gap: 5px; text-align: center; }
-.rank-metric strong { font-family: var(--font-display); font-size: 22px; font-weight: 400; }
-.rank-metric small, .rank-points small { font-size: 6px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; opacity: .5; }
-.rank-points { font-family: var(--font-display); font-size: 25px; }
 .leaderboard-row.podium { margin: 0 -16px; padding: 0 16px; background: var(--cream); }
-.leaderboard-row.podium .rank-number, .leaderboard-row.podium .rank-points { color: var(--accent); }
+.leaderboard-row.podium .rank-number { color: var(--accent); }
 
 footer { min-height: 220px; display: grid; grid-template-columns: 1.1fr 1fr 1.2fr auto; align-items: center; gap: 30px; padding: 55px max(5vw, 24px); background: var(--deep); color: var(--cream); }
 .footer-brand { display: flex; align-items: center; gap: 13px; font-size: 18px; letter-spacing: .15em; }
@@ -345,7 +338,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   .hero-art { transform: scale(.85); transform-origin: center; }
   .member-grid { grid-template-columns: repeat(3, 1fr); }
   .event-grid { grid-template-columns: repeat(2, 1fr); }
-  .leaderboard-row { grid-template-columns: 65px minmax(230px, 1fr) 100px 100px 90px; }
+  .leaderboard-row { grid-template-columns: 75px minmax(230px, 1fr); }
   .top-hero { gap: 4vw; }
   .champion-card { transform: rotate(2deg) scale(.9); }
   .event-card.featured { grid-column: span 1; }
@@ -403,10 +396,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   .champion-card { min-height: 410px; margin: 15px auto 0; transform: rotate(2deg) scale(.92); }
   .leaderboard { padding-top: 80px; padding-bottom: 80px; }
   .leaderboard-heading { align-items: start; flex-direction: column; }
-  .leaderboard-row { grid-template-columns: 48px minmax(0, 1fr) 72px; min-height: 82px; }
-  .leaderboard-row > :nth-child(3), .leaderboard-row > :nth-child(4) { display: none; }
-  .leaderboard-labels span:nth-child(3), .leaderboard-labels span:nth-child(4) { display: none; }
-  .leaderboard-labels span:nth-child(5) { text-align: center; }
+  .leaderboard-row { grid-template-columns: 48px minmax(0, 1fr); min-height: 82px; }
   .rank-avatar { width: 43px; height: 43px; }
   .rank-person { gap: 10px; }
   .rank-person h3 { font-size: 16px; }
