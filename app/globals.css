@@ -242,7 +242,7 @@ h1 em, h2 em, blockquote em { color: var(--accent); font-weight: inherit; }
 .members-stat span { font-size: 9px; font-weight: 700; line-height: 1.4; letter-spacing: .1em; text-transform: uppercase; }
 .directory { padding-top: 58px; padding-bottom: 110px; background: var(--paper); }
 .directory-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
-.year-picker { display: flex; gap: 8px; }
+.year-picker { display: flex; flex-wrap: wrap; gap: 8px; }
 .year-picker button { min-width: 124px; padding: 12px 17px; display: flex; justify-content: space-between; border: 1px solid var(--line); background: transparent; font-size: 12px; font-weight: 800; cursor: pointer; transition: .2s; }
 .year-picker button.active { background: var(--ink); color: white; }
 .year-picker button span { color: var(--lime); }
@@ -385,7 +385,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   .members-intro { padding-bottom: 0; }
   .directory-toolbar { align-items: stretch; flex-direction: column; }
   .year-picker { width: 100%; }
-  .year-picker button { flex: 1; min-width: 0; }
+  .year-picker button { flex: 1 1 calc(50% - 8px); min-width: 120px; }
   .search-box { width: 100%; }
   .member-grid { grid-template-columns: repeat(2, 1fr); gap: 27px 12px; }
   .avatar { height: 180px; }

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 
 type Tab = "news" | "members" | "top20";
 type EventYear = 2024 | 2025 | 2026;
-type RosterYear = 2023 | 2024 | 2025;
+type RosterYear = 2023 | 2024 | 2025 | 2026;
 type MemberGroup = "Mentor" | "Supporter" | "Leadership" | "Member";
 
 type MemberProfile = {
@@ -126,27 +126,6 @@ const roster2024: MemberProfile[] = [
 ];
 
 
-function normalizeProfile(entry: string | MemberProfile, index: number): MemberProfile {
-  if (typeof entry === "object" && entry !== null) {
-    const validGroups: MemberGroup[] = ["Mentor", "Supporter", "Leadership", "Member"];
-    return {
-      name: String(entry.name ?? ""),
-      title: String(entry.title ?? "Member"),
-      group: validGroups.includes(entry.group) ? entry.group : "Member",
-    };
-  }
-
-  const name = String(entry ?? "");
-  if (index === 0) return { name, title: "Mentor", group: "Mentor" };
-  if (index === 1) return { name, title: "Supporter", group: "Supporter" };
-  if (index === 2) return { name, title: "Leader Nhà", group: "Leadership" };
-  return { name, title: "Member", group: "Member" };
-}
-
-function makeMockRoster(entries: Array<string | MemberProfile>): MemberProfile[] {
-  return entries.map(normalizeProfile);
-}
-
 const roster2025: MemberProfile[] = [
   { name: "Việt Phương", title: "Mentor", group: "Mentor" },
   { name: "Hạ My", title: "Supporter", group: "Supporter" },
@@ -185,11 +164,16 @@ const roster2025: MemberProfile[] = [
   { name: "Nguyễn Hoàng Bảo Oanh", title: "Member", group: "Member" },
 ];
 
+const roster2026: MemberProfile[] = roster2025.map((person) => ({ ...person }));
+
 const rosters: Record<RosterYear, MemberProfile[]> = {
-  2023: makeMockRoster(roster2023),
-  2024: makeMockRoster(roster2024),
+  2023: roster2023,
+  2024: roster2024,
   2025: roster2025,
+  2026: roster2026,
 };
+
+const totalMembers = Object.values(rosters).reduce((total, roster) => total + roster.length, 0);
 
 const groupOrder: MemberGroup[] = ["Mentor", "Supporter", "Leadership", "Member"];
 const groupLabels: Record<MemberGroup, string> = {
@@ -199,7 +183,7 @@ const groupLabels: Record<MemberGroup, string> = {
   Member: "Member",
 };
 
-const top20 = roster2025.slice(0, 20).map((person, index) => ({
+const top20 = roster2026.slice(0, 20).map((person, index) => ({
   ...person,
   rank: index + 1,
   points: 980 - index * 23,
@@ -216,7 +200,7 @@ const avatarTones = ["sage", "sun", "sky", "lilac", "coral", "lime"];
 
 export default function Home() {
   const [tab, setTab] = useState<Tab>("news");
-  const [year, setYear] = useState<RosterYear>(2025);
+  const [year, setYear] = useState<RosterYear>(2026);
   const [eventYear, setEventYear] = useState<EventYear>(2026);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
@@ -263,7 +247,7 @@ export default function Home() {
             className={tab === "members" ? "active" : ""}
             onClick={() => switchTab("members")}
           >
-            Members <span>105</span>
+            Members <span>{totalMembers}</span>
           </button>
           <button
             role="tab"
@@ -319,7 +303,7 @@ export default function Home() {
 
           <section className="stats-strip" aria-label="Faerie highlights">
             <div><strong>03</strong><span>thế hệ tiếp nối</span></div>
-            <div><strong>105</strong><span>mảnh ghép Faerie</span></div>
+            <div><strong>{totalMembers}</strong><span>mảnh ghép Faerie</span></div>
             <div><strong>02</strong><span>hoạt động năm 2026</span></div>
             <p>TOGETHER WE MAKE<br />ORDINARY DAYS MAGIC <b>✦</b></p>
           </section>
@@ -422,14 +406,14 @@ export default function Home() {
                 Mỗi thế hệ là một màu sắc riêng, cùng góp lại thành câu chuyện Faerie.
                 Tìm những gương mặt đã đồng hành với ngôi nhà qua từng năm.
               </p>
-              <div className="members-stat"><strong>105</strong><span>members<br />&amp; growing</span></div>
+              <div className="members-stat"><strong>{totalMembers}</strong><span>members<br />&amp; growing</span></div>
             </div>
           </section>
 
           <section className="directory section-shell">
             <div className="directory-toolbar">
               <div className="year-picker" aria-label="Chọn năm">
-                {([2023, 2024, 2025] as RosterYear[]).map((item) => (
+                {([2023, 2024, 2025, 2026] as RosterYear[]).map((item) => (
                   <button
                     key={item}
                     className={year === item ? "active" : ""}
