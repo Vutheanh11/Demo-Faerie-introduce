@@ -42,7 +42,7 @@ const eventsByYear: Record<Year, Array<{
         "Buổi gặp mặt trực tiếp đầu tiên của cả nhà, nơi những cái tên trên màn hình trở thành bạn bè và những kế hoạch bắt đầu thành hình.",
       tag: "Meet up",
       location: "TP.HCM",
-      tone: "orange",
+      tone: "fern",
     },
   ],
 };

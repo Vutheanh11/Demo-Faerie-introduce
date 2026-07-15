@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: "Khám phá câu chuyện, Top 20 và các thế hệ nhà Faerie tại FPTU campus TP.HCM.",
       type: "website",
       locale: "vi_VN",
-      images: [{ url: "/og.png", width: 1731, height: 909, alt: "Faerie Brothers & Sisters FPTU" }],
+      images: [{ url: "/og.png", width: 1734, height: 907, alt: "Faerie Brothers & Sisters FPTU" }],
     },
     twitter: {
       card: "summary_large_image",
