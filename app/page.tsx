@@ -481,7 +481,6 @@ export default function Home() {
         </div>
       ) : tab === "members" ? (
         <div role="tabpanel" className="members-page page-enter">
-          <div className="member-family-frame">
           <section className="members-hero section-shell">
             <div>
               <p className="eyebrow"><span /> The people behind the magic</p>
@@ -493,6 +492,38 @@ export default function Home() {
                 Tìm những gương mặt đã đồng hành với ngôi nhà qua từng năm.
               </p>
               <div className="members-stat"><strong>{totalMembers}</strong><span>members<br />&amp; growing</span></div>
+            </div>
+
+            <div className="member-hero-deck" aria-label={`Một số thành viên Faerie Roster ${year}`}>
+              {rosters[year].slice(0, 9).map((person, index) => (
+                <article className="hero-member-card" key={`hero-${year}-${person.name}`}>
+                  <button
+                    type="button"
+                    className="hero-member-card-button"
+                    aria-label={`Xem vai trò của ${person.name}: ${person.title}`}
+                  >
+                    <div className="hero-member-card-inner">
+                      <div className={`hero-member-card-face hero-member-card-front ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[index % avatarTones.length]}`}>
+                        {memberPhoto(year, person.name) ? (
+                          <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
+                        ) : (
+                          <span className="hero-card-initials">{initials(person.name)}</span>
+                        )}
+                        <div className="hero-card-caption">
+                          <strong>{person.name}</strong>
+                          <small>Roster {year}</small>
+                        </div>
+                      </div>
+                      <div className={`hero-member-card-face hero-member-card-back ${person.group.toLowerCase()}`}>
+                        <span>ROLE</span>
+                        <i aria-hidden="true">✦</i>
+                        <strong>{person.title}</strong>
+                        <small>{person.name}</small>
+                      </div>
+                    </div>
+                  </button>
+                </article>
+              ))}
             </div>
           </section>
 
@@ -580,7 +611,6 @@ export default function Home() {
               <div className="empty-state"><span>✦</span><h3>Chưa tìm thấy thành viên</h3><p>Thử một tên hoặc vai trò khác nhé.</p></div>
             )}
           </section>
-          </div>
         </div>
       ) : (
         <div role="tabpanel" className="top-page page-enter">
