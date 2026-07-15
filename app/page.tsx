@@ -22,6 +22,7 @@ const eventsByYear: Record<EventYear, Array<{
   tag: string;
   location: string;
   tone: string;
+  images?: string[];
 }>> = {
   2024: [],
   2025: [],
@@ -35,6 +36,15 @@ const eventsByYear: Record<EventYear, Array<{
       tag: "Opening",
       location: "FPTU HCMC Campus",
       tone: "mint",
+      images: [
+        "/images/events/2026/kickoff/KickOff2026.jpg",
+        "/images/events/2026/kickoff/KickOff2026_1.jpg",
+        "/images/events/2026/kickoff/KickOff2026_2.jpg",
+        "/images/events/2026/kickoff/KickOff2026_3.jpg",
+        "/images/events/2026/kickoff/KickOff2026_4.jpg",
+        "/images/events/2026/kickoff/KickOff2026_5.jpg",
+        "/images/events/2026/kickoff/KickOff2026_6.jpg",
+      ],
     },
     {
       date: "15.07",
@@ -398,9 +408,22 @@ export default function Home() {
               <div className="event-grid two-events">
                 {eventsByYear[eventYear].map((event, index) => (
                   <article className="event-card" key={`${eventYear}-${event.title}`}>
-                    <div className={`event-visual ${event.tone}`}>
+                    <div className={`event-visual ${event.tone} ${event.images ? "has-photos" : ""}`}>
                       <span className="event-number">0{index + 1}</span>
-                      <div className="event-symbol" aria-hidden="true">{index === 0 ? "✦" : "∞"}</div>
+                      {event.images ? (
+                        <div className="event-photo-gallery">
+                          {event.images.map((image, imageIndex) => (
+                            <img
+                              key={image}
+                              src={image}
+                              alt={`Ảnh ${event.title} ${event.year} số ${imageIndex + 1}`}
+                              loading={imageIndex === 0 ? "eager" : "lazy"}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="event-symbol" aria-hidden="true">{index === 0 ? "✦" : "∞"}</div>
+                      )}
                       <span className="event-tag">{event.tag}</span>
                     </div>
                     <div className="event-content">
