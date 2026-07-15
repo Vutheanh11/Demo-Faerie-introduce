@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 
 type Tab = "news" | "members" | "top20";
-type Year = 2024 | 2025 | 2026;
+type EventYear = 2024 | 2025 | 2026;
+type RosterYear = 2023 | 2024 | 2025;
 type MemberGroup = "Mentor" | "Supporter" | "Leadership" | "Member";
 
 type MemberProfile = {
@@ -12,7 +13,7 @@ type MemberProfile = {
   group: MemberGroup;
 };
 
-const eventsByYear: Record<Year, Array<{
+const eventsByYear: Record<EventYear, Array<{
   date: string;
   year: string;
   title: string;
@@ -47,7 +48,7 @@ const eventsByYear: Record<Year, Array<{
   ],
 };
 
-const names2024: MemberProfile[] = [
+const roster2023: MemberProfile[] = [
   { name: "Việt Phương", title: "Mentor", group: "Mentor" },
   { name: "Hạ My", title: "Supporter", group: "Supporter" },
   { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
@@ -86,7 +87,7 @@ const names2024: MemberProfile[] = [
 ];
 
 
-const names2025: MemberProfile[] = [
+const roster2024: MemberProfile[] = [
   { name: "Việt Phương", title: "Mentor", group: "Mentor" },
   { name: "Hạ My", title: "Supporter", group: "Supporter" },
   { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
@@ -146,7 +147,7 @@ function makeMockRoster(entries: Array<string | MemberProfile>): MemberProfile[]
   return entries.map(normalizeProfile);
 }
 
-const roster2026: MemberProfile[] = [
+const roster2025: MemberProfile[] = [
   { name: "Việt Phương", title: "Mentor", group: "Mentor" },
   { name: "Hạ My", title: "Supporter", group: "Supporter" },
   { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
@@ -184,10 +185,10 @@ const roster2026: MemberProfile[] = [
   { name: "Nguyễn Hoàng Bảo Oanh", title: "Member", group: "Member" },
 ];
 
-const rosters: Record<Year, MemberProfile[]> = {
-  2024: makeMockRoster(names2024),
-  2025: makeMockRoster(names2025),
-  2026: roster2026,
+const rosters: Record<RosterYear, MemberProfile[]> = {
+  2023: makeMockRoster(roster2023),
+  2024: makeMockRoster(roster2024),
+  2025: roster2025,
 };
 
 const groupOrder: MemberGroup[] = ["Mentor", "Supporter", "Leadership", "Member"];
@@ -198,7 +199,7 @@ const groupLabels: Record<MemberGroup, string> = {
   Member: "Member",
 };
 
-const top20 = roster2026.slice(0, 20).map((person, index) => ({
+const top20 = roster2025.slice(0, 20).map((person, index) => ({
   ...person,
   rank: index + 1,
   points: 980 - index * 23,
@@ -215,8 +216,8 @@ const avatarTones = ["sage", "sun", "sky", "lilac", "coral", "lime"];
 
 export default function Home() {
   const [tab, setTab] = useState<Tab>("news");
-  const [year, setYear] = useState<Year>(2026);
-  const [eventYear, setEventYear] = useState<Year>(2026);
+  const [year, setYear] = useState<RosterYear>(2025);
+  const [eventYear, setEventYear] = useState<EventYear>(2026);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
 
@@ -262,7 +263,7 @@ export default function Home() {
             className={tab === "members" ? "active" : ""}
             onClick={() => switchTab("members")}
           >
-            Members <span>95</span>
+            Members <span>105</span>
           </button>
           <button
             role="tab"
@@ -318,7 +319,7 @@ export default function Home() {
 
           <section className="stats-strip" aria-label="Faerie highlights">
             <div><strong>03</strong><span>thế hệ tiếp nối</span></div>
-            <div><strong>95+</strong><span>mảnh ghép Faerie</span></div>
+            <div><strong>105</strong><span>mảnh ghép Faerie</span></div>
             <div><strong>02</strong><span>hoạt động năm 2026</span></div>
             <p>TOGETHER WE MAKE<br />ORDINARY DAYS MAGIC <b>✦</b></p>
           </section>
@@ -333,7 +334,7 @@ export default function Home() {
             </div>
 
             <div className="event-year-tabs" aria-label="Chọn năm sự kiện" role="tablist">
-              {([2024, 2025, 2026] as Year[]).map((item) => (
+              {([2024, 2025, 2026] as EventYear[]).map((item) => (
                 <button
                   key={item}
                   role="tab"
@@ -421,21 +422,21 @@ export default function Home() {
                 Mỗi thế hệ là một màu sắc riêng, cùng góp lại thành câu chuyện Faerie.
                 Tìm những gương mặt đã đồng hành với ngôi nhà qua từng năm.
               </p>
-              <div className="members-stat"><strong>95</strong><span>members<br />&amp; growing</span></div>
+              <div className="members-stat"><strong>105</strong><span>members<br />&amp; growing</span></div>
             </div>
           </section>
 
           <section className="directory section-shell">
             <div className="directory-toolbar">
               <div className="year-picker" aria-label="Chọn năm">
-                {([2024, 2025, 2026] as Year[]).map((item) => (
+                {([2023, 2024, 2025] as RosterYear[]).map((item) => (
                   <button
                     key={item}
                     className={year === item ? "active" : ""}
                     onClick={() => { setYear(item); setRole("All"); }}
                     aria-pressed={year === item}
                   >
-                    {item} <span>{year === item ? "✦" : ""}</span>
+                    Roster {item} <span>{year === item ? "✦" : ""}</span>
                   </button>
                 ))}
               </div>
@@ -464,7 +465,7 @@ export default function Home() {
             </div>
 
             <div className="directory-title">
-              <h2>Faerie class of <em>{year}</em></h2>
+              <h2>Faerie <em>Roster {year}</em></h2>
               <span>{members.length.toString().padStart(2, "0")} kết quả</span>
             </div>
 
@@ -479,7 +480,7 @@ export default function Home() {
                     <div className="member-info">
                       <div>
                         <h3>{person.name}</h3>
-                        <p>Faerie · Gen {year.toString().slice(-2)}</p>
+                        <p>Faerie · Roster {year}</p>
                       </div>
                       <span className={`role-badge ${person.group.toLowerCase()}`}>{person.title}</span>
                     </div>
