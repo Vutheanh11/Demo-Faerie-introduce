@@ -256,15 +256,16 @@ h1 em, h2 em, blockquote em { color: var(--accent); font-weight: inherit; }
 .quote-band blockquote em { color: var(--cream); }
 .quote-spark { position: absolute; bottom: 40px; font-size: 8px; font-weight: 800; letter-spacing: .18em; }
 
-.members-page { min-height: 80vh; }
-.members-hero { min-height: 500px; display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: 8vw; background: var(--mint); border-bottom: 1px solid var(--line); }
+.members-page { min-height: 80vh; padding: 46px max(3vw, 18px) 92px; background: var(--paper); }
+.member-family-frame { max-width: 1600px; margin: 0 auto; overflow: hidden; border: 1px solid var(--line); background: var(--mint); box-shadow: 16px 18px 0 rgba(111,159,87,.24); }
+.members-hero { min-height: 500px; display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: 8vw; background: transparent; border-bottom: 0; }
 .members-hero h1 { font-size: clamp(66px, 7vw, 112px); }
 .members-intro { align-self: end; padding-bottom: 80px; }
 .members-intro > p { max-width: 510px; margin: 0 0 44px; font-size: 14px; line-height: 1.85; }
 .members-stat { display: flex; align-items: center; gap: 18px; padding-top: 22px; border-top: 1px solid var(--line); }
 .members-stat strong { font-family: var(--font-display); font-size: 60px; line-height: 1; }
 .members-stat span { font-size: 9px; font-weight: 700; line-height: 1.4; letter-spacing: .1em; text-transform: uppercase; }
-.directory { padding-top: 58px; padding-bottom: 110px; background: var(--paper); }
+.directory { padding-top: 58px; padding-bottom: 110px; background: transparent; border-top: 1px solid var(--line); }
 .directory-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
 .year-picker { display: flex; flex-wrap: wrap; gap: 8px; }
 .year-picker button { min-width: 124px; padding: 12px 17px; display: flex; justify-content: space-between; border: 1px solid var(--line); background: transparent; font-size: 12px; font-weight: 800; cursor: pointer; transition: .2s; }
@@ -393,6 +394,8 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
 }
 
 @media (max-width: 760px) {
+  .members-page { padding: 18px 12px 65px; }
+  .member-family-frame { box-shadow: 8px 10px 0 rgba(111,159,87,.22); }
   .site-header { height: 72px; grid-template-columns: 1fr auto; padding: 0 18px; }
   .header-note { display: none; }
   .brand small { display: none; }

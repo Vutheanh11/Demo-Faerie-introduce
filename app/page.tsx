@@ -481,6 +481,7 @@ export default function Home() {
         </div>
       ) : tab === "members" ? (
         <div role="tabpanel" className="members-page page-enter">
+          <div className="member-family-frame">
           <section className="members-hero section-shell">
             <div>
               <p className="eyebrow"><span /> The people behind the magic</p>
@@ -579,6 +580,7 @@ export default function Home() {
               <div className="empty-state"><span>✦</span><h3>Chưa tìm thấy thành viên</h3><p>Thử một tên hoặc vai trò khác nhé.</p></div>
             )}
           </section>
+          </div>
         </div>
       ) : (
         <div role="tabpanel" className="top-page page-enter">
