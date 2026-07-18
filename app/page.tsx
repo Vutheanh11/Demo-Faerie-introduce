@@ -442,7 +442,7 @@ export default function Home() {
             <div className="v-section-heading" data-reveal>
               <div>
                 <p className="v-kicker"><span>STORIES</span> What&apos;s happening</p>
-                <h2>CHUYỆN NHÀ<br /><em>FAERIE</em></h2>
+                <h2>FAERIE<br /><em>STORY</em></h2>
               </div>
               <p>
                 Mỗi sự kiện là một tọa độ trong hành trình chung — nơi chúng mình gặp gỡ,

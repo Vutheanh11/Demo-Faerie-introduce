@@ -1109,7 +1109,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   gap: 7vw;
   padding-top: 40px;
   padding-bottom: 90px;
-  overflow: visible;
+  overflow: hidden;
   background: var(--t-black);
   color: var(--t-white);
   border-bottom: 0;
