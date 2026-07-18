@@ -421,6 +421,7 @@ footer p { font-size: 9px; line-height: 1.8; letter-spacing: .07em; }
 .footer-contact > span { margin-bottom: 3px; color: var(--lime); font-size: 7px; font-weight: 800; letter-spacing: .16em; }
 .footer-contact a { max-width: 100%; color: var(--cream); font-size: 9px; line-height: 1.5; text-decoration: none; overflow-wrap: anywhere; border-bottom: 1px solid transparent; transition: color .2s ease, border-color .2s ease; }
 .footer-contact a:hover, .footer-contact a:focus-visible { color: var(--lime); border-color: var(--lime); outline: none; }
+.footer-contact address { max-width: 340px; margin: 6px 0 0; color: rgba(246,243,235,.62); font-size: 8px; font-style: normal; line-height: 1.65; }
 footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1px solid var(--cream); background: none; color: var(--cream); font-size: 9px; font-weight: 700; cursor: pointer; }
 
 .page-enter { animation: page-in .45s ease both; }
