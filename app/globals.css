@@ -1161,6 +1161,9 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   right: max(1vw, 12px);
   bottom: -125px;
   height: 315px;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 50%;
+  scroll-behavior: smooth;
   mask-image: linear-gradient(90deg, transparent, black 3%, black 96%, transparent);
 }
 .valorant-members .member-hero-track { padding: 42px 3vw 0 1vw; }
@@ -1169,12 +1172,16 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   width: clamp(126px, 12vw, 176px);
   height: 252px;
   margin-left: -91px;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
 }
 .valorant-members .member-hero-deck:hover .hero-member-card { margin-left: -55px; }
 .valorant-members .member-hero-deck:hover .hero-member-card:first-child { margin-left: 0; }
 .valorant-members .hero-member-card-inner { transform: rotateY(0deg); transition-duration: .8s; }
-.valorant-members .hero-member-card:hover .hero-member-card-inner,
-.valorant-members .hero-member-card-button:focus .hero-member-card-inner { transform: rotateY(180deg); }
+.valorant-members .hero-member-card.auto-active .hero-member-card-inner {
+  transform: rotateY(180deg);
+  transition-delay: .16s;
+}
 .valorant-members .hero-member-card-face {
   border: 1px solid rgba(246,243,235,.32);
   clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);

@@ -290,10 +290,23 @@ export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const heroDeckRef = useRef<HTMLDivElement>(null);
   const heroDeckIdleTimerRef = useRef<number | null>(null);
-  const heroDeckAnimationRef = useRef<number | null>(null);
-  const heroDeckScrollTargetRef = useRef(0);
+  const heroDeckResetTimerRef = useRef<number | null>(null);
+  const heroDeckSnapTimerRef = useRef<number | null>(null);
+  const heroDeckInitializedRef = useRef(false);
 
   const topMembers = topByYear[topYear];
+  const heroDeckItems = useMemo(() => {
+    const roster = rosters[year];
+
+    return Array.from({ length: 3 }, (_, copyIndex) =>
+      roster.map((person, logicalIndex) => ({
+        person,
+        logicalIndex,
+        copyIndex,
+        virtualIndex: copyIndex * roster.length + logicalIndex,
+      })),
+    ).flat();
+  }, [year]);
 
   useEffect(() => {
     let frame = 0;
@@ -340,7 +353,8 @@ export default function Home() {
   }, [tab, eventYear, year, role, query, topYear]);
 
   useEffect(() => {
-    setHeroCardIndex(0);
+    heroDeckInitializedRef.current = false;
+    setHeroCardIndex(rosters[year].length);
   }, [year]);
 
   useEffect(() => {
@@ -348,49 +362,56 @@ export default function Home() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const timer = window.setInterval(() => {
-      setHeroCardIndex((current) => (current + 1) % rosters[year].length);
+      setHeroCardIndex((current) => current + 1);
     }, 2000);
 
     return () => window.clearInterval(timer);
   }, [tab, year, isHeroDeckFocused, isHeroDeckInteracting]);
 
   useEffect(() => {
-    if (tab !== "members" || isHeroDeckInteracting || isHeroDeckFocused) return;
+    if (tab !== "members") return;
 
+    const memberCount = rosters[year].length;
     const deck = heroDeckRef.current;
     const card = deck?.querySelector<HTMLElement>(`[data-hero-card-index="${heroCardIndex}"]`);
     if (!deck || !card) return;
 
     const target = card.offsetLeft - (deck.clientWidth - card.offsetWidth) / 2;
-    deck.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
-  }, [heroCardIndex, isHeroDeckFocused, isHeroDeckInteracting, tab, year]);
+    const shouldJump = !heroDeckInitializedRef.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    deck.scrollTo({ left: Math.max(0, target), behavior: shouldJump ? "auto" : "smooth" });
+    heroDeckInitializedRef.current = true;
+
+    if (heroDeckResetTimerRef.current !== null) window.clearTimeout(heroDeckResetTimerRef.current);
+    if (heroCardIndex >= memberCount && heroCardIndex < memberCount * 2) return;
+
+    heroDeckResetTimerRef.current = window.setTimeout(() => {
+      const logicalIndex = ((heroCardIndex % memberCount) + memberCount) % memberCount;
+      const middleIndex = memberCount + logicalIndex;
+      const middleCard = deck.querySelector<HTMLElement>(`[data-hero-card-index="${middleIndex}"]`);
+      if (!middleCard) return;
+
+      const middleTarget = middleCard.offsetLeft - (deck.clientWidth - middleCard.offsetWidth) / 2;
+      deck.scrollTo({ left: Math.max(0, middleTarget), behavior: "auto" });
+      setHeroCardIndex(middleIndex);
+      heroDeckResetTimerRef.current = null;
+    }, shouldJump ? 0 : 850);
+
+    return () => {
+      if (heroDeckResetTimerRef.current !== null) {
+        window.clearTimeout(heroDeckResetTimerRef.current);
+        heroDeckResetTimerRef.current = null;
+      }
+    };
+  }, [heroCardIndex, tab, year]);
 
   useEffect(
     () => () => {
       if (heroDeckIdleTimerRef.current !== null) window.clearTimeout(heroDeckIdleTimerRef.current);
-      if (heroDeckAnimationRef.current !== null) window.cancelAnimationFrame(heroDeckAnimationRef.current);
+      if (heroDeckResetTimerRef.current !== null) window.clearTimeout(heroDeckResetTimerRef.current);
+      if (heroDeckSnapTimerRef.current !== null) window.clearTimeout(heroDeckSnapTimerRef.current);
     },
     [],
   );
-
-  const glideHeroDeck = (deck: HTMLDivElement, target: number) => {
-    heroDeckScrollTargetRef.current = target;
-    if (heroDeckAnimationRef.current !== null) return;
-
-    const animate = () => {
-      const distance = heroDeckScrollTargetRef.current - deck.scrollLeft;
-      if (Math.abs(distance) < 0.75) {
-        deck.scrollLeft = heroDeckScrollTargetRef.current;
-        heroDeckAnimationRef.current = null;
-        return;
-      }
-
-      deck.scrollLeft += distance * 0.075;
-      heroDeckAnimationRef.current = window.requestAnimationFrame(animate);
-    };
-
-    heroDeckAnimationRef.current = window.requestAnimationFrame(animate);
-  };
 
   const pauseHeroDeckAutomation = () => {
     setIsHeroDeckInteracting(true);
@@ -400,6 +421,29 @@ export default function Home() {
       setIsHeroDeckInteracting(false);
       heroDeckIdleTimerRef.current = null;
     }, 900);
+  };
+
+  const settleHeroDeck = () => {
+    pauseHeroDeckAutomation();
+    if (heroDeckSnapTimerRef.current !== null) window.clearTimeout(heroDeckSnapTimerRef.current);
+
+    heroDeckSnapTimerRef.current = window.setTimeout(() => {
+      const deck = heroDeckRef.current;
+      if (!deck) return;
+
+      const deckCenter = deck.scrollLeft + deck.clientWidth / 2;
+      const cards = Array.from(deck.querySelectorAll<HTMLElement>("[data-hero-card-index]"));
+      const nearestCard = cards.reduce<HTMLElement | null>((nearest, card) => {
+        if (!nearest) return card;
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const nearestCenter = nearest.offsetLeft + nearest.offsetWidth / 2;
+        return Math.abs(cardCenter - deckCenter) < Math.abs(nearestCenter - deckCenter) ? card : nearest;
+      }, null);
+      const nextIndex = Number(nearestCard?.dataset.heroCardIndex);
+
+      if (Number.isFinite(nextIndex)) setHeroCardIndex(nextIndex);
+      heroDeckSnapTimerRef.current = null;
+    }, 350);
   };
 
   const members = useMemo(
@@ -647,28 +691,20 @@ export default function Home() {
               className="member-hero-deck"
               ref={heroDeckRef}
               aria-label={`Toàn bộ thành viên Faerie Roster ${year}`}
-              onPointerMove={(event) => {
-                if (event.pointerType !== "mouse") return;
-
-                const deck = event.currentTarget;
-                const bounds = deck.getBoundingClientRect();
-                const pointerPosition = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
-                pauseHeroDeckAutomation();
-                glideHeroDeck(deck, pointerPosition * (deck.scrollWidth - deck.clientWidth));
-              }}
+              onPointerDown={pauseHeroDeckAutomation}
+              onPointerUp={settleHeroDeck}
+              onPointerCancel={settleHeroDeck}
               onPointerLeave={() => {
                 if (heroDeckIdleTimerRef.current !== null) window.clearTimeout(heroDeckIdleTimerRef.current);
-                if (heroDeckAnimationRef.current !== null) window.cancelAnimationFrame(heroDeckAnimationRef.current);
                 heroDeckIdleTimerRef.current = null;
-                heroDeckAnimationRef.current = null;
                 setIsHeroDeckInteracting(false);
               }}
               onFocusCapture={() => setIsHeroDeckFocused(true)}
               onBlurCapture={() => setIsHeroDeckFocused(false)}
             >
               <div className="member-hero-track">
-                {rosters[year].map((person, index) => {
-                  const distanceFromActive = Math.abs(index - heroCardIndex);
+                {heroDeckItems.map(({ person, logicalIndex, copyIndex, virtualIndex }) => {
+                  const distanceFromActive = Math.abs(virtualIndex - heroCardIndex);
                   const emphasisClass = distanceFromActive === 0
                     ? "auto-active"
                     : distanceFromActive === 1
@@ -680,20 +716,25 @@ export default function Home() {
                   return (
                     <article
                       className={`hero-member-card ${emphasisClass}`}
-                      data-hero-card-index={index}
-                      key={`hero-${year}-${person.name}`}
+                      data-hero-card-index={virtualIndex}
+                      data-logical-index={logicalIndex}
+                      aria-hidden={copyIndex !== 1}
+                      key={`hero-${year}-${copyIndex}-${logicalIndex}-${person.name}`}
                     >
                       <button
                         type="button"
                         className="hero-member-card-button"
+                        tabIndex={copyIndex === 1 ? 0 : -1}
                         aria-label={`Xem ảnh và tên của ${person.name}, vai trò ${person.title}`}
                         onPointerEnter={(event) => {
-                          if (event.pointerType === "mouse") setHeroCardIndex(index);
+                          if (event.pointerType !== "mouse") return;
+                          pauseHeroDeckAutomation();
+                          setHeroCardIndex(virtualIndex);
                         }}
-                        onFocus={() => setHeroCardIndex(index)}
+                        onFocus={() => setHeroCardIndex(virtualIndex)}
                       >
                         <div className="hero-member-card-inner">
-                          <div className={`hero-member-card-face hero-member-card-front ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[index % avatarTones.length]}`}>
+                          <div className={`hero-member-card-face hero-member-card-front ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[logicalIndex % avatarTones.length]}`}>
                             {memberPhoto(year, person.name) ? (
                               <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
                             ) : (
