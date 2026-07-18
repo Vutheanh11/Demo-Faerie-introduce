@@ -549,7 +549,7 @@ export default function Home() {
             <div className="v-manifesto-wash" aria-hidden="true" />
             <div className="v-manifesto-copy section-shell" data-reveal>
               <p className="v-kicker"><span>04</span> Ready for the next chapter?</p>
-              <blockquote>GROW TOGETHER.<br /><em>SHINE TOGETHER.</em></blockquote>
+              <blockquote>FAERIE ĐOÀN KẾT<br /><em>CHẤP HẾT GIAN NAN</em></blockquote>
               <button className="v-button v-button-light" onClick={() => switchTab("members")}>
                 <span>Khám phá thành viên</span><b aria-hidden="true">→</b>
               </button>
