@@ -14,6 +14,89 @@ type MemberProfile = {
   group: MemberGroup;
 };
 
+function EventPhotoGallery({ images, title }: { images: string[]; title: string }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [transitionId, setTransitionId] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  const showPhoto = (nextIndex: number, nextDirection: 1 | -1) => {
+    if (nextIndex === activeIndex) return;
+    setPreviousIndex(activeIndex);
+    setDirection(nextDirection);
+    setActiveIndex(nextIndex);
+    setTransitionId((id) => id + 1);
+  };
+
+  useEffect(() => {
+    if (paused || images.length < 2) return;
+
+    const timer = window.setTimeout(() => {
+      setPreviousIndex(activeIndex);
+      setDirection(1);
+      setActiveIndex((activeIndex + 1) % images.length);
+      setTransitionId((id) => id + 1);
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, images.length, paused]);
+
+  const previousPhoto = () => showPhoto((activeIndex - 1 + images.length) % images.length, -1);
+  const nextPhoto = () => showPhoto((activeIndex + 1) % images.length, 1);
+
+  return (
+    <div
+      className="event-photo-gallery"
+      onPointerEnter={() => setPaused(true)}
+      onPointerLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+    >
+      {previousIndex !== null && (
+        <img
+          key={`out-${previousIndex}-${transitionId}`}
+          className={`event-photo-image is-leaving ${direction === 1 ? "to-left" : "to-right"}`}
+          src={images[previousIndex]}
+          alt=""
+          aria-hidden="true"
+          onAnimationEnd={() => setPreviousIndex(null)}
+        />
+      )}
+      <img
+        key={`in-${activeIndex}-${transitionId}`}
+        className={`event-photo-image ${previousIndex === null ? "is-current" : `is-entering ${direction === 1 ? "from-right" : "from-left"}`}`}
+        src={images[activeIndex]}
+        alt={`Ảnh ${title} số ${activeIndex + 1}`}
+        loading={activeIndex === 0 ? "eager" : "lazy"}
+      />
+
+      {images.length > 1 && (
+        <>
+          <button type="button" className="event-gallery-arrow previous" onClick={previousPhoto} aria-label={`Xem ảnh trước của ${title}`}>
+            <span aria-hidden="true">←</span>
+          </button>
+          <button type="button" className="event-gallery-arrow next" onClick={nextPhoto} aria-label={`Xem ảnh tiếp theo của ${title}`}>
+            <span aria-hidden="true">→</span>
+          </button>
+          <div className="event-gallery-dots" role="group" aria-label={`Chọn ảnh của ${title}`}>
+            {images.map((image, index) => (
+              <button
+                type="button"
+                key={image}
+                className={activeIndex === index ? "active" : ""}
+                aria-label={`Xem ảnh ${index + 1} của ${title}`}
+                aria-pressed={activeIndex === index}
+                onClick={() => showPhoto(index, index > activeIndex ? 1 : -1)}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 const eventsByYear: Record<EventYear, Array<{
   date: string;
   year: string;
@@ -487,16 +570,7 @@ export default function Home() {
                   >
                     <div className={`v-event-media ${event.tone} ${event.images ? "has-photos" : ""}`}>
                       {event.images ? (
-                        <div className="event-photo-gallery">
-                          {event.images.map((image, imageIndex) => (
-                            <img
-                              key={image}
-                              src={image}
-                              alt={`Ảnh ${event.title} ${event.year} số ${imageIndex + 1}`}
-                              loading={imageIndex === 0 ? "eager" : "lazy"}
-                            />
-                          ))}
-                        </div>
+                        <EventPhotoGallery images={event.images} title={`${event.title} ${event.year}`} />
                       ) : (
                         <div className="v-event-symbol" aria-hidden="true">{index === 0 ? "✦" : "∞"}</div>
                       )}
