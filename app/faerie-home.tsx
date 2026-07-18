@@ -238,7 +238,7 @@ const rosters: Record<RosterYear, MemberProfile[]> = {
   2026: roster2026,
 };
 
-const totalMembers = Object.values(rosters).reduce((total, roster) => total + roster.length, 0);
+const totalMembers = 95;
 
 const groupOrder: MemberGroup[] = ["Mentor", "Supporter", "Leadership", "Member"];
 const groupLabels: Record<MemberGroup, string> = {
@@ -443,7 +443,7 @@ export default function Home() {
 
           <section className="v-signal" id="mission" aria-label="Những con số của Faerie">
             <div className="v-signal-lead"><span aria-hidden="true">✦</span> ONE HOUSE. MANY STORIES.</div>
-            <div><small>THẾ HỆ</small><strong>03</strong><span>tiếp nối</span></div>
+            <div><small>THẾ HỆ</small><strong>3</strong><span>tiếp nối</span></div>
             <div><small>THÀNH VIÊN</small><strong>{totalMembers}</strong><span>mảnh ghép</span></div>
             <div><small>NĂM 2026</small><strong>02</strong><span>hoạt động</span></div>
           </section>
