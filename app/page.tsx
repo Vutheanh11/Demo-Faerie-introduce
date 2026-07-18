@@ -287,12 +287,57 @@ export default function Home() {
   const [isHeroDeckFocused, setIsHeroDeckFocused] = useState(false);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
+  const [scrollProgress, setScrollProgress] = useState(0);
   const heroDeckRef = useRef<HTMLDivElement>(null);
   const heroDeckIdleTimerRef = useRef<number | null>(null);
   const heroDeckAnimationRef = useRef<number | null>(null);
   const heroDeckScrollTargetRef = useRef(0);
 
   const topMembers = topByYear[topYear];
+
+  useEffect(() => {
+    let frame = 0;
+
+    const updateProgress = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        setScrollProgress(scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0);
+      });
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
+    };
+  }, [tab]);
+
+  useEffect(() => {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      nodes.forEach((node) => node.classList.add("is-visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6%" },
+    );
+
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, [tab, eventYear, year, role, query, topYear]);
 
   useEffect(() => {
     setHeroCardIndex(0);
@@ -374,8 +419,9 @@ export default function Home() {
   };
 
   return (
-    <main>
-      <header className={`site-header ${tab === "Introduce" ? "is-intro" : ""}`}>
+    <main className={`app-shell tab-${tab.toLowerCase()}`}>
+      <header className="site-header is-tactical">
+        <span className="site-progress" style={{ transform: `scaleX(${scrollProgress})` }} aria-hidden="true" />
         <button className="brand" onClick={() => switchTab("Introduce")} aria-label="Faerie home">
           <span className="brand-mark" aria-hidden="true"><img src="/images/faerie-icon.png" alt="" /></span>
           <span>
@@ -463,7 +509,7 @@ export default function Home() {
 
           <section className="v-events section-shell" id="events">
             <div className="v-section-index" aria-hidden="true"><span>02</span><i /></div>
-            <div className="v-section-heading">
+            <div className="v-section-heading" data-reveal>
               <div>
                 <p className="v-kicker"><span>STORIES</span> What&apos;s happening</p>
                 <h2>CHUYỆN NHÀ<br /><em>FAERIE</em></h2>
@@ -474,7 +520,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="v-year-tabs" aria-label="Chọn năm sự kiện" role="tablist">
+            <div className="v-year-tabs" aria-label="Chọn năm sự kiện" role="tablist" data-reveal>
               {([2024, 2025, 2026] as EventYear[]).map((item) => (
                 <button
                   key={item}
@@ -492,7 +538,12 @@ export default function Home() {
             {eventsByYear[eventYear].length > 0 ? (
               <div className="v-event-grid">
                 {eventsByYear[eventYear].map((event, index) => (
-                  <article className={`v-event-card ${index === 0 ? "featured" : ""}`} key={`${eventYear}-${event.title}`}>
+                  <article
+                    className={`v-event-card ${index === 0 ? "featured" : ""}`}
+                    key={`${eventYear}-${event.title}`}
+                    data-reveal
+                    style={{ transitionDelay: `${index * 90}ms` }}
+                  >
                     <div className={`v-event-media ${event.tone} ${event.images ? "has-photos" : ""}`}>
                       {event.images ? (
                         <div className="event-photo-gallery">
@@ -533,7 +584,7 @@ export default function Home() {
 
           <section className="v-about section-shell">
             <div className="v-about-word" aria-hidden="true">TOGETHER</div>
-            <div className="v-about-copy">
+            <div className="v-about-copy" data-reveal>
               <p className="v-kicker"><span>03</span> Our mission</p>
               <h2>KHÔNG CHỈ<br />LÀ NGƯỜI<br /><em>DẪN ĐƯỜNG.</em></h2>
               <p className="v-about-lead">
@@ -542,7 +593,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="v-about-visual" aria-label="Khoảnh khắc của các thành viên Faerie">
+            <div className="v-about-visual" aria-label="Khoảnh khắc của các thành viên Faerie" data-reveal>
               <figure className="v-photo-main">
                 <img src="/images/events/2026/kickoff/KickOff2026_1.jpg" alt="Thành viên Faerie tại sự kiện Kick Off 2026" loading="lazy" />
                 <figcaption>FAERIE KICK OFF // 2026</figcaption>
@@ -553,7 +604,7 @@ export default function Home() {
               <span className="v-photo-code" aria-hidden="true">FÆ / 03 — 26</span>
             </div>
 
-            <div className="v-values" aria-label="Giá trị của Faerie">
+            <div className="v-values" aria-label="Giá trị của Faerie" data-reveal>
               <div><span>01</span><strong>BELONGING</strong><p>Một nơi để thuộc về.</p></div>
               <div><span>02</span><strong>GROWTH</strong><p>Cùng nhau tiến bộ.</p></div>
               <div><span>03</span><strong>KINDNESS</strong><p>Tử tế trong mọi kết nối.</p></div>
@@ -564,7 +615,7 @@ export default function Home() {
           <section className="v-manifesto">
             <img src="/images/events/2026/kickoff/KickOff2026_6.jpg" alt="Các thành viên Faerie cùng nhau trong hoạt động năm 2026" loading="lazy" />
             <div className="v-manifesto-wash" aria-hidden="true" />
-            <div className="v-manifesto-copy section-shell">
+            <div className="v-manifesto-copy section-shell" data-reveal>
               <p className="v-kicker"><span>04</span> Ready for the next chapter?</p>
               <blockquote>GROW TOGETHER.<br /><em>SHINE TOGETHER.</em></blockquote>
               <button className="v-button v-button-light" onClick={() => switchTab("members")}>
@@ -575,13 +626,16 @@ export default function Home() {
           </section>
         </div>
       ) : tab === "members" ? (
-        <div role="tabpanel" className="members-page page-enter">
-          <section className="members-hero section-shell">
-            <div>
-              <p className="eyebrow"><span /> The people behind the magic</p>
-              <h1>Meet the<br /><em>Faerie family.</em></h1>
+        <div role="tabpanel" className="members-page tactical-page valorant-members page-enter">
+          <section className="members-hero tactical-hero section-shell">
+            <div className="tactical-grid" aria-hidden="true" />
+            <div className="tactical-hero-word" aria-hidden="true">MEMBERS</div>
+            <span className="tactical-coordinate" aria-hidden="true">03 // ROSTER DATABASE // FPTU HCMC</span>
+            <div className="members-hero-copy">
+              <p className="tactical-kicker"><span>01</span> The people behind the magic</p>
+              <h1>MEET THE<br /><em>FAERIE FAMILY.</em></h1>
             </div>
-            <div className="members-intro">
+            <div className="members-intro" data-reveal>
               <p>
                 Mỗi thế hệ là một màu sắc riêng, cùng góp lại thành câu chuyện Faerie.
                 Tìm những gương mặt đã đồng hành với ngôi nhà qua từng năm.
@@ -665,8 +719,16 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="directory section-shell">
-            <div className="directory-toolbar">
+          <section className="directory tactical-directory section-shell">
+            <div className="tactical-section-heading" data-reveal>
+              <div>
+                <p className="tactical-kicker"><span>02</span> Select your roster</p>
+                <h2>CHOOSE YOUR<br /><em>CREW.</em></h2>
+              </div>
+              <p>Tìm kiếm từng gương mặt, vai trò và thế hệ đã cùng tạo nên hành trình Faerie.</p>
+            </div>
+
+            <div className="directory-toolbar" data-reveal>
               <div className="year-picker" aria-label="Chọn năm">
                 {([2023, 2024, 2025, 2026] as RosterYear[]).map((item) => (
                   <button
@@ -692,7 +754,7 @@ export default function Home() {
               </label>
             </div>
 
-            <div className="role-filter" aria-label="Lọc theo vai trò">
+            <div className="role-filter" aria-label="Lọc theo vai trò" data-reveal>
               <button className={role === "All" ? "active" : ""} onClick={() => setRole("All")}>
                 Tất cả <span>{rosters[year].length}</span>
               </button>
@@ -703,7 +765,7 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="directory-title">
+            <div className="directory-title" data-reveal>
               <h2>Faerie class of <em>{year}</em></h2>
               <span>{members.length.toString().padStart(2, "0")} kết quả</span>
             </div>
@@ -711,7 +773,12 @@ export default function Home() {
             {members.length > 0 ? (
               <div className="member-grid">
                 {members.map((person) => (
-                  <article className="member-card" key={`${year}-${person.name}`}>
+                  <article
+                    className="member-card"
+                    key={`${year}-${person.name}`}
+                    data-reveal
+                    style={{ transitionDelay: `${Math.min(person.index % 8, 7) * 45}ms` }}
+                  >
                     <button
                       type="button"
                       className="member-card-button"
@@ -751,11 +818,14 @@ export default function Home() {
           </section>
         </div>
       ) : (
-        <div role="tabpanel" className="top-page page-enter">
-          <section className="top-hero section-shell">
+        <div role="tabpanel" className="top-page tactical-page valorant-top page-enter">
+          <section className="top-hero tactical-hero section-shell">
+            <div className="tactical-grid" aria-hidden="true" />
+            <div className="tactical-hero-word" aria-hidden="true">TOP {topMembers.length}</div>
+            <span className="tactical-coordinate" aria-hidden="true">04 // HALL OF FAME // {topYear}</span>
             <div className="top-hero-copy">
-              <p className="eyebrow"><span /> Faerie outstanding brosis · {topYear}</p>
-              <h1>Top <em>{topMembers.length}</em><br />shining souls.</h1>
+              <p className="tactical-kicker"><span>01</span> Faerie outstanding brosis · {topYear}</p>
+              <h1>TOP <em>{topMembers.length}</em><br />SHINING SOULS.</h1>
               <div className="top-year-tabs" role="tablist" aria-label="Chọn năm bảng thành viên xuất sắc">
                 {([2023, 2024, 2025] as TopYear[]).map((item) => (
                   <button
@@ -775,7 +845,7 @@ export default function Home() {
                 cho nhà Faerie năm {topYear}, cùng nhau lan tỏa tinh thần Brothers &amp; Sisters tại FPTU HCMC.
               </p>
             </div>
-            <div className="champion-card">
+            <div className="champion-card" data-reveal>
               <span className="champion-rank">#01</span>
               <div className={`champion-avatar ${memberPhoto(topYear, topMembers[0].name) ? "has-photo" : ""}`}>
                 {memberPhoto(topYear, topMembers[0].name) ? (
@@ -788,11 +858,11 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="leaderboard section-shell">
-            <div className="leaderboard-heading">
+          <section className="leaderboard tactical-leaderboard section-shell">
+            <div className="leaderboard-heading" data-reveal>
               <div>
-                <p className="eyebrow"><span /> Faerie Hall of Fame · {topYear}</p>
-                <h2>Brosis xuất sắc <em>{topYear}</em></h2>
+                <p className="tactical-kicker"><span>02</span> Faerie Hall of Fame · {topYear}</p>
+                <h2>BROSIS XUẤT SẮC <em>{topYear}</em></h2>
               </div>
               <p>{topMembers.length} gương mặt nổi bật · Faerie Gen {topYear}</p>
             </div>
@@ -802,7 +872,13 @@ export default function Home() {
                 <span>Hạng</span><span>Thành viên</span>
               </div>
               {topMembers.map((person, index) => (
-                <article className={`leaderboard-row ${index < 3 ? "podium" : ""}`} role="row" key={`${topYear}-${person.name}`}>
+                <article
+                  className={`leaderboard-row ${index < 3 ? "podium" : ""}`}
+                  role="row"
+                  key={`${topYear}-${person.name}`}
+                  data-reveal
+                  style={{ transitionDelay: `${Math.min(index, 9) * 55}ms` }}
+                >
                   <div className="rank-number">{person.rank.toString().padStart(2, "0")}</div>
                   <div className="rank-person">
                     <span className={`rank-avatar ${memberPhoto(topYear, person.name) ? "has-photo" : avatarTones[index % avatarTones.length]}`}>
@@ -819,7 +895,7 @@ export default function Home() {
         </div>
       )}
 
-      <footer>
+      <footer className="tactical-footer">
         <div className="footer-brand"><span><img src="/images/faerie-icon.png" alt="" /></span><strong>FAERIE</strong></div>
         <p>Brothers &amp; Sisters · FPT University<br />TP.HCM Campus</p>
         <p className="footer-note">MADE WITH KINDNESS<br />FOR EVERY NEW CHAPTER.</p>
