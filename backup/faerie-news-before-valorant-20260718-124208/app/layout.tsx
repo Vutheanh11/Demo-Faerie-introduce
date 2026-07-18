@@ -22,18 +22,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(`${protocol}://${host}`),
-    title: "Faerie — Find Your People",
-    description: "Khám phá nhà Faerie, những câu chuyện và các thế hệ Brothers & Sisters tại Đại học FPT campus TP.HCM.",
+    title: "Faerie — Brothers & Sisters FPTU",
+    description: "Tin tức, Top 20 hoạt động và những gương mặt tạo nên đại gia đình Faerie tại Đại học FPT campus TP.HCM.",
     openGraph: {
-      title: "Faerie — Find Your People",
-      description: "Một mái nhà để thuộc về, cùng trưởng thành và tỏa sáng tại FPTU campus TP.HCM.",
+      title: "Faerie — Grow together. Shine together.",
+      description: "Khám phá câu chuyện, Top 20 và các thế hệ nhà Faerie tại FPTU campus TP.HCM.",
       type: "website",
       locale: "vi_VN",
       images: [{ url: "/og.png", width: 1734, height: 907, alt: "Faerie Brothers & Sisters FPTU" }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Faerie — Find Your People",
+      title: "Faerie — Brothers & Sisters FPTU",
       description: "Grow together. Shine together.",
       images: ["/og.png"],
     },

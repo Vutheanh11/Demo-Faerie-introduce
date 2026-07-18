@@ -375,7 +375,7 @@ export default function Home() {
 
   return (
     <main>
-      <header className={`site-header ${tab === "Introduce" ? "is-intro" : ""}`}>
+      <header className="site-header">
         <button className="brand" onClick={() => switchTab("Introduce")} aria-label="Faerie home">
           <span className="brand-mark" aria-hidden="true"><img src="/images/faerie-icon.png" alt="" /></span>
           <span>
@@ -415,66 +415,51 @@ export default function Home() {
       </header>
 
       {tab === "Introduce" ? (
-        <div role="tabpanel" className="valorant-intro page-enter">
-          <section className="v-hero" aria-labelledby="faerie-hero-title">
-            <img
-              className="v-hero-background"
-              src="/images/faerie-banner.jpg"
-              alt="Các thành viên nhà Faerie chụp ảnh cùng nhau tại FPTU HCMC"
-            />
-            <div className="v-hero-wash" aria-hidden="true" />
-            <div className="v-grid" aria-hidden="true" />
-            <span className="v-coordinate v-coordinate-top" aria-hidden="true">10°50&apos;N / 106°40&apos;E</span>
-            <span className="v-coordinate v-coordinate-side" aria-hidden="true">FAERIE // FPTU HCMC // 2026</span>
-
-            <div className="v-hero-content section-shell">
-              <p className="v-kicker"><span>01</span> Brothers &amp; Sisters · FPTU HCMC</p>
-              <h1 id="faerie-hero-title">
-                <span>FIND</span>
-                <span className="v-title-accent">YOUR</span>
-                <span>PEOPLE.</span>
-              </h1>
-              <div className="v-hero-bottom">
-                <p>
-                  Faerie là nơi mỗi tân sinh viên tìm thấy một người đồng hành,
-                  một đội để sát cánh và một mái nhà để luôn muốn quay về.
-                </p>
-                <div className="v-actions">
-                  <button className="v-button" onClick={() => switchTab("members")}>
-                    <span>Gặp nhà Faerie</span><b aria-hidden="true">↗</b>
-                  </button>
-                  <a className="v-text-link" href="#events">Khám phá hành trình <span aria-hidden="true">↓</span></a>
-                </div>
-              </div>
-            </div>
-
-            <div className="v-hero-wordmark" aria-hidden="true">FAERIE</div>
-            <a className="v-scroll-cue" href="#mission" aria-label="Cuộn đến câu chuyện Faerie">
-              <span>SCROLL TO DISCOVER</span><i aria-hidden="true" />
-            </a>
-          </section>
-
-          <section className="v-signal" id="mission" aria-label="Những con số của Faerie">
-            <div className="v-signal-lead"><span aria-hidden="true">✦</span> ONE HOUSE. MANY STORIES.</div>
-            <div><small>THẾ HỆ</small><strong>03</strong><span>tiếp nối</span></div>
-            <div><small>THÀNH VIÊN</small><strong>{totalMembers}</strong><span>mảnh ghép</span></div>
-            <div><small>NĂM 2026</small><strong>02</strong><span>hoạt động</span></div>
-          </section>
-
-          <section className="v-events section-shell" id="events">
-            <div className="v-section-index" aria-hidden="true"><span>02</span><i /></div>
-            <div className="v-section-heading">
-              <div>
-                <p className="v-kicker"><span>STORIES</span> What&apos;s happening</p>
-                <h2>CHUYỆN NHÀ<br /><em>FAERIE</em></h2>
-              </div>
-              <p>
-                Mỗi sự kiện là một tọa độ trong hành trình chung — nơi chúng mình gặp gỡ,
-                thử sức và biến những ngày bình thường thành ký ức đáng nhớ.
+        <div role="tabpanel" className="page-enter">
+          <section className="hero section-shell">
+            <div className="hero-copy">
+              <p className="eyebrow"><span /> Brothers &amp; Sisters · FPTU HCMC Campus</p>
+              <h1>Grow together.<br /><em>Shine together.</em></h1>
+              <p className="hero-lead">
+                Faerie là một mái nhà nhỏ trong đại gia đình Brosis — nơi mỗi tân sinh viên
+                đều có người đồng hành, một nhóm để thuộc về và thật nhiều ký ức để mang theo.
               </p>
+              <div className="hero-actions">
+                <button className="primary-button" onClick={() => switchTab("members")}>
+                  Gặp nhà Faerie <span aria-hidden="true">↗</span>
+                </button>
+                <a href="#events" className="text-link">Xem sự kiện <span aria-hidden="true">↓</span></a>
+              </div>
             </div>
 
-            <div className="v-year-tabs" aria-label="Chọn năm sự kiện" role="tablist">
+            <div className="hero-art" aria-label="Ảnh tập thể nhà Faerie">
+              <div className="spark spark-one">✦</div>
+              <div className="spark spark-two">✦</div>
+              <figure className="hero-photo-card">
+                <img src="/images/faerie-banner.jpg" alt="Các thành viên nhà Faerie chụp ảnh cùng nhau tại FPTU HCMC" />
+                <figcaption><span>FAERIE&apos;S HOUSE</span><strong>2026</strong></figcaption>
+              </figure>
+              <div className="round-stamp"><span>35</span>SOULS<br />ONE HOME</div>
+            </div>
+          </section>
+
+          <section className="stats-strip" aria-label="Faerie highlights">
+            <div><strong>03</strong><span>thế hệ tiếp nối</span></div>
+            <div><strong>{totalMembers}</strong><span>mảnh ghép Faerie</span></div>
+            <div><strong>02</strong><span>hoạt động năm 2026</span></div>
+            <p>TOGETHER WE MAKE<br />ORDINARY DAYS MAGIC <b>✦</b></p>
+          </section>
+
+          <section className="events section-shell" id="events">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow"><span /> What's happening</p>
+                <h2>Chuyện nhà <em>Faerie</em></h2>
+              </div>
+              <p>Những cột mốc nhỏ được lưu lại<br />qua từng thế hệ nhà Faerie.</p>
+            </div>
+
+            <div className="event-year-tabs" aria-label="Chọn năm sự kiện" role="tablist">
               {([2024, 2025, 2026] as EventYear[]).map((item) => (
                 <button
                   key={item}
@@ -490,10 +475,11 @@ export default function Home() {
             </div>
 
             {eventsByYear[eventYear].length > 0 ? (
-              <div className="v-event-grid">
+              <div className="event-grid two-events">
                 {eventsByYear[eventYear].map((event, index) => (
-                  <article className={`v-event-card ${index === 0 ? "featured" : ""}`} key={`${eventYear}-${event.title}`}>
-                    <div className={`v-event-media ${event.tone} ${event.images ? "has-photos" : ""}`}>
+                  <article className="event-card" key={`${eventYear}-${event.title}`}>
+                    <div className={`event-visual ${event.tone} ${event.images ? "has-photos" : ""}`}>
+                      <span className="event-number">0{index + 1}</span>
                       {event.images ? (
                         <div className="event-photo-gallery">
                           {event.images.map((image, imageIndex) => (
@@ -506,72 +492,61 @@ export default function Home() {
                           ))}
                         </div>
                       ) : (
-                        <div className="v-event-symbol" aria-hidden="true">{index === 0 ? "✦" : "∞"}</div>
+                        <div className="event-symbol" aria-hidden="true">{index === 0 ? "✦" : "∞"}</div>
                       )}
-                      <span className="v-event-number">// 0{index + 1}</span>
-                      <span className="v-event-tag">{event.tag}</span>
-                      <span className="v-corner" aria-hidden="true" />
+                      <span className="event-tag">{event.tag}</span>
                     </div>
-                    <div className="v-event-copy">
-                      <div className="v-event-date"><strong>{event.date}</strong><span>{event.year}</span></div>
+                    <div className="event-content">
+                      <div className="event-date"><strong>{event.date}</strong><span>{event.year}</span></div>
                       <div>
                         <h3>{event.title}</h3>
                         <p>{event.description}</p>
-                        <small><span aria-hidden="true">⌖</span> {event.location}</small>
+                        <small><span aria-hidden="true">◎</span> {event.location}</small>
                       </div>
                     </div>
                   </article>
                 ))}
               </div>
             ) : (
-              <div className="v-event-empty">
-                <span aria-hidden="true">// {eventYear}</span>
-                <div><strong>MISSION NOT STARTED</strong><p>Chuyện năm {eventYear} đang được viết. Hẹn gặp bạn ở cột mốc tiếp theo.</p></div>
+              <div className="empty-state event-empty">
+                <span>✦</span>
+                <h3>Chuyện năm {eventYear} đang được viết</h3>
+                <p>Những kỷ niệm của thế hệ này sẽ sớm xuất hiện tại đây.</p>
               </div>
             )}
           </section>
 
-          <section className="v-about section-shell">
-            <div className="v-about-word" aria-hidden="true">TOGETHER</div>
-            <div className="v-about-copy">
-              <p className="v-kicker"><span>03</span> Our mission</p>
-              <h2>KHÔNG CHỈ<br />LÀ NGƯỜI<br /><em>DẪN ĐƯỜNG.</em></h2>
-              <p className="v-about-lead">
-                Brothers &amp; Sisters kết nối những người đi trước với tân sinh viên trong những ngày đầu tại FPTU.
-                Ở Faerie, sự đồng hành đi xa hơn một lời chỉ dẫn: đó là học cùng, chơi cùng và lớn lên cùng nhau.
-              </p>
+          <section className="about section-shell">
+            <div className="about-label">
+              <span>02 / OUR STORY</span>
+              <div className="mini-orbit">F<br /><i>✦</i></div>
             </div>
-
-            <div className="v-about-visual" aria-label="Khoảnh khắc của các thành viên Faerie">
-              <figure className="v-photo-main">
-                <img src="/images/events/2026/kickoff/KickOff2026_1.jpg" alt="Thành viên Faerie tại sự kiện Kick Off 2026" loading="lazy" />
-                <figcaption>FAERIE KICK OFF // 2026</figcaption>
-              </figure>
-              <figure className="v-photo-mini">
-                <img src="/images/events/2026/kickoff/KickOff2026_4.jpg" alt="Khoảnh khắc kết nối của nhà Faerie" loading="lazy" />
-              </figure>
-              <span className="v-photo-code" aria-hidden="true">FÆ / 03 — 26</span>
-            </div>
-
-            <div className="v-values" aria-label="Giá trị của Faerie">
-              <div><span>01</span><strong>BELONGING</strong><p>Một nơi để thuộc về.</p></div>
-              <div><span>02</span><strong>GROWTH</strong><p>Cùng nhau tiến bộ.</p></div>
-              <div><span>03</span><strong>KINDNESS</strong><p>Tử tế trong mọi kết nối.</p></div>
-              <div><span>04</span><strong>LEGACY</strong><p>Tiếp nối điều tốt đẹp.</p></div>
+            <div className="about-copy">
+              <p className="eyebrow"><span /> More than a mentoring program</p>
+              <h2>Đi cùng nhau,<br />lớn lên <em>cùng nhau.</em></h2>
+              <div className="about-columns">
+                <p>
+                  Brothers &amp; Sisters là chương trình đồng hành sinh viên tại Đại học FPT campus TP.HCM,
+                  kết nối những người đi trước với các tân sinh viên trong những ngày đầu còn nhiều bỡ ngỡ.
+                </p>
+                <p>
+                  Ở Faerie, sự đồng hành không dừng ở lời chỉ dẫn. Đó là những bữa ăn cùng nhau,
+                  tin nhắn hỏi thăm, buổi học nhóm và một cộng đồng luôn sẵn sàng lắng nghe.
+                </p>
+              </div>
+              <div className="values-row">
+                <span><b>01</b> Belonging</span>
+                <span><b>02</b> Growth</span>
+                <span><b>03</b> Kindness</span>
+                <span><b>04</b> Legacy</span>
+              </div>
             </div>
           </section>
 
-          <section className="v-manifesto">
-            <img src="/images/events/2026/kickoff/KickOff2026_6.jpg" alt="Các thành viên Faerie cùng nhau trong hoạt động năm 2026" loading="lazy" />
-            <div className="v-manifesto-wash" aria-hidden="true" />
-            <div className="v-manifesto-copy section-shell">
-              <p className="v-kicker"><span>04</span> Ready for the next chapter?</p>
-              <blockquote>GROW TOGETHER.<br /><em>SHINE TOGETHER.</em></blockquote>
-              <button className="v-button v-button-light" onClick={() => switchTab("members")}>
-                <span>Khám phá thành viên</span><b aria-hidden="true">→</b>
-              </button>
-            </div>
-            <span className="v-manifesto-code" aria-hidden="true">FAERIE // BROSIS // FPTU HCMC</span>
+          <section className="quote-band">
+            <span className="quote-mark">“</span>
+            <blockquote>Không chỉ là người dẫn đường.<br />Chúng mình là <em>gia đình.</em></blockquote>
+            <span className="quote-spark">✦ FAERIE / 2026</span>
           </section>
         </div>
       ) : tab === "members" ? (
