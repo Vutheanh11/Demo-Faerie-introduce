@@ -726,11 +726,6 @@ export default function Home() {
                         className="hero-member-card-button"
                         tabIndex={copyIndex === 1 ? 0 : -1}
                         aria-label={`Xem ảnh và tên của ${person.name}, vai trò ${person.title}`}
-                        onPointerEnter={(event) => {
-                          if (event.pointerType !== "mouse") return;
-                          pauseHeroDeckAutomation();
-                          setHeroCardIndex(virtualIndex);
-                        }}
                         onFocus={() => setHeroCardIndex(virtualIndex)}
                       >
                         <div className="hero-member-card-inner">
