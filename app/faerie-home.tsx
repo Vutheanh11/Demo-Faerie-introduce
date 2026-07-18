@@ -876,6 +876,11 @@ export default function Home() {
         <div className="footer-brand"><span><img src="images/faerie-icon.png" alt="" /></span><strong>FAERIE</strong></div>
         <p>Brothers &amp; Sisters · FPT University<br />TP.HCM Campus</p>
         <p className="footer-note">MADE WITH KINDNESS<br />FOR EVERY NEW CHAPTER.</p>
+        <div className="footer-contact">
+          <span>CONTACT // FAERIE</span>
+          <a href="mailto:faeriesolace@gmail.com">faeriesolace@gmail.com</a>
+          <a href="https://www.facebook.com/profile.php?id=61577779404694" target="_blank" rel="noreferrer">Facebook Faerie ↗</a>
+        </div>
         <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Lên đầu trang ↑</button>
       </footer>
     </main>
