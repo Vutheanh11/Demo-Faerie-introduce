@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -10,6 +11,8 @@
   --paper: #fbfdf9;
   --accent: #6f9f57;
   --line: rgba(23, 58, 45, 0.18);
+  --font-sans: "Be Vietnam Pro", sans-serif;
+  --font-display: "DM Serif Display", serif;
 }
 
 * { box-sizing: border-box; }
@@ -1119,7 +1122,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   position: absolute;
   inset: 0;
   z-index: -3;
-  background: url("/images/faerie-banner.jpg") center 46% / cover no-repeat;
+  background: url("../images/faerie-banner.jpg") center 46% / cover no-repeat;
   filter: saturate(.55) contrast(1.13);
   transform: scale(1.03);
   animation: tactical-photo-breathe 14s ease-in-out infinite alternate;

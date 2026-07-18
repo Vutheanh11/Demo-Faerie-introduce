@@ -1,49 +1,35 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
-import { Be_Vietnam_Pro, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 
-const sans = Be_Vietnam_Pro({
-  variable: "--font-sans",
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700", "800"],
-});
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://faerie-brosis-fptu.anhvtse190111.chatgpt.site/";
+const metadataBase = new URL(siteUrl.endsWith("/") ? siteUrl : `${siteUrl}/`);
+const socialImage = new URL("og.png", metadataBase).toString();
 
-const display = DM_Serif_Display({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: "400",
-});
+export const dynamic = "force-static";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const requestHeaders = await headers();
-  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
-  const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
-
-  return {
-    metadataBase: new URL(`${protocol}://${host}`),
+export const metadata: Metadata = {
+  metadataBase,
+  title: "Faerie — Find Your People",
+  description: "Khám phá nhà Faerie, những câu chuyện và các thế hệ Brothers & Sisters tại Đại học FPT campus TP.HCM.",
+  openGraph: {
     title: "Faerie — Find Your People",
-    description: "Khám phá nhà Faerie, những câu chuyện và các thế hệ Brothers & Sisters tại Đại học FPT campus TP.HCM.",
-    openGraph: {
-      title: "Faerie — Find Your People",
-      description: "Một mái nhà để thuộc về, cùng trưởng thành và tỏa sáng tại FPTU campus TP.HCM.",
-      type: "website",
-      locale: "vi_VN",
-      images: [{ url: "/og.png", width: 1734, height: 907, alt: "Faerie Brothers & Sisters FPTU" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: "Faerie — Find Your People",
-      description: "Grow together. Shine together.",
-      images: ["/og.png"],
-    },
-  };
-}
+    description: "Một mái nhà để thuộc về, cùng trưởng thành và tỏa sáng tại FPTU campus TP.HCM.",
+    type: "website",
+    locale: "vi_VN",
+    images: [{ url: socialImage, width: 1734, height: 907, alt: "Faerie Brothers & Sisters FPTU" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Faerie — Find Your People",
+    description: "Grow together. Shine together.",
+    images: [socialImage],
+  },
+};
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="vi">
-      <body className={`${sans.variable} ${display.variable}`}>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
