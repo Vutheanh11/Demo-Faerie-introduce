@@ -55,6 +55,15 @@ const eventsByYear: Record<EventYear, Array<{
       tag: "Meet up",
       location: "TP.HCM",
       tone: "fern",
+      images: [
+        "images/events/2026/offline/HopOffline_1.jpg",
+        "images/events/2026/offline/HopOffline_2.jpg",
+        "images/events/2026/offline/HopOffline_3.jpg",
+        "images/events/2026/offline/HopOffline_4.jpg",
+        "images/events/2026/offline/HopOffline_5.jpg",
+        "images/events/2026/offline/HopOffline_6.jpg",
+        "images/events/2026/offline/HopOffline_7.jpg",
+      ],
     },
   ],
 };
