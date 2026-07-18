@@ -1103,12 +1103,12 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
 
 /* Members / roster select */
 .valorant-members .members-hero {
-  min-height: 720px;
+  min-height: 650px;
   grid-template-columns: 1.05fr .95fr;
   align-items: center;
   gap: 7vw;
   padding-top: 40px;
-  padding-bottom: 190px;
+  padding-bottom: 90px;
   overflow: visible;
   background: var(--t-black);
   color: var(--t-white);
@@ -1216,7 +1216,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
 
 .valorant-members .directory {
   position: relative;
-  padding-top: 230px;
+  padding-top: 130px;
   padding-bottom: 140px;
   background:
     linear-gradient(90deg, transparent 49.94%, rgba(17,23,21,.08) 50%, transparent 50.06%),
@@ -1225,7 +1225,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
 .valorant-members .directory::before {
   content: "ROSTER";
   position: absolute;
-  top: 148px;
+  top: 68px;
   right: -.03em;
   color: transparent;
   -webkit-text-stroke: 1px rgba(17,23,21,.06);
@@ -1548,12 +1548,12 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   .tactical-section-heading { grid-template-columns: 1fr; align-items: start; gap: 28px; margin-bottom: 44px; }
   .tactical-section-heading h2 { font-size: clamp(52px, 16vw, 82px); }
   .valorant-members .members-hero {
-    min-height: 760px;
+    min-height: 620px;
     grid-template-columns: 1fr;
     align-content: start;
     gap: 25px;
     padding-top: 86px;
-    padding-bottom: 205px;
+    padding-bottom: 90px;
   }
   .valorant-members .members-hero h1 { font-size: clamp(59px, 16vw, 86px); }
   .valorant-members .members-intro { padding-top: 0; }
@@ -1564,7 +1564,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   .valorant-members .hero-member-card { flex-basis: 122px; width: 122px; height: 215px; margin-left: -80px; }
   .valorant-members .member-hero-deck:hover .hero-member-card { margin-left: -80px; }
   .valorant-members .hero-member-card.auto-active .hero-member-card-button { transform: translateY(-18px) scale(1.02); }
-  .valorant-members .directory { padding-top: 190px; padding-bottom: 100px; }
+  .valorant-members .directory { padding-top: 110px; padding-bottom: 100px; }
   .valorant-members .directory-toolbar { position: relative; top: auto; align-items: stretch; }
   .valorant-members .year-picker button { flex: 1 1 calc(50% - 4px); min-width: 118px; }
   .valorant-members .member-grid { grid-template-columns: repeat(2, 1fr); gap: 20px 10px; }
@@ -1592,7 +1592,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   [data-reveal] { transform: translateY(22px); }
   .tactical-kicker { gap: 8px; font-size: 7px; letter-spacing: .13em; }
   .tactical-kicker::before { width: 22px; }
-  .valorant-members .members-hero { min-height: 720px; padding-top: 75px; }
+  .valorant-members .members-hero { min-height: 590px; padding-top: 75px; }
   .valorant-members .members-hero h1,
   .valorant-top .top-hero-copy h1 { font-size: clamp(54px, 16vw, 72px); }
   .valorant-members .members-intro > p { font-size: 10px; }
