@@ -148,6 +148,93 @@ const eventsByYear: Record<EventYear, Array<{
         "images/events/2026/offline/HopOffline_7.jpg",
       ],
     },
+    {
+      date: "16.08",
+      year: "2026",
+      title: "Team Building",
+      description:
+        "Một ngày cùng thử thách, phối hợp và kết nối để mỗi thành viên hiểu nhau hơn, đồng lòng hơn trên hành trình Faerie.",
+      tag: "Teamwork",
+      location: "TP.HCM",
+      tone: "mint",
+      images: [
+        "images/events/2026/team-building/TeamBuilding_1.jpg",
+        "images/events/2026/team-building/TeamBuilding_2.jpg",
+        "images/events/2026/team-building/TeamBuilding_3.jpg",
+        "images/events/2026/team-building/TeamBuilding_4.jpg",
+        "images/events/2026/team-building/TeamBuilding_5.jpg",
+        "images/events/2026/team-building/TeamBuilding_6.jpg",
+        "images/events/2026/team-building/TeamBuilding_7.jpg",
+        "images/events/2026/team-building/TeamBuilding_8.jpg",
+      ],
+    },
+    {
+      date: "25.08",
+      year: "2026",
+      title: "Kick Off",
+      description:
+        "Cột mốc khởi động chặng đường mới, nơi cả nhà cùng gặp gỡ, chia sẻ mục tiêu và sẵn sàng tạo nên những dấu ấn tiếp theo.",
+      tag: "Kick Off",
+      location: "FPTU HCMC Campus",
+      tone: "fern",
+      images: [
+        "images/events/2026/kickoff-august/KickOff_1.jpg",
+        "images/events/2026/kickoff-august/KickOff_2.jpg",
+        "images/events/2026/kickoff-august/KickOff_3.jpg",
+        "images/events/2026/kickoff-august/KickOff_4.jpg",
+        "images/events/2026/kickoff-august/KickOff_6.jpg",
+      ],
+    },
+    {
+      date: "02.09",
+      year: "2026",
+      title: "Chào Mừng Quốc Khánh",
+      description:
+        "Faerie cùng hòa chung không khí Quốc khánh, lưu lại những khoảnh khắc rực rỡ và niềm tự hào trong sắc màu Việt Nam.",
+      tag: "National Day",
+      location: "FPTU HCMC Campus",
+      tone: "mint",
+      images: [
+        "images/events/2026/national-day/QK_1.jpg",
+        "images/events/2026/national-day/QK_2.jpg",
+        "images/events/2026/national-day/QK_3.jpg",
+        "images/events/2026/national-day/QK_4.jpg",
+        "images/events/2026/national-day/QK_5.jpg",
+        "images/events/2026/national-day/QK_6.jpg",
+      ],
+    },
+    {
+      date: "03.09",
+      year: "2026",
+      title: "Welcome Day 1",
+      description:
+        "Ngày đầu tiên Faerie chào đón những gương mặt mới bằng năng lượng, nụ cười và những kết nối đầu tiên tại FPTU HCMC.",
+      tag: "Welcome Day",
+      location: "FPTU HCMC Campus",
+      tone: "fern",
+      images: [
+        "images/events/2026/welcome-day-1/WD_1.jpg",
+        "images/events/2026/welcome-day-1/WD_2.jpg",
+        "images/events/2026/welcome-day-1/WD_3.jpg",
+        "images/events/2026/welcome-day-1/WD_4.jpg",
+      ],
+    },
+    {
+      date: "04.09",
+      year: "2026",
+      title: "Welcome Day 2",
+      description:
+        "Welcome Day tiếp tục với thêm nhiều cuộc gặp gỡ, hoạt động và kỷ niệm, nối dài lời chào của nhà Faerie dành cho tân sinh viên.",
+      tag: "Welcome Day",
+      location: "FPTU HCMC Campus",
+      tone: "mint",
+      images: [
+        "images/events/2026/welcome-day-2/WD2_1.jpg",
+        "images/events/2026/welcome-day-2/WD2_2.jpg",
+        "images/events/2026/welcome-day-2/WD2_3.jpg",
+        "images/events/2026/welcome-day-2/WD2_4.jpg",
+      ],
+    },
   ],
 };
 
@@ -528,7 +615,7 @@ export default function Home() {
             <div className="v-signal-lead"><span aria-hidden="true">✦</span> ONE HOUSE. MANY STORIES.</div>
             <div><small>THẾ HỆ</small><strong>3</strong><span>tiếp nối</span></div>
             <div><small>THÀNH VIÊN</small><strong>{totalMembers}</strong><span>mảnh ghép</span></div>
-            <div><small>NĂM 2026</small><strong>02</strong><span>hoạt động</span></div>
+            <div><small>NĂM 2026</small><strong>{eventsByYear[2026].length.toString().padStart(2, "0")}</strong><span>hoạt động</span></div>
           </section>
 
           <section className="v-events section-shell" id="events">
@@ -564,7 +651,7 @@ export default function Home() {
                 {eventsByYear[eventYear].map((event, index) => (
                   <article
                     className={`v-event-card ${index === 0 ? "featured" : ""}`}
-                    key={`${eventYear}-${event.title}`}
+                    key={`${eventYear}-${event.date}-${event.title}`}
                     data-reveal
                     style={{ transitionDelay: `${index * 90}ms` }}
                   >
