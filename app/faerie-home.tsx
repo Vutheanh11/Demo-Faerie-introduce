@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 type Tab = "Introduce" | "members" | "top20";
 type EventYear = 2024 | 2025 | 2026;
 type RosterYear = 2023 | 2024 | 2025 | 2026;
-type TopYear = 2023 | 2024 | 2025 | 2026;
 type MemberGroup = "Mentor" | "Supporter" | "Leadership" | "Member";
 
 type MemberProfile = {
@@ -410,7 +409,7 @@ const rosters: Record<RosterYear, MemberProfile[]> = {
   2026: roster2026,
 };
 
-const totalMembers = 95;
+const totalMembers = 36;
 
 const groupOrder: MemberGroup[] = ["Mentor", "Supporter", "Leadership", "Member"];
 const groupLabels: Record<MemberGroup, string> = {
@@ -419,20 +418,6 @@ const groupLabels: Record<MemberGroup, string> = {
   Leadership: "Ban điều hành",
   Member: "Member",
 };
-
-function makeRanking(roster: MemberProfile[], limit: number) {
-  return roster.slice(0, limit).map((person, index) => ({
-    ...person,
-    rank: index + 1,
-  }));
-}
-
-const topByYear = {
-  2023: makeRanking(roster2023, 20),
-  2024: makeRanking(roster2024, 12),
-  2025: makeRanking(roster2025, 8),
-  2026: [],
-} satisfies Record<TopYear, ReturnType<typeof makeRanking>>;
 
 const memberPhotos: Partial<Record<RosterYear, Record<string, string>>> = {
   2025: {
@@ -498,13 +483,9 @@ export default function Home() {
   const [tab, setTab] = useState<Tab>("Introduce");
   const year: RosterYear = 2026;
   const [eventYear, setEventYear] = useState<EventYear>(2026);
-  const [topYear, setTopYear] = useState<TopYear>(2025);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
   const [scrollProgress, setScrollProgress] = useState(0);
-
-  const topMembers = topByYear[topYear];
-  const isTop2026 = topYear === 2026;
 
   useEffect(() => {
     let frame = 0;
@@ -548,7 +529,7 @@ export default function Home() {
 
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
-  }, [tab, eventYear, year, role, query, topYear]);
+  }, [tab, eventYear, year, role, query]);
 
   const members = useMemo(
     () =>
@@ -593,7 +574,7 @@ export default function Home() {
             className={tab === "members" ? "active" : ""}
             onClick={() => switchTab("members")}
           >
-            Members <span>95</span>
+            Members <span>{totalMembers}</span>
           </button>
           <button
             role="tab"
@@ -884,113 +865,45 @@ export default function Home() {
         <div role="tabpanel" className="top-page tactical-page valorant-top page-enter">
           <section className="top-hero tactical-hero section-shell">
             <div className="tactical-grid" aria-hidden="true" />
-            <div className="tactical-hero-word" aria-hidden="true">{isTop2026 ? "WHO'S NEXT" : `TOP ${topMembers.length}`}</div>
-            <span className="tactical-coordinate" aria-hidden="true">04 // HALL OF FAME // {topYear}</span>
+            <div className="tactical-hero-word" aria-hidden="true">WHO&apos;S NEXT</div>
+            <span className="tactical-coordinate" aria-hidden="true">04 // HALL OF FAME // 2026</span>
             <div className="top-hero-copy">
-              <p className="tactical-kicker"><span>01</span> Faerie outstanding brosis · {topYear}</p>
-              <h1>
-                {isTop2026 ? <>WHO GONNA BE<br /><em>THE NEXT TOP 20?</em></> : <>TOP <em>{topMembers.length}</em><br />SHINING SOULS.</>}
-              </h1>
+              <p className="tactical-kicker"><span>01</span> Faerie outstanding brosis · 2026</p>
+              <h1>WHO GONNA BE<br /><em>THE NEXT TOP 20?</em></h1>
               <div className="top-year-tabs" role="tablist" aria-label="Chọn năm bảng thành viên xuất sắc">
-                {([2023, 2024, 2025, 2026] as TopYear[]).map((item) => (
-                  <button
-                    key={item}
-                    role="tab"
-                    aria-selected={topYear === item}
-                    className={topYear === item ? "active" : ""}
-                    onClick={() => setTopYear(item)}
-                  >
-                    <strong>{item}</strong>
-                    <span>{item === 2026 ? "Who's next?" : `Top ${topByYear[item].length}`}</span>
-                  </button>
-                ))}
+                <button type="button" role="tab" aria-selected="true" className="active">
+                  <strong>2026</strong>
+                  <span>Who&apos;s next?</span>
+                </button>
               </div>
-              {isTop2026 ? (
-                <p>
-                  Danh sách vẫn đang được viết. Hai mươi vị trí, hai mươi câu chuyện mới — và gương mặt tiếp theo có thể là bạn.
-                </p>
-              ) : (
-                <p>
-                  Những gương mặt nổi bật trên hành trình kết nối, sẻ chia và tạo nên năng lượng
-                  cho nhà Faerie năm {topYear}, cùng nhau lan tỏa tinh thần Brothers &amp; Sisters tại FPTU HCMC.
-                </p>
-              )}
+              <p>
+                Danh sách vẫn đang được viết. Hai mươi vị trí, hai mươi câu chuyện mới — và gương mặt tiếp theo có thể là bạn.
+              </p>
             </div>
-            {isTop2026 ? (
-              <div className="champion-card champion-card-mystery" data-reveal>
-                <span className="champion-rank">#??</span>
-                <div className="champion-avatar mystery-avatar" aria-hidden="true">?</div>
-                <small>THE NEXT SPOT IS OPEN</small>
-                <h2>WHO&apos;S NEXT?</h2>
-                <p>FAERIE · 2026</p>
-              </div>
-            ) : (
-              <div className="champion-card" data-reveal>
-                <span className="champion-rank">#01</span>
-                <div className={`champion-avatar ${memberPhoto(topYear, topMembers[0].name) ? "has-photo" : ""}`}>
-                  {memberPhoto(topYear, topMembers[0].name) ? (
-                    <img src={memberPhoto(topYear, topMembers[0].name)} alt={`Ảnh của ${topMembers[0].name}`} />
-                  ) : initials(topMembers[0].name)}
-                </div>
-                <small>LEADING THE MAGIC</small>
-                <h2>{topMembers[0].name}</h2>
-                <p>{topMembers[0].title}</p>
-              </div>
-            )}
+            <div className="champion-card champion-card-mystery" data-reveal>
+              <span className="champion-rank">#??</span>
+              <div className="champion-avatar mystery-avatar" aria-hidden="true">?</div>
+              <small>THE NEXT SPOT IS OPEN</small>
+              <h2>WHO&apos;S NEXT?</h2>
+              <p>FAERIE · 2026</p>
+            </div>
           </section>
 
-          {isTop2026 ? (
-            <section className="leaderboard tactical-leaderboard top-2026-teaser section-shell">
-              <div className="top-2026-teaser-card" data-reveal>
-                <span className="top-2026-index">20 // ?</span>
-                <p className="tactical-kicker"><span>02</span> Faerie Hall of Fame · 2026</p>
-                <h2>WHO GONNA BE<br /><em>THE NEXT TOP 20?</em></h2>
-                <p className="top-2026-copy">
-                  Chưa có cái tên nào được chốt. Hành trình 2026 đang diễn ra — cùng tạo dấu ấn để trở thành một trong hai mươi gương mặt tiếp theo của Faerie.
-                </p>
-                <div className="top-2026-slots" aria-label="20 vị trí đang chờ những gương mặt nổi bật">
-                  {Array.from({ length: 20 }, (_, index) => (
-                    <span key={index}>{String(index + 1).padStart(2, "0")}</span>
-                  ))}
-                </div>
-              </div>
-            </section>
-          ) : (
-            <section className="leaderboard tactical-leaderboard section-shell">
-              <div className="leaderboard-heading" data-reveal>
-                <div>
-                  <p className="tactical-kicker"><span>02</span> Faerie Hall of Fame · {topYear}</p>
-                  <h2>BROSIS XUẤT SẮC <em>{topYear}</em></h2>
-                </div>
-                <p>{topMembers.length} gương mặt nổi bật · Faerie Gen {topYear}</p>
-              </div>
-
-              <div className="leaderboard-table" role="table" aria-label={`Top ${topMembers.length} brosis xuất sắc năm ${topYear}`}>
-                <div className="leaderboard-row leaderboard-labels" role="row">
-                  <span>Hạng</span><span>Thành viên</span>
-                </div>
-                {topMembers.map((person, index) => (
-                  <article
-                    className={`leaderboard-row ${index < 3 ? "podium" : ""}`}
-                    role="row"
-                    key={`${topYear}-${person.name}`}
-                    data-reveal
-                    style={{ transitionDelay: `${Math.min(index, 9) * 55}ms` }}
-                  >
-                    <div className="rank-number">{person.rank.toString().padStart(2, "0")}</div>
-                    <div className="rank-person">
-                      <span className={`rank-avatar ${memberPhoto(topYear, person.name) ? "has-photo" : avatarTones[index % avatarTones.length]}`}>
-                        {memberPhoto(topYear, person.name) ? (
-                          <img src={memberPhoto(topYear, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
-                        ) : initials(person.name)}
-                      </span>
-                      <div><h3>{person.name}</h3><p>{person.title}</p></div>
-                    </div>
-                  </article>
+          <section className="leaderboard tactical-leaderboard top-2026-teaser section-shell">
+            <div className="top-2026-teaser-card" data-reveal>
+              <span className="top-2026-index">20 // ?</span>
+              <p className="tactical-kicker"><span>02</span> Faerie Hall of Fame · 2026</p>
+              <h2>WHO GONNA BE<br /><em>THE NEXT TOP 20?</em></h2>
+              <p className="top-2026-copy">
+                Chưa có cái tên nào được chốt. Hành trình 2026 đang diễn ra — cùng tạo dấu ấn để trở thành một trong hai mươi gương mặt tiếp theo của Faerie.
+              </p>
+              <div className="top-2026-slots" aria-label="20 vị trí đang chờ những gương mặt nổi bật">
+                {Array.from({ length: 20 }, (_, index) => (
+                  <span key={index}>{String(index + 1).padStart(2, "0")}</span>
                 ))}
               </div>
-            </section>
-          )}
+            </div>
+          </section>
         </div>
       )}
 
