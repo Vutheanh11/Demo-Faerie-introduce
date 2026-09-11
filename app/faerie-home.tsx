@@ -459,7 +459,7 @@ const avatarTones = ["sage", "sun", "sky", "lilac", "coral", "lime"];
 
 export default function Home() {
   const [tab, setTab] = useState<Tab>("Introduce");
-  const [year, setYear] = useState<RosterYear>(2026);
+  const year: RosterYear = 2026;
   const [eventYear, setEventYear] = useState<EventYear>(2026);
   const [topYear, setTopYear] = useState<TopYear>(2025);
   const [role, setRole] = useState<MemberGroup | "All">("All");
@@ -758,16 +758,14 @@ export default function Home() {
 
             <div className="directory-toolbar" data-reveal>
               <div className="year-picker" aria-label="Chọn năm">
-                {([2023, 2024, 2025, 2026] as RosterYear[]).map((item) => (
-                  <button
-                    key={item}
-                    className={year === item ? "active" : ""}
-                    onClick={() => { setYear(item); setRole("All"); }}
-                    aria-pressed={year === item}
-                  >
-                    Roster {item} <span>{year === item ? "✦" : ""}</span>
-                  </button>
-                ))}
+                <button
+                  type="button"
+                  className="active"
+                  onClick={() => setRole("All")}
+                  aria-pressed="true"
+                >
+                  Member 2026 <span>✦</span>
+                </button>
               </div>
 
               <label className="search-box">
@@ -824,7 +822,7 @@ export default function Home() {
                           </div>
                           <div className="member-front-info">
                             <strong>{person.name}</strong>
-                            <span>Faerie · Roster {year} <i aria-hidden="true">↻</i></span>
+                            <span>Faerie · Member {year} <i aria-hidden="true">↻</i></span>
                           </div>
                         </div>
 
