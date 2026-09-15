@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import MemberProfileDialog, { type MemberDetails } from "./member-profile-dialog";
 
 type Tab = "Introduce" | "members" | "top20";
@@ -831,28 +831,23 @@ export default function Home() {
                       aria-haspopup="dialog"
                       onClick={() => setSelectedMember(person)}
                     >
-                      <div className="member-card-inner">
-                        <div className="member-card-face member-card-front">
-                          <div className={`avatar ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[person.index % avatarTones.length]}`}>
-                            {memberPhoto(year, person.name) ? (
-                              <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
-                            ) : (
-                              <span>{initials(person.name)}</span>
-                            )}
-                            <small>{(person.index + 1).toString().padStart(2, "0")}</small>
-                          </div>
-                          <div className="member-front-info">
-                            <strong>{person.name}</strong>
-                            <span>Faerie · Member {year} <i aria-hidden="true">↻</i></span>
-                          </div>
+                      <div className="member-card-surface">
+                        <div
+                          className={`avatar ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[person.index % avatarTones.length]}`}
+                          style={memberPhoto(year, person.name) ? { "--member-image": `url("${memberPhoto(year, person.name)}")` } as CSSProperties : undefined}
+                        >
+                          {memberPhoto(year, person.name) ? (
+                            <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
+                          ) : (
+                            <span>{initials(person.name)}</span>
+                          )}
+                          <span className="member-card-glitch" aria-hidden="true" />
+                          <small>{(person.index + 1).toString().padStart(2, "0")}</small>
                         </div>
-
-                        <div className={`member-card-face member-card-back ${person.group.toLowerCase()}`}>
-                          <span className="member-back-kicker">ROLE / {groupLabels[person.group]}</span>
-                          <i aria-hidden="true">✦</i>
-                          <strong className="member-back-role">{person.title}</strong>
-                          <span className="member-back-name">{person.name}</span>
-                          <small>NHẤN ĐỂ XEM HỒ SƠ ↗</small>
+                        <div className="member-front-info">
+                          <strong>{person.name}</strong>
+                          <span className="member-front-role">{person.title}</span>
+                          <span className="member-front-meta">Xem hồ sơ <i aria-hidden="true">↗</i></span>
                         </div>
                       </div>
                     </button>
