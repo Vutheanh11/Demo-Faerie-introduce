@@ -12,6 +12,12 @@ type MemberProfile = MemberDetails & {
   group: MemberGroup;
 };
 
+function memberGlitchStyle(photo?: string): CSSProperties | undefined {
+  if (!photo || typeof document === "undefined") return undefined;
+  // CSS variables resolve relative URLs against the stylesheet, not the page.
+  return { "--member-image": `url("${new URL(photo, document.baseURI).href}")` } as CSSProperties;
+}
+
 function EventPhotoGallery({ images, title }: { images: string[]; title: string }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [previousIndex, setPreviousIndex] = useState<number | null>(null);
@@ -834,7 +840,7 @@ export default function Home() {
                       <div className="member-card-surface">
                         <div
                           className={`avatar ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[person.index % avatarTones.length]}`}
-                          style={memberPhoto(year, person.name) ? { "--member-image": `url("${memberPhoto(year, person.name)}")` } as CSSProperties : undefined}
+                          style={memberGlitchStyle(memberPhoto(year, person.name))}
                         >
                           {memberPhoto(year, person.name) ? (
                             <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
