@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import MemberProfileDialog, { type MemberDetails } from "./member-profile-dialog";
 
 type Tab = "Introduce" | "members" | "top20";
 type EventYear = 2024 | 2025 | 2026;
 type RosterYear = 2023 | 2024 | 2025 | 2026;
 type MemberGroup = "Mentor" | "Supporter" | "Leadership" | "Member";
 
-type MemberProfile = {
-  name: string;
-  title: string;
+type MemberProfile = MemberDetails & {
   group: MemberGroup;
 };
 
@@ -363,7 +362,7 @@ function makeMockRoster(names: string[]): MemberProfile[] {
 }
 
 const roster2026: MemberProfile[] = [
-  { name: "Việt Phương", title: "Mentor", group: "Mentor" },
+  { name: "Việt Phương", fullName: "Lê Việt Phương", title: "Mentor", group: "Mentor" },
   { name: "Nguyễn Trần Hạ My", title: "Supporter", group: "Supporter" },
   { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
   { name: "Vũ Thế Anh", title: "Sub Leader Nhà", group: "Leadership" },
@@ -486,6 +485,8 @@ export default function Home() {
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [selectedMember, setSelectedMember] = useState<MemberProfile | null>(null);
+  const closeMemberProfile = useCallback(() => setSelectedMember(null), []);
 
   useEffect(() => {
     let frame = 0;
@@ -826,7 +827,9 @@ export default function Home() {
                     <button
                       type="button"
                       className="member-card-button"
-                      aria-label={`Xem vai trò của ${person.name}: ${person.title}`}
+                      aria-label={`Xem hồ sơ của ${person.name}: ${person.title}`}
+                      aria-haspopup="dialog"
+                      onClick={() => setSelectedMember(person)}
                     >
                       <div className="member-card-inner">
                         <div className="member-card-face member-card-front">
@@ -849,7 +852,7 @@ export default function Home() {
                           <i aria-hidden="true">✦</i>
                           <strong className="member-back-role">{person.title}</strong>
                           <span className="member-back-name">{person.name}</span>
-                          <small>FAERIE · {year}</small>
+                          <small>NHẤN ĐỂ XEM HỒ SƠ ↗</small>
                         </div>
                       </div>
                     </button>
@@ -905,6 +908,15 @@ export default function Home() {
             </div>
           </section>
         </div>
+      )}
+
+      {selectedMember && (
+        <MemberProfileDialog
+          member={selectedMember}
+          photo={memberPhoto(year, selectedMember.name)}
+          year={year}
+          onDismiss={closeMemberProfile}
+        />
       )}
 
       <footer className="tactical-footer">
