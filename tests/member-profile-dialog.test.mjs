@@ -29,18 +29,24 @@ test("shows the full name, role, introduction and supplied Facebook profile", ()
     fullName: "Họ Và Tên Đầy Đủ",
     title: "Leader Ban Event",
     introduction: "Giới thiệu do thành viên cung cấp.",
+    birthDate: "12/04/2006",
+    interests: "Nhiếp ảnh",
+    message: "Cùng nhau tiến bộ.",
     facebookUrl: "https://www.facebook.com/profile.php?id=123",
   });
   assert.match(html, /<h2 id="member-profile-name">Họ Và Tên Đầy Đủ<\/h2>/);
   assert.match(html, /Leader Ban Event/);
   assert.match(html, /Giới thiệu do thành viên cung cấp\./);
+  assert.match(html, /12\/04\/2006/);
+  assert.match(html, /Nhiếp ảnh/);
+  assert.match(html, /Cùng nhau tiến bộ\./);
   assert.match(html, /href="https:\/\/www\.facebook\.com\/profile\.php\?id=123"/);
   assert.match(html, /target="_blank" rel="noopener noreferrer"/);
 });
 
 test("shows honest pending labels without a fake link for missing details", () => {
   const html = render({ introduction: "   " });
-  assert.equal((html.match(/Đang cập nhật/g) || []).length, 2);
+  assert.equal((html.match(/Đang cập nhật/g) || []).length, 5);
   assert.doesNotMatch(html, /<a\b/);
   assert.match(html, /aria-labelledby="member-profile-name"/);
   assert.match(html, /aria-label="Đóng hồ sơ thành viên"/);

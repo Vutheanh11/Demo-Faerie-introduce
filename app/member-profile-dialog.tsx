@@ -8,6 +8,9 @@ export type MemberDetails = {
   title: string;
   facebookUrl?: string;
   introduction?: string;
+  birthDate?: string;
+  interests?: string;
+  message?: string;
 };
 
 function facebookLink(value?: string) {
@@ -138,6 +141,22 @@ export default function MemberProfileDialog({
             <p className={!member.introduction?.trim() ? "member-profile-pending" : undefined}>
               {member.introduction?.trim() || "Đang cập nhật"}
             </p>
+          </section>
+
+          <div className="member-profile-details">
+            <section className="member-profile-section" aria-labelledby="member-profile-birth-heading">
+              <h3 id="member-profile-birth-heading">Ngày sinh</h3>
+              <p className={!member.birthDate?.trim() ? "member-profile-pending" : undefined}>{member.birthDate?.trim() || "Đang cập nhật"}</p>
+            </section>
+            <section className="member-profile-section" aria-labelledby="member-profile-interests-heading">
+              <h3 id="member-profile-interests-heading">Sở thích</h3>
+              <p className={!member.interests?.trim() ? "member-profile-pending" : undefined}>{member.interests?.trim() || "Đang cập nhật"}</p>
+            </section>
+          </div>
+
+          <section className="member-profile-section" aria-labelledby="member-profile-message-heading">
+            <h3 id="member-profile-message-heading">Thông điệp</h3>
+            <p className={!member.message?.trim() ? "member-profile-pending" : undefined}>{member.message?.trim() || "Đang cập nhật"}</p>
           </section>
 
           <section className="member-profile-section" aria-labelledby="member-profile-facebook-heading">

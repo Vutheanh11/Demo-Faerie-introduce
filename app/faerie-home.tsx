@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import MemberProfileDialog, { type MemberDetails } from "./member-profile-dialog";
 
 type Tab = "Introduce" | "members" | "top20";
@@ -19,11 +19,24 @@ function memberGlitchStyle(photo?: string): CSSProperties | undefined {
 }
 
 function EventPhotoGallery({ images, title }: { images: string[]; title: string }) {
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [previousIndex, setPreviousIndex] = useState<number | null>(null);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [transitionId, setTransitionId] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const gallery = galleryRef.current;
+    if (!gallery || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), {
+      rootMargin: "120px 0px",
+    });
+    observer.observe(gallery);
+    return () => observer.disconnect();
+  }, []);
 
   const showPhoto = (nextIndex: number, nextDirection: 1 | -1) => {
     if (nextIndex === activeIndex) return;
@@ -34,7 +47,8 @@ function EventPhotoGallery({ images, title }: { images: string[]; title: string 
   };
 
   useEffect(() => {
-    if (paused || images.length < 2) return;
+    if (paused || !visible || images.length < 2 || document.hidden ||
+        window.matchMedia("(max-width: 760px), (prefers-reduced-motion: reduce)").matches) return;
 
     const timer = window.setTimeout(() => {
       setPreviousIndex(activeIndex);
@@ -44,18 +58,35 @@ function EventPhotoGallery({ images, title }: { images: string[]; title: string 
     }, 5000);
 
     return () => window.clearTimeout(timer);
-  }, [activeIndex, images.length, paused]);
+  }, [activeIndex, images.length, paused, visible]);
 
   const previousPhoto = () => showPhoto((activeIndex - 1 + images.length) % images.length, -1);
   const nextPhoto = () => showPhoto((activeIndex + 1) % images.length, 1);
 
   return (
     <div
+      ref={galleryRef}
       className="event-photo-gallery"
       onPointerEnter={() => setPaused(true)}
       onPointerLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
+      onTouchStart={(event) => {
+        touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+      }}
+      onTouchEnd={(event) => {
+        if (!touchStart.current) return;
+        const dx = event.changedTouches[0].clientX - touchStart.current.x;
+        const dy = event.changedTouches[0].clientY - touchStart.current.y;
+        touchStart.current = null;
+        if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy) * 1.3) return;
+        if (dx < 0) nextPhoto();
+        else previousPhoto();
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowRight") { event.preventDefault(); nextPhoto(); }
+        if (event.key === "ArrowLeft") { event.preventDefault(); previousPhoto(); }
+      }}
     >
       {previousIndex !== null && (
         <img
@@ -64,6 +95,7 @@ function EventPhotoGallery({ images, title }: { images: string[]; title: string 
           src={images[previousIndex]}
           alt=""
           aria-hidden="true"
+          decoding="async"
           onAnimationEnd={() => setPreviousIndex(null)}
         />
       )}
@@ -72,7 +104,8 @@ function EventPhotoGallery({ images, title }: { images: string[]; title: string 
         className={`event-photo-image ${previousIndex === null ? "is-current" : `is-entering ${direction === 1 ? "from-right" : "from-left"}`}`}
         src={images[activeIndex]}
         alt={`Ảnh ${title} số ${activeIndex + 1}`}
-        loading={activeIndex === 0 ? "eager" : "lazy"}
+        loading="lazy"
+        decoding="async"
       />
 
       {images.length > 1 && (
@@ -124,13 +157,13 @@ const eventsByYear: Record<EventYear, Array<{
       location: "FPTU HCMC Campus",
       tone: "mint",
       images: [
-        "images/events/2026/kickoff/KickOff2026.jpg",
-        "images/events/2026/kickoff/KickOff2026_1.jpg",
-        "images/events/2026/kickoff/KickOff2026_2.jpg",
-        "images/events/2026/kickoff/KickOff2026_3.jpg",
-        "images/events/2026/kickoff/KickOff2026_4.jpg",
-        "images/events/2026/kickoff/KickOff2026_5.jpg",
-        "images/events/2026/kickoff/KickOff2026_6.jpg",
+        "images/events/2026/kickoff/KickOff2026.webp",
+        "images/events/2026/kickoff/KickOff2026_1.webp",
+        "images/events/2026/kickoff/KickOff2026_2.webp",
+        "images/events/2026/kickoff/KickOff2026_3.webp",
+        "images/events/2026/kickoff/KickOff2026_4.webp",
+        "images/events/2026/kickoff/KickOff2026_5.webp",
+        "images/events/2026/kickoff/KickOff2026_6.webp",
       ],
     },
     {
@@ -143,13 +176,13 @@ const eventsByYear: Record<EventYear, Array<{
       location: "TP.HCM",
       tone: "fern",
       images: [
-        "images/events/2026/offline/HopOffline_1.jpg",
-        "images/events/2026/offline/HopOffline_2.jpg",
-        "images/events/2026/offline/HopOffline_3.jpg",
-        "images/events/2026/offline/HopOffline_4.jpg",
-        "images/events/2026/offline/HopOffline_5.jpg",
-        "images/events/2026/offline/HopOffline_6.jpg",
-        "images/events/2026/offline/HopOffline_7.jpg",
+        "images/events/2026/offline/HopOffline_1.webp",
+        "images/events/2026/offline/HopOffline_2.webp",
+        "images/events/2026/offline/HopOffline_3.webp",
+        "images/events/2026/offline/HopOffline_4.webp",
+        "images/events/2026/offline/HopOffline_5.webp",
+        "images/events/2026/offline/HopOffline_6.webp",
+        "images/events/2026/offline/HopOffline_7.webp",
       ],
     },
     {
@@ -162,14 +195,14 @@ const eventsByYear: Record<EventYear, Array<{
       location: "TP.HCM",
       tone: "mint",
       images: [
-        "images/events/2026/team-building/TeamBuilding_1.jpg",
-        "images/events/2026/team-building/TeamBuilding_2.jpg",
-        "images/events/2026/team-building/TeamBuilding_3.jpg",
-        "images/events/2026/team-building/TeamBuilding_4.jpg",
-        "images/events/2026/team-building/TeamBuilding_5.jpg",
-        "images/events/2026/team-building/TeamBuilding_6.jpg",
-        "images/events/2026/team-building/TeamBuilding_7.jpg",
-        "images/events/2026/team-building/TeamBuilding_8.jpg",
+        "images/events/2026/team-building/TeamBuilding_1.webp",
+        "images/events/2026/team-building/TeamBuilding_2.webp",
+        "images/events/2026/team-building/TeamBuilding_3.webp",
+        "images/events/2026/team-building/TeamBuilding_4.webp",
+        "images/events/2026/team-building/TeamBuilding_5.webp",
+        "images/events/2026/team-building/TeamBuilding_6.webp",
+        "images/events/2026/team-building/TeamBuilding_7.webp",
+        "images/events/2026/team-building/TeamBuilding_8.webp",
       ],
     },
     {
@@ -182,11 +215,11 @@ const eventsByYear: Record<EventYear, Array<{
       location: "FPTU HCMC Campus",
       tone: "fern",
       images: [
-        "images/events/2026/kickoff-august/KickOff_1.jpg",
-        "images/events/2026/kickoff-august/KickOff_2.jpg",
-        "images/events/2026/kickoff-august/KickOff_3.jpg",
-        "images/events/2026/kickoff-august/KickOff_4.jpg",
-        "images/events/2026/kickoff-august/KickOff_6.jpg",
+        "images/events/2026/kickoff-august/KickOff_1.webp",
+        "images/events/2026/kickoff-august/KickOff_2.webp",
+        "images/events/2026/kickoff-august/KickOff_3.webp",
+        "images/events/2026/kickoff-august/KickOff_4.webp",
+        "images/events/2026/kickoff-august/KickOff_6.webp",
       ],
     },
     {
@@ -199,12 +232,12 @@ const eventsByYear: Record<EventYear, Array<{
       location: "FPTU HCMC Campus",
       tone: "mint",
       images: [
-        "images/events/2026/national-day/QK_1.jpg",
-        "images/events/2026/national-day/QK_2.jpg",
-        "images/events/2026/national-day/QK_3.jpg",
-        "images/events/2026/national-day/QK_4.jpg",
-        "images/events/2026/national-day/QK_5.jpg",
-        "images/events/2026/national-day/QK_6.jpg",
+        "images/events/2026/national-day/QK_1.webp",
+        "images/events/2026/national-day/QK_2.webp",
+        "images/events/2026/national-day/QK_3.webp",
+        "images/events/2026/national-day/QK_4.webp",
+        "images/events/2026/national-day/QK_5.webp",
+        "images/events/2026/national-day/QK_6.webp",
       ],
     },
     {
@@ -217,10 +250,10 @@ const eventsByYear: Record<EventYear, Array<{
       location: "FPTU HCMC Campus",
       tone: "fern",
       images: [
-        "images/events/2026/welcome-day-1/WD_1.jpg",
-        "images/events/2026/welcome-day-1/WD_2.jpg",
-        "images/events/2026/welcome-day-1/WD_3.jpg",
-        "images/events/2026/welcome-day-1/WD_4.jpg",
+        "images/events/2026/welcome-day-1/WD_1.webp",
+        "images/events/2026/welcome-day-1/WD_2.webp",
+        "images/events/2026/welcome-day-1/WD_3.webp",
+        "images/events/2026/welcome-day-1/WD_4.webp",
       ],
     },
     {
@@ -233,10 +266,10 @@ const eventsByYear: Record<EventYear, Array<{
       location: "FPTU HCMC Campus",
       tone: "mint",
       images: [
-        "images/events/2026/welcome-day-2/WD2_1.jpg",
-        "images/events/2026/welcome-day-2/WD2_2.jpg",
-        "images/events/2026/welcome-day-2/WD2_3.jpg",
-        "images/events/2026/welcome-day-2/WD2_4.jpg",
+        "images/events/2026/welcome-day-2/WD2_1.webp",
+        "images/events/2026/welcome-day-2/WD2_2.webp",
+        "images/events/2026/welcome-day-2/WD2_3.webp",
+        "images/events/2026/welcome-day-2/WD2_4.webp",
       ],
     },
   ],
@@ -490,7 +523,7 @@ export default function Home() {
   const [eventYear, setEventYear] = useState<EventYear>(2026);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const progressRef = useRef<HTMLSpanElement>(null);
   const [selectedMember, setSelectedMember] = useState<MemberProfile | null>(null);
   const closeMemberProfile = useCallback(() => setSelectedMember(null), []);
 
@@ -501,7 +534,9 @@ export default function Home() {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
         const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-        setScrollProgress(scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0);
+        if (progressRef.current) {
+          progressRef.current.style.transform = `scaleX(${scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0})`;
+        }
       });
     };
 
@@ -518,7 +553,7 @@ export default function Home() {
 
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (window.matchMedia("(max-width: 760px), (prefers-reduced-motion: reduce)").matches) {
       nodes.forEach((node) => node.classList.add("is-visible"));
       return;
     }
@@ -557,7 +592,7 @@ export default function Home() {
   return (
     <main className={`app-shell tab-${tab.toLowerCase()}`}>
       <header className="site-header is-tactical">
-        <span className="site-progress" style={{ transform: `scaleX(${scrollProgress})` }} aria-hidden="true" />
+        <span ref={progressRef} className="site-progress" style={{ transform: "scaleX(0)" }} aria-hidden="true" />
         <button className="brand" onClick={() => switchTab("Introduce")} aria-label="Faerie home">
           <span className="brand-mark" aria-hidden="true"><img src="images/faerie-icon.png" alt="" /></span>
           <span>
@@ -601,8 +636,9 @@ export default function Home() {
           <section className="v-hero" aria-labelledby="faerie-hero-title">
             <img
               className="v-hero-background"
-              src="images/faerie-banner.jpg"
-              alt="Các thành viên nhà Faerie chụp ảnh cùng nhau tại FPTU HCMC"
+              src="images/events/2026/team-building/TeamBuilding_1.webp"
+              alt="Các thành viên Faerie cùng nhau trong buổi Team Building ngoài trời"
+              fetchPriority="high"
             />
             <div className="v-hero-wash" aria-hidden="true" />
             <div className="v-grid" aria-hidden="true" />
@@ -722,11 +758,8 @@ export default function Home() {
 
             <div className="v-about-visual" aria-label="Khoảnh khắc của các thành viên Faerie" data-reveal>
               <figure className="v-photo-main">
-                <img src="images/events/2026/kickoff/KickOff2026_1.jpg" alt="Thành viên Faerie tại sự kiện Kick Off 2026" loading="lazy" />
-                <figcaption>FAERIE KICK OFF // 2026</figcaption>
-              </figure>
-              <figure className="v-photo-mini">
-                <img src="images/events/2026/kickoff/KickOff2026_4.jpg" alt="Khoảnh khắc kết nối của nhà Faerie" loading="lazy" />
+                <img src="images/events/2026/offline/HopOffline_3.webp" alt="Thành viên Faerie cùng trò chuyện và vỗ tay trong buổi họp offline" loading="lazy" decoding="async" />
+                <figcaption>FAERIE OFFLINE // 2026</figcaption>
               </figure>
               <span className="v-photo-code" aria-hidden="true">FÆ / 03 — 26</span>
             </div>
@@ -740,7 +773,7 @@ export default function Home() {
           </section>
 
           <section className="v-manifesto">
-            <img src="images/events/2026/kickoff/KickOff2026_6.jpg" alt="Các thành viên Faerie cùng nhau trong hoạt động năm 2026" loading="lazy" />
+            <img src="images/events/2026/team-building/TeamBuilding_7.webp" alt="Các thành viên Faerie chụp ảnh cùng nhau tại Team Building 2026" loading="lazy" decoding="async" />
             <div className="v-manifesto-wash" aria-hidden="true" />
             <div className="v-manifesto-copy section-shell" data-reveal>
               <p className="v-kicker"><span>04</span> Ready for the next chapter?</p>
