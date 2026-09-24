@@ -280,7 +280,6 @@ const roster2023: MemberProfile[] = [
   { name: "Lý Quốc Lâm", title: "Supporter", group: "Supporter" },
   { name: "Trần Mai", title: "Leader Nhà", group: "Leadership" },
   { name: "Vũ Thế Anh", title: "Sub Leader Nhà", group: "Leadership" },
-  { name: "Trần Văn Quỳnh", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
   { name: "Cao Minh Thư", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
   { name: "Trần Thu Anh", title: "Leader Ban Media", group: "Leadership" },
   { name: "Trịnh Hoàng Khang", title: "Leader Ban Kỹ Thuật", group: "Leadership" },
@@ -302,7 +301,6 @@ const roster2023: MemberProfile[] = [
   { name: "Lê Võ Gia Bảo", title: "Member", group: "Member" },
   { name: "Võ Khôi Nguyên", title: "Member", group: "Member" },
   { name: "Huỳnh Quốc Bảo", title: "Member", group: "Member" },
-  { name: "Đặng Tiến Hưng", title: "Member", group: "Member" },
   { name: "Hoàng Văn Đức Nhân", title: "Member", group: "Member" },
   { name: "Nguyễn Thanh Nhật Tân", title: "Member", group: "Member" },
   { name: "Nguyễn Thành Nhân", title: "Member", group: "Member" },
@@ -318,7 +316,6 @@ const roster2024: MemberProfile[] = [
   { name: "Nguyễn Hoàng Đức Phương", title: "Supporter", group: "Supporter" },
   { name: "Trần Mai", title: "Leader Nhà", group: "Leadership" },
   { name: "Vũ Thế Anh", title: "Sub Leader Nhà", group: "Leadership" },
-  { name: "Trần Văn Quỳnh", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
   { name: "Cao Minh Thư", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
   { name: "Trần Thu Anh", title: "Leader Ban Media", group: "Leadership" },
   { name: "Trịnh Hoàng Khang", title: "Leader Ban Kỹ Thuật", group: "Leadership" },
@@ -340,7 +337,6 @@ const roster2024: MemberProfile[] = [
   { name: "Lê Võ Gia Bảo", title: "Member", group: "Member" },
   { name: "Võ Khôi Nguyên", title: "Member", group: "Member" },
   { name: "Huỳnh Quốc Bảo", title: "Member", group: "Member" },
-  { name: "Đặng Tiến Hưng", title: "Member", group: "Member" },
   { name: "Hoàng Văn Đức Nhân", title: "Member", group: "Member" },
   { name: "Nguyễn Thanh Nhật Tân", title: "Member", group: "Member" },
   { name: "Nguyễn Thành Nhân", title: "Member", group: "Member" },
@@ -405,7 +401,6 @@ const roster2026: MemberProfile[] = [
   { name: "Nguyễn Trần Hạ My", title: "Supporter", group: "Supporter" },
   { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
   { name: "Vũ Thế Anh", title: "Sub Leader Nhà", group: "Leadership" },
-  { name: "Đặng Tiến Hưng", title: "Member", group: "Member" },
   { name: "Huỳnh Quốc Bảo", title: "Member", group: "Member" },
   { name: "Đồng Thành Đạt", title: "Member", group: "Member" },
   { name: "Lê Thùy Dương", title: "Leader Ban Nghệ Thuật", group: "Leadership" },
@@ -425,7 +420,6 @@ const roster2026: MemberProfile[] = [
   { name: "Nguyễn Đan Huy", title: "Member", group: "Member" },
   { name: "Phạm Thị Thu Hằng", title: "Member", group: "Member" },
   { name: "Võ Khôi Nguyên", title: "Member", group: "Member" },
-  { name: "Trần Văn Quỳnh", title: "Member", group: "Member" },
   { name: "Phou Mảu Quang", title: "Member", group: "Member" },
   { name: "Nguyễn Thanh Nhật Tân", title: "Sub Leader Ban Văn Hóa", group: "Leadership" },
   { name: "Trần Nhất Huy", title: "Member", group: "Member" },
@@ -435,7 +429,6 @@ const roster2026: MemberProfile[] = [
   { name: "Trịnh Hoàng Khang", title: "Leader Ban Kỹ Thuật", group: "Leadership" },
   { name: "Lê Ngọc Trang", title: "Member", group: "Member" },
   { name: "Trần Đức Minh", title: "Member", group: "Member" },
-  { name: "Võ Việt Nhật Minh", title: "Member", group: "Member" },
   { name: "Phạm Gia Khiêm", title: "Member", group: "Member" },
   { name: "Trương Thảo Vi", title: "Member", group: "Member" },
 ];
@@ -447,7 +440,7 @@ const rosters: Record<RosterYear, MemberProfile[]> = {
   2026: roster2026,
 };
 
-const totalMembers = 36;
+const totalMembers = roster2026.length;
 
 const groupOrder: MemberGroup[] = ["Mentor", "Supporter", "Leadership", "Member"];
 const groupLabels: Record<MemberGroup, string> = {
@@ -470,7 +463,6 @@ const memberPhotos: Partial<Record<RosterYear, Record<string, string>>> = {
     "Nguyễn Trần Hạ My": "images/members/2026/cards/02.webp",
     "Phạm Lê Ý Linh": "images/members/2026/cards/03.webp",
     "Vũ Thế Anh": "images/members/2026/cards/04.webp",
-    "Đặng Tiến Hưng": "images/members/2026/cards/05.webp",
     "Huỳnh Quốc Bảo": "images/members/2026/cards/06.webp",
     "Đồng Thành Đạt": "images/members/2026/cards/07.webp",
     "Lê Thùy Dương": "images/members/2026/cards/08.webp",
@@ -490,7 +482,6 @@ const memberPhotos: Partial<Record<RosterYear, Record<string, string>>> = {
     "Nguyễn Đan Huy": "images/members/2026/cards/22.webp",
     "Phạm Thị Thu Hằng": "images/members/2026/cards/23.webp",
     "Võ Khôi Nguyên": "images/members/2026/cards/24.webp",
-    "Trần Văn Quỳnh": "images/members/2026/cards/25.webp",
     "Phou Mảu Quang": "images/members/2026/cards/26.webp",
     "Nguyễn Thanh Nhật Tân": "images/members/2026/cards/27.webp",
     "Trần Nhất Huy": "images/members/2026/cards/28.webp",
@@ -500,7 +491,6 @@ const memberPhotos: Partial<Record<RosterYear, Record<string, string>>> = {
     "Trịnh Hoàng Khang": "images/members/2026/cards/32.webp",
     "Lê Ngọc Trang": "images/members/2026/cards/33.webp",
     "Trần Đức Minh": "images/members/2026/cards/34.webp",
-    "Võ Việt Nhật Minh": "images/members/2026/cards/35.webp",
     "Phạm Gia Khiêm": "images/members/2026/cards/36.webp",
     "Trương Thảo Vi": "images/members/2026/cards/37.webp",
   },
