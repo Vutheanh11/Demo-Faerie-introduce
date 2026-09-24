@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import MemberProfileDialog, { type MemberDetails } from "./member-profile-dialog";
 
-type Tab = "Introduce" | "members" | "top20";
+type Tab = "Introduce" | "members" | "top20" | "news";
 type EventYear = 2024 | 2025 | 2026;
 type RosterYear = 2023 | 2024 | 2025 | 2026;
 type MemberGroup = "Mentor" | "Supporter" | "Leadership" | "Member";
@@ -275,6 +275,8 @@ const eventsByYear: Record<EventYear, Array<{
   ],
 };
 
+const newsItems = [...eventsByYear[2026]].reverse();
+
 const roster2023: MemberProfile[] = [
   { name: "Nguyễn Thành Phát", title: "Mentor", group: "Mentor" },
   { name: "Lý Quốc Lâm", title: "Supporter", group: "Supporter" },
@@ -396,6 +398,16 @@ function makeMockRoster(names: string[]): MemberProfile[] {
   });
 }
 
+function memberRoleRank(title: string) {
+  if (title === "Mentor") return 0;
+  if (title === "Supporter") return 1;
+  if (title === "Leader Nhà") return 2;
+  if (title === "Sub Leader Nhà") return 3;
+  if (title.startsWith("Leader Ban ")) return 4;
+  if (title.startsWith("Sub Leader Ban ") || title.startsWith("Sublead Ban ")) return 5;
+  return 6;
+}
+
 const roster2026: MemberProfile[] = [
   { name: "Việt Phương", fullName: "Lê Việt Phương", title: "Mentor", group: "Mentor" },
   { name: "Nguyễn Trần Hạ My", title: "Supporter", group: "Supporter" },
@@ -431,7 +443,7 @@ const roster2026: MemberProfile[] = [
   { name: "Trần Đức Minh", title: "Member", group: "Member" },
   { name: "Phạm Gia Khiêm", title: "Member", group: "Member" },
   { name: "Trương Thảo Vi", title: "Member", group: "Member" },
-];
+].sort((first, second) => memberRoleRank(first.title) - memberRoleRank(second.title));
 
 const rosters: Record<RosterYear, MemberProfile[]> = {
   2023: roster2023,
@@ -615,6 +627,14 @@ export default function Home() {
             onClick={() => switchTab("top20")}
           >
             Top 20 <span>★</span>
+          </button>
+          <button
+            role="tab"
+            aria-selected={tab === "news"}
+            className={tab === "news" ? "active" : ""}
+            onClick={() => switchTab("news")}
+          >
+            News <span>{newsItems.length.toString().padStart(2, "0")}</span>
           </button>
         </nav>
 
@@ -886,6 +906,33 @@ export default function Home() {
             ) : (
               <div className="empty-state"><span>✦</span><h3>Chưa tìm thấy thành viên</h3><p>Thử một tên hoặc vai trò khác nhé.</p></div>
             )}
+          </section>
+        </div>
+      ) : tab === "news" ? (
+        <div role="tabpanel" className="news-page tactical-page page-enter">
+          <section className="news-hero section-shell">
+            <p className="tactical-kicker"><span>01</span> Faerie House · 2026</p>
+            <h1>FAERIE<br /><em>NEWS.</em></h1>
+            <p>Những hoạt động gần đây của nhà Faerie, từ khoảnh khắc mới nhất trở về ngày đầu tiên.</p>
+            <span className="news-total">{newsItems.length.toString().padStart(2, "0")} CÂU CHUYỆN</span>
+          </section>
+          <section className="news-feed section-shell" aria-label="Tin tức Faerie">
+            {newsItems.map((event) => (
+              <article className="news-card" key={`${event.year}-${event.date}-${event.title}`} data-reveal>
+                <div className="news-card-image">
+                  <img src={event.images?.[0]} alt={`Faerie — ${event.title}, ${event.date}.${event.year}`} loading="lazy" decoding="async" />
+                </div>
+                <div className="news-card-copy">
+                  <div className="news-card-meta">
+                    <time dateTime={`${event.year}-${event.date.slice(3, 5)}-${event.date.slice(0, 2)}`}>{event.date}.{event.year}</time>
+                    <span>{event.tag}</span>
+                  </div>
+                  <h2>{event.title}</h2>
+                  <p>{event.description}</p>
+                  <small>{event.location}</small>
+                </div>
+              </article>
+            ))}
           </section>
         </div>
       ) : (
