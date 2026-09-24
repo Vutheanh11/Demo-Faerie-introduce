@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import MemberProfileDialog, { type MemberDetails } from "./member-profile-dialog";
 
 type Tab = "Introduce" | "members" | "top20" | "news";
-type EventYear = 2024 | 2025 | 2026;
 type RosterYear = 2023 | 2024 | 2025 | 2026;
 type MemberGroup = "Mentor" | "Supporter" | "Leadership" | "Member";
 
@@ -134,7 +133,7 @@ function EventPhotoGallery({ images, title }: { images: string[]; title: string 
   );
 }
 
-const eventsByYear: Record<EventYear, Array<{
+const events2026: Array<{
   date: string;
   year: string;
   title: string;
@@ -143,10 +142,7 @@ const eventsByYear: Record<EventYear, Array<{
   location: string;
   tone: string;
   images?: string[];
-}>> = {
-  2024: [],
-  2025: [],
-  2026: [
+}> = [
     {
       date: "02.07",
       year: "2026",
@@ -272,10 +268,9 @@ const eventsByYear: Record<EventYear, Array<{
         "images/events/2026/welcome-day-2/WD2_4.webp",
       ],
     },
-  ],
-};
+];
 
-const newsItems = [...eventsByYear[2026]].reverse();
+const newsItems = [...events2026].reverse();
 
 const roster2023: MemberProfile[] = [
   { name: "Nguyễn Thành Phát", title: "Mentor", group: "Mentor" },
@@ -522,7 +517,6 @@ const avatarTones = ["sage", "sun", "sky", "lilac", "coral", "lime"];
 export default function Home() {
   const [tab, setTab] = useState<Tab>("Introduce");
   const year: RosterYear = 2026;
-  const [eventYear, setEventYear] = useState<EventYear>(2026);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
   const progressRef = useRef<HTMLSpanElement>(null);
@@ -573,7 +567,7 @@ export default function Home() {
 
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
-  }, [tab, eventYear, year, role, query]);
+  }, [tab, year, role, query]);
 
   const members = useMemo(
     () =>
@@ -686,7 +680,7 @@ export default function Home() {
             <div className="v-signal-lead"><span aria-hidden="true">✦</span> ONE HOUSE. MANY STORIES.</div>
             <div><small>THẾ HỆ</small><strong>3</strong><span>tiếp nối</span></div>
             <div><small>THÀNH VIÊN</small><strong>{totalMembers}</strong><span>mảnh ghép</span></div>
-            <div><small>NĂM 2026</small><strong>{eventsByYear[2026].length.toString().padStart(2, "0")}</strong><span>hoạt động</span></div>
+            <div><small>NĂM 2026</small><strong>{events2026.length.toString().padStart(2, "0")}</strong><span>hoạt động</span></div>
           </section>
 
           <section className="v-events section-shell" id="events">
@@ -694,7 +688,7 @@ export default function Home() {
             <div className="v-section-heading" data-reveal>
               <div>
                 <p className="v-kicker"><span>STORIES</span> What&apos;s happening</p>
-                <h2>FAERIE<br /><em>STORY</em></h2>
+                <h2 className="v-story-title">FAERIE<br /><em>STORY 2026</em></h2>
               </div>
               <p>
                 Mỗi sự kiện là một tọa độ trong hành trình chung — nơi chúng mình gặp gỡ,
@@ -702,27 +696,11 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="v-year-tabs" aria-label="Chọn năm sự kiện" role="tablist" data-reveal>
-              {([2024, 2025, 2026] as EventYear[]).map((item) => (
-                <button
-                  key={item}
-                  role="tab"
-                  aria-selected={eventYear === item}
-                  className={eventYear === item ? "active" : ""}
-                  onClick={() => setEventYear(item)}
-                >
-                  <span>{item}</span>
-                  <small>{eventsByYear[item].length.toString().padStart(2, "0")} stories</small>
-                </button>
-              ))}
-            </div>
-
-            {eventsByYear[eventYear].length > 0 ? (
-              <div className="v-event-grid">
-                {eventsByYear[eventYear].map((event, index) => (
+            <div className="v-event-grid">
+                {events2026.map((event, index) => (
                   <article
                     className={`v-event-card ${index === 0 ? "featured" : ""}`}
-                    key={`${eventYear}-${event.date}-${event.title}`}
+                    key={`${event.year}-${event.date}-${event.title}`}
                     data-reveal
                     style={{ transitionDelay: `${index * 90}ms` }}
                   >
@@ -746,13 +724,7 @@ export default function Home() {
                     </div>
                   </article>
                 ))}
-              </div>
-            ) : (
-              <div className="v-event-empty">
-                <span aria-hidden="true">{"// "}{eventYear}</span>
-                <div><strong>MISSION NOT STARTED</strong><p>Chuyện năm {eventYear} đang được viết. Hẹn gặp bạn ở cột mốc tiếp theo.</p></div>
-              </div>
-            )}
+            </div>
           </section>
 
           <section className="v-about section-shell">
