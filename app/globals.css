@@ -1943,6 +1943,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
 .valorant-members .member-front-info .member-front-role { font-size: 14px; line-height: 1.5; }
 .valorant-members .member-front-info .member-front-meta { font-size: 12px; }
 .footer-contact a, .footer-contact address { font-size: 14px; line-height: 1.7; }
+.footer-contact .footer-credit { width: 100%; margin-top: 10px; padding-top: 12px; border-top: 1px solid rgba(246,243,235,.2); color: rgba(246,243,235,.72); font-size: 14px; }
 .v-events, .valorant-members .directory { scroll-margin-top: 82px; }
 .v-photo-main figcaption { font-size: 12px; letter-spacing: .08em; }
 .event-gallery-dots { gap: 2px; padding: 4px 6px; }

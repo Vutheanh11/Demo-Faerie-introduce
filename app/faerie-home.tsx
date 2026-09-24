@@ -952,6 +952,7 @@ export default function Home() {
           <a href="mailto:faeriesolace@gmail.com">faeriesolace@gmail.com</a>
           <a href="https://www.facebook.com/profile.php?id=61577779404694" target="_blank" rel="noreferrer">Facebook Faerie ↗</a>
           <address>Lô E2a-7, Đường D1 Khu Công nghệ cao, P. Long Thạnh Mỹ, TP. Thủ Đức, Ho Chi Minh City, Vietnam</address>
+          <a className="footer-credit" href="https://www.facebook.com/vu.bootloop" target="_blank" rel="noopener noreferrer">Made by Vu The Anh ↗</a>
         </div>
         <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Lên đầu trang ↑</button>
       </footer>
