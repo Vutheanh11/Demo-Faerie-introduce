@@ -9,7 +9,21 @@ type MemberGroup = "Mentor" | "Supporter" | "Leadership" | "Member";
 
 type MemberProfile = MemberDetails & {
   group: MemberGroup;
+  photo?: string;
 };
+
+type FaerieEvent = {
+  date: string;
+  year: string;
+  title: string;
+  description: string;
+  tag: string;
+  location: string;
+  tone: string;
+  images?: string[];
+};
+
+const apiBaseUrl = (process.env.NEXT_PUBLIC_FAERIE_API_URL ?? "https://faerienews-backend.onrender.com").replace(/\/$/, "");
 
 function memberGlitchStyle(photo?: string): CSSProperties | undefined {
   if (!photo || typeof document === "undefined") return undefined;
@@ -133,16 +147,7 @@ function EventPhotoGallery({ images, title }: { images: string[]; title: string 
   );
 }
 
-const events2026: Array<{
-  date: string;
-  year: string;
-  title: string;
-  description: string;
-  tag: string;
-  location: string;
-  tone: string;
-  images?: string[];
-}> = [
+const events2026: FaerieEvent[] = [
     {
       date: "02.07",
       year: "2026",
@@ -269,8 +274,6 @@ const events2026: Array<{
       ],
     },
 ];
-
-const newsItems = [...events2026].reverse();
 
 const roster2023: MemberProfile[] = [
   { name: "Nguyễn Thành Phát", title: "Mentor", group: "Mentor" },
@@ -403,7 +406,7 @@ function memberRoleRank(title: string) {
   return 6;
 }
 
-const roster2026: MemberProfile[] = [
+const roster2026: MemberProfile[] = ([
   { name: "Việt Phương", fullName: "Lê Việt Phương", title: "Mentor", group: "Mentor" },
   { name: "Nguyễn Trần Hạ My", title: "Supporter", group: "Supporter" },
   { name: "Phạm Lê Ý Linh", title: "Leader Nhà", group: "Leadership" },
@@ -438,7 +441,7 @@ const roster2026: MemberProfile[] = [
   { name: "Trần Đức Minh", title: "Member", group: "Member" },
   { name: "Phạm Gia Khiêm", title: "Member", group: "Member" },
   { name: "Trương Thảo Vi", title: "Member", group: "Member" },
-].sort((first, second) => memberRoleRank(first.title) - memberRoleRank(second.title));
+] satisfies MemberProfile[]).sort((first, second) => memberRoleRank(first.title) - memberRoleRank(second.title));
 
 const rosters: Record<RosterYear, MemberProfile[]> = {
   2023: roster2023,
@@ -446,8 +449,6 @@ const rosters: Record<RosterYear, MemberProfile[]> = {
   2025: roster2025,
   2026: roster2026,
 };
-
-const totalMembers = roster2026.length;
 
 const groupOrder: MemberGroup[] = ["Mentor", "Supporter", "Leadership", "Member"];
 const groupLabels: Record<MemberGroup, string> = {
@@ -517,11 +518,48 @@ const avatarTones = ["sage", "sun", "sky", "lilac", "coral", "lime"];
 export default function Home() {
   const [tab, setTab] = useState<Tab>("Introduce");
   const year: RosterYear = 2026;
+  const [currentMembers, setCurrentMembers] = useState<MemberProfile[]>(roster2026);
+  const [currentEvents, setCurrentEvents] = useState<FaerieEvent[]>(events2026);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
   const progressRef = useRef<HTMLSpanElement>(null);
   const [selectedMember, setSelectedMember] = useState<MemberProfile | null>(null);
   const closeMemberProfile = useCallback(() => setSelectedMember(null), []);
+  const totalMembers = currentMembers.length;
+  const newsItems = useMemo(() => [...currentEvents].reverse(), [currentEvents]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 90_000);
+
+    const loadMembers = async () => {
+      const response = await fetch(`${apiBaseUrl}/api/v1/members?year=2026`, { signal: controller.signal });
+      if (!response.ok) return;
+      const data: { members?: MemberProfile[] } = await response.json();
+      if (Array.isArray(data.members) && data.members.every((person) =>
+        typeof person.name === "string" && typeof person.title === "string" &&
+        ["Mentor", "Supporter", "Leadership", "Member"].includes(person.group))) {
+        setCurrentMembers(data.members);
+      }
+    };
+
+    const loadEvents = async () => {
+      const response = await fetch(`${apiBaseUrl}/api/v1/events?year=2026`, { signal: controller.signal });
+      if (!response.ok) return;
+      const data: { events?: FaerieEvent[] } = await response.json();
+      if (Array.isArray(data.events) && data.events.every((event) =>
+        typeof event.date === "string" && typeof event.title === "string" &&
+        typeof event.description === "string" && Array.isArray(event.images))) {
+        setCurrentEvents(data.events);
+      }
+    };
+
+    void Promise.allSettled([loadMembers(), loadEvents()]).finally(() => window.clearTimeout(timeout));
+    return () => {
+      controller.abort();
+      window.clearTimeout(timeout);
+    };
+  }, []);
 
   useEffect(() => {
     let frame = 0;
@@ -571,13 +609,13 @@ export default function Home() {
 
   const members = useMemo(
     () =>
-      rosters[year]
+      currentMembers
         .map((person, index) => ({ ...person, index }))
         .filter((person) => role === "All" || person.group === role)
         .filter((person) =>
           String(person.name ?? "").toLocaleLowerCase("vi").includes(query.trim().toLocaleLowerCase("vi")),
         ),
-    [year, role, query],
+    [currentMembers, role, query],
   );
 
   const switchTab = (nextTab: Tab) => {
@@ -680,7 +718,7 @@ export default function Home() {
             <div className="v-signal-lead"><span aria-hidden="true">✦</span> ONE HOUSE. MANY STORIES.</div>
             <div><small>THẾ HỆ</small><strong>3</strong><span>tiếp nối</span></div>
             <div><small>THÀNH VIÊN</small><strong>{totalMembers}</strong><span>mảnh ghép</span></div>
-            <div><small>NĂM 2026</small><strong>{events2026.length.toString().padStart(2, "0")}</strong><span>hoạt động</span></div>
+            <div><small>NĂM 2026</small><strong>{currentEvents.length.toString().padStart(2, "0")}</strong><span>hoạt động</span></div>
           </section>
 
           <section className="v-events section-shell" id="events">
@@ -697,7 +735,7 @@ export default function Home() {
             </div>
 
             <div className="v-event-grid">
-                {events2026.map((event, index) => (
+                {currentEvents.map((event, index) => (
                   <article
                     className={`v-event-card ${index === 0 ? "featured" : ""}`}
                     key={`${event.year}-${event.date}-${event.title}`}
@@ -822,11 +860,11 @@ export default function Home() {
 
             <div className="role-filter" aria-label="Lọc theo vai trò" data-reveal>
               <button className={role === "All" ? "active" : ""} onClick={() => setRole("All")}>
-                Tất cả <span>{rosters[year].length}</span>
+                Tất cả <span>{currentMembers.length}</span>
               </button>
               {groupOrder.map((item) => (
                 <button key={item} className={role === item ? "active" : ""} onClick={() => setRole(item)}>
-                  {groupLabels[item]} <span>{rosters[year].filter((person) => person.group === item).length}</span>
+                  {groupLabels[item]} <span>{currentMembers.filter((person) => person.group === item).length}</span>
                 </button>
               ))}
             </div>
@@ -854,11 +892,11 @@ export default function Home() {
                     >
                       <div className="member-card-surface">
                         <div
-                          className={`avatar ${memberPhoto(year, person.name) ? "has-photo" : avatarTones[person.index % avatarTones.length]}`}
-                          style={memberGlitchStyle(memberPhoto(year, person.name))}
+                          className={`avatar ${person.photo || memberPhoto(year, person.name) ? "has-photo" : avatarTones[person.index % avatarTones.length]}`}
+                          style={memberGlitchStyle(person.photo || memberPhoto(year, person.name))}
                         >
-                          {memberPhoto(year, person.name) ? (
-                            <img src={memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
+                          {person.photo || memberPhoto(year, person.name) ? (
+                            <img src={person.photo || memberPhoto(year, person.name)} alt={`Ảnh của ${person.name}`} loading="lazy" />
                           ) : (
                             <span>{initials(person.name)}</span>
                           )}
@@ -956,7 +994,7 @@ export default function Home() {
       {selectedMember && (
         <MemberProfileDialog
           member={selectedMember}
-          photo={memberPhoto(year, selectedMember.name)}
+          photo={selectedMember.photo || memberPhoto(year, selectedMember.name)}
           year={year}
           onDismiss={closeMemberProfile}
         />

@@ -13,3 +13,5 @@ services:
         value: "true"
       - key: NEXT_PUBLIC_SITE_URL
         value: https://faeriehouse.onrender.com/
+      - key: NEXT_PUBLIC_FAERIE_API_URL
+        value: https://faerienews-backend.onrender.com
