@@ -13,6 +13,7 @@ type MemberProfile = MemberDetails & {
 };
 
 type FaerieEvent = {
+  id?: string;
   date: string;
   year: string;
   title: string;
@@ -520,13 +521,13 @@ export default function Home() {
   const year: RosterYear = 2026;
   const [currentMembers, setCurrentMembers] = useState<MemberProfile[]>(roster2026);
   const [currentEvents, setCurrentEvents] = useState<FaerieEvent[]>(events2026);
+  const [newsItems, setNewsItems] = useState<FaerieEvent[]>([...events2026].reverse());
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
   const progressRef = useRef<HTMLSpanElement>(null);
   const [selectedMember, setSelectedMember] = useState<MemberProfile | null>(null);
   const closeMemberProfile = useCallback(() => setSelectedMember(null), []);
   const totalMembers = currentMembers.length;
-  const newsItems = useMemo(() => [...currentEvents].reverse(), [currentEvents]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -554,7 +555,18 @@ export default function Home() {
       }
     };
 
-    void Promise.allSettled([loadMembers(), loadEvents()]).finally(() => window.clearTimeout(timeout));
+    const loadNews = async () => {
+      const response = await fetch(`${apiBaseUrl}/api/v1/news`, { signal: controller.signal });
+      if (!response.ok) return;
+      const data: { news?: FaerieEvent[] } = await response.json();
+      if (Array.isArray(data.news) && data.news.every((item) =>
+        typeof item.date === "string" && typeof item.title === "string" &&
+        typeof item.description === "string" && Array.isArray(item.images))) {
+        setNewsItems(data.news);
+      }
+    };
+
+    void Promise.allSettled([loadMembers(), loadEvents(), loadNews()]).finally(() => window.clearTimeout(timeout));
     return () => {
       controller.abort();
       window.clearTimeout(timeout);
@@ -928,9 +940,13 @@ export default function Home() {
           </section>
           <section className="news-feed section-shell" aria-label="Tin tức Faerie">
             {newsItems.map((event) => (
-              <article className="news-card" key={`${event.year}-${event.date}-${event.title}`} data-reveal>
+              <article className="news-card" key={event.id ?? `${event.year}-${event.date}-${event.title}`} data-reveal>
                 <div className="news-card-image">
-                  <img src={event.images?.[0]} alt={`Faerie — ${event.title}, ${event.date}.${event.year}`} loading="lazy" decoding="async" />
+                  {event.images?.[0] ? (
+                    <img src={event.images[0]} alt={`Faerie — ${event.title}, ${event.date}.${event.year}`} loading="lazy" decoding="async" />
+                  ) : (
+                    <span className="news-card-image-placeholder">FAERIE NEWS</span>
+                  )}
                 </div>
                 <div className="news-card-copy">
                   <div className="news-card-meta">
