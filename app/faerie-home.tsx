@@ -814,6 +814,17 @@ export default function Home() {
         <div className="header-note">EST. 2024 · TP.HCM</div>
       </header>
 
+      <div className="site-watermark-overlay" aria-hidden="true">
+        <svg width="100%" height="100%" focusable="false">
+          <defs>
+            <pattern id="faerie-credit-watermark" width="390" height="190" patternUnits="userSpaceOnUse" patternTransform="rotate(-22)">
+              <text x="18" y="96" fill="#617d68" fontFamily="Arial, sans-serif" fontSize="23" fontWeight="700" letterSpacing="1.5">Made by Vu The Anh</text>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#faerie-credit-watermark)" />
+        </svg>
+      </div>
+
       {tab === "Introduce" ? (
         <div role="tabpanel" className="valorant-intro page-enter">
           <section className="v-hero" aria-labelledby="faerie-hero-title">
