@@ -15,6 +15,7 @@ type MemberProfile = MemberDetails & {
 type FaerieEvent = {
   id?: string;
   body?: string;
+  bodyBlocks?: { runs: { text: string; bold?: boolean; italic?: boolean; underline?: boolean; size?: number }[] }[];
   date: string;
   year: string;
   title: string;
@@ -59,6 +60,8 @@ function NewsStoryPage({ story, loading, onBack }: { story?: FaerieEvent; loadin
 
   const articleText = story.body || eventStories[`${story.date}-${story.title}`] || story.description;
   const paragraphs = articleText.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean);
+  const richBlocks = Array.isArray(story.bodyBlocks) ? story.bodyBlocks.slice(0, 100).filter((block) =>
+    Array.isArray(block?.runs) && block.runs.some((run) => typeof run?.text === "string" && run.text.trim())) : [];
   const images = story.images ?? [];
   return (
     <article role="tabpanel" className="news-story-page page-enter">
@@ -85,7 +88,16 @@ function NewsStoryPage({ story, loading, onBack }: { story?: FaerieEvent; loadin
       <section className="news-story-article section-shell" aria-label={`Bài viết ${story.title}`}>
         <div className="news-story-aside"><span>01 / CÂU CHUYỆN</span><strong>{story.date}.{story.year}</strong><small>{story.location}</small></div>
         <div className="news-story-prose">
-          {paragraphs.map((paragraph, index) => <p key={index} className={index === 0 ? "lead" : ""}>{paragraph}</p>)}
+          {richBlocks.length ? richBlocks.map((block, blockIndex) => (
+            <p key={blockIndex} className={blockIndex === 0 ? "lead" : ""}>
+              {block.runs.slice(0, 200).filter((run) => typeof run?.text === "string").map((run, runIndex) => {
+                const size = Number.isInteger(run.size) && (run.size ?? 0) >= 1 && (run.size ?? 0) <= 7 ? run.size : 0;
+                const bold = run.bold ? <strong>{run.text}</strong> : run.text;
+                const italic = run.italic ? <em>{bold}</em> : bold;
+                return <span key={runIndex} className={size ? `news-text-size-${size}` : undefined}>{run.underline ? <u>{italic}</u> : italic}</span>;
+              })}
+            </p>
+          )) : paragraphs.map((paragraph, index) => <p key={index} className={index === 0 ? "lead" : ""}>{paragraph}</p>)}
         </div>
       </section>
       {images.length > 1 && (

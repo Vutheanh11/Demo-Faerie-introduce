@@ -2042,6 +2042,13 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
 .news-story-prose { max-width: 800px; }
 .news-story-prose p { margin: 0 0 26px; font-size: clamp(17px, 1.5vw, 21px); line-height: 1.85; }
 .news-story-prose p.lead { font-size: clamp(23px, 2.3vw, 34px); font-weight: 700; line-height: 1.5; letter-spacing: -.025em; }
+.news-story-prose .news-text-size-1 { font-size: 14px; }
+.news-story-prose .news-text-size-2 { font-size: 16px; }
+.news-story-prose .news-text-size-3 { font-size: 18px; }
+.news-story-prose .news-text-size-4 { font-size: 22px; }
+.news-story-prose .news-text-size-5 { font-size: 28px; }
+.news-story-prose .news-text-size-6 { font-size: 32px; }
+.news-story-prose .news-text-size-7 { font-size: 40px; }
 .news-story-gallery { padding-top: clamp(65px, 8vw, 110px); padding-bottom: clamp(85px, 10vw, 150px); background: #d9e7d8; }
 .news-story-gallery-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 25px; margin-bottom: 42px; border-top: 1px solid rgba(23,44,32,.3); padding-top: 16px; }
 .news-story-gallery-heading > span { color: var(--t-green); font-size: 12px; font-weight: 900; letter-spacing: .12em; }
