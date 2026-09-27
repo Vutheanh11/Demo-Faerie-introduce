@@ -14,6 +14,7 @@ type MemberProfile = MemberDetails & {
 
 type FaerieEvent = {
   id?: string;
+  body?: string;
   date: string;
   year: string;
   title: string;
@@ -25,6 +26,80 @@ type FaerieEvent = {
 };
 
 const apiBaseUrl = (process.env.NEXT_PUBLIC_FAERIE_API_URL ?? "https://faerienews-backend.onrender.com").replace(/\/$/, "");
+
+function newsStoryKey(story: FaerieEvent) {
+  if (story.id) return story.id;
+  const title = story.title.toLocaleLowerCase("vi").normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return `${story.year}-${story.date.replace(".", "-")}-${title}`;
+}
+
+const eventStories: Record<string, string> = {
+  "02.07-Kick Off": "Faerie 2026 bắt đầu bằng một buổi gặp gỡ để các thành viên trong đội ngũ điều hành nhìn về cùng một hướng. Đây là dịp cả nhà làm quen, chia sẻ tinh thần chung và mở ra chương đầu tiên của hành trình mới.\n\nTừ điểm khởi đầu ấy, những kế hoạch được đặt xuống bàn và câu chuyện Faerie 2026 dần thành hình. Bộ ảnh ghi lại những gương mặt, cuộc gặp gỡ và không khí của ngày mở màn.",
+  "15.07-Họp Offline lần đầu": "Sau những lần trò chuyện qua màn hình, Faerie có buổi họp trực tiếp đầu tiên. Những cái tên quen thuộc nay có thể ngồi cạnh nhau, cùng trao đổi và bắt đầu hiểu nhau nhiều hơn.\n\nBuổi gặp gỡ không chỉ để nói về kế hoạch phía trước mà còn là một bước nhỏ để tập thể trở nên gần gũi. Những khung hình bên dưới lưu lại khoảnh khắc đầu tiên ấy.",
+  "16.08-Team Building": "Team Building là một ngày dành cho việc cùng nhau thử thách và phối hợp. Mỗi hoạt động là cơ hội để thành viên Faerie quan sát, lắng nghe và tìm ra cách đồng hành với nhau.\n\nĐiều còn lại sau một ngày kết nối là sự thấu hiểu và tinh thần đồng đội. Cùng nhìn lại những khoảnh khắc đã góp phần đưa cả nhà gần nhau hơn.",
+  "25.08-Kick Off": "Chặng đường mới của Faerie được khởi động trong buổi Kick Off ngày 25/8. Cả nhà cùng gặp gỡ, chia sẻ những mục tiêu trước mắt và chuẩn bị tinh thần cho các hoạt động tiếp theo.\n\nMỗi dấu mốc bắt đầu đều mang theo sự háo hức riêng. Những bức ảnh ở đây là lát cắt của ngày cả tập thể cùng hướng về một hành trình mới.",
+  "02.09-Chào Mừng Quốc Khánh": "Trong không khí Quốc khánh, Faerie cùng lưu giữ những khoảnh khắc mang sắc màu Việt Nam. Đây là dịp để cả nhà hòa chung niềm vui và thể hiện niềm tự hào theo cách của mình.\n\nCùng xem lại những hình ảnh của hoạt động Chào Mừng Quốc Khánh, nơi tinh thần tập thể Faerie gặp gỡ không khí của ngày lễ.",
+  "03.09-Welcome Day 1": "Welcome Day đầu tiên mở ra những cuộc gặp gỡ giữa Faerie và các gương mặt mới tại FPTU HCMC. Từ lời chào, nụ cười đến những tương tác ban đầu, mỗi khoảnh khắc đều góp phần tạo nên không khí ngày hội.\n\nVới Faerie, đây là điểm bắt đầu của những kết nối mới. Bộ ảnh bên dưới ghi lại năng lượng và những dấu ấn đầu tiên của Welcome Day.",
+  "04.09-Welcome Day 2": "Ngày thứ hai của Welcome Day tiếp nối lời chào mà Faerie dành cho các tân sinh viên. Thêm những cuộc gặp gỡ, thêm hoạt động và thêm những gương mặt góp mặt trong câu chuyện của nhà.\n\nTừ ngày đầu tiên đến ngày thứ hai, điều đáng nhớ vẫn là những kết nối được tạo ra. Cùng nhìn lại những hình ảnh và kỷ niệm của Welcome Day 2.",
+};
+
+function NewsStoryPage({ story, loading, onBack }: { story?: FaerieEvent; loading: boolean; onBack: () => void }) {
+  if (!story) {
+    return (
+      <div role="tabpanel" className="news-story-page news-story-empty page-enter">
+        <div className="section-shell"><button type="button" className="news-story-back" onClick={onBack}>← Trở về News</button>
+          <h1>{loading ? "ĐANG TẢI BÀI VIẾT..." : "KHÔNG TÌM THẤY BÀI VIẾT."}</h1>
+          {!loading && <p>Bài viết này có thể đã được gỡ hoặc đường dẫn không còn đúng.</p>}
+        </div>
+      </div>
+    );
+  }
+
+  const articleText = story.body || eventStories[`${story.date}-${story.title}`] || story.description;
+  const paragraphs = articleText.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean);
+  const images = story.images ?? [];
+  return (
+    <article role="tabpanel" className="news-story-page page-enter">
+      <header className="news-story-header section-shell">
+        <button type="button" className="news-story-back" onClick={onBack}>← Trở về News</button>
+        <div className="news-story-heading">
+          <p className="tactical-kicker"><span>FAERIE STORY</span> / {story.tag}</p>
+          <h1>{story.title}</h1>
+          <div className="news-story-meta">
+            <time dateTime={`${story.year}-${story.date.slice(3, 5)}-${story.date.slice(0, 2)}`}>{story.date}.{story.year}</time>
+            <span>{story.location}</span>
+            <span>{images.length.toString().padStart(2, "0")} hình ảnh</span>
+          </div>
+        </div>
+      </header>
+      {images[0] ? (
+        <figure className="news-story-cover">
+          <img src={images[0]} alt={`${story.title} — ảnh 1`} fetchPriority="high" />
+          <figcaption>FAERIE HOUSE / {story.year}</figcaption>
+        </figure>
+      ) : (
+        <div className="news-story-cover news-story-cover-empty"><span>FAERIE NEWS</span></div>
+      )}
+      <section className="news-story-article section-shell" aria-label={`Bài viết ${story.title}`}>
+        <div className="news-story-aside"><span>01 / CÂU CHUYỆN</span><strong>{story.date}.{story.year}</strong><small>{story.location}</small></div>
+        <div className="news-story-prose">
+          {paragraphs.map((paragraph, index) => <p key={index} className={index === 0 ? "lead" : ""}>{paragraph}</p>)}
+        </div>
+      </section>
+      {images.length > 1 && (
+        <section className="news-story-gallery section-shell" aria-label={`Hình ảnh ${story.title}`}>
+          <div className="news-story-gallery-heading"><span>02 / HÌNH ẢNH</span><h2>NHỮNG KHOẢNH KHẮC<br /><em>ĐÁNG NHỚ.</em></h2></div>
+          <div className="news-story-gallery-grid">{images.slice(1).map((src, index) => (
+            <figure key={`${src}-${index}`}><img src={src} alt={`${story.title} — ảnh ${index + 2}`} loading="lazy" decoding="async" /><figcaption>{String(index + 2).padStart(2, "0")} / {String(images.length).padStart(2, "0")}</figcaption></figure>
+          ))}</div>
+        </section>
+      )}
+      <div className="news-story-footer section-shell"><button type="button" className="news-story-back" onClick={onBack}>← Xem tất cả News</button></div>
+    </article>
+  );
+}
 
 function memberGlitchStyle(photo?: string): CSSProperties | undefined {
   if (!photo || typeof document === "undefined") return undefined;
@@ -522,12 +597,25 @@ export default function Home() {
   const [currentMembers, setCurrentMembers] = useState<MemberProfile[]>(roster2026);
   const [currentEvents, setCurrentEvents] = useState<FaerieEvent[]>(events2026);
   const [newsItems, setNewsItems] = useState<FaerieEvent[]>([...events2026].reverse());
+  const [selectedStoryKey, setSelectedStoryKey] = useState<string | null>(null);
+  const [newsLoading, setNewsLoading] = useState(true);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
   const progressRef = useRef<HTMLSpanElement>(null);
   const [selectedMember, setSelectedMember] = useState<MemberProfile | null>(null);
   const closeMemberProfile = useCallback(() => setSelectedMember(null), []);
   const totalMembers = currentMembers.length;
+
+  useEffect(() => {
+    const syncStoryFromUrl = () => {
+      const storyKey = new URL(window.location.href).searchParams.get("story");
+      setSelectedStoryKey(storyKey);
+      if (storyKey) setTab("news");
+    };
+    syncStoryFromUrl();
+    window.addEventListener("popstate", syncStoryFromUrl);
+    return () => window.removeEventListener("popstate", syncStoryFromUrl);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -556,13 +644,17 @@ export default function Home() {
     };
 
     const loadNews = async () => {
-      const response = await fetch(`${apiBaseUrl}/api/v1/news`, { signal: controller.signal });
-      if (!response.ok) return;
-      const data: { news?: FaerieEvent[] } = await response.json();
-      if (Array.isArray(data.news) && data.news.every((item) =>
-        typeof item.date === "string" && typeof item.title === "string" &&
-        typeof item.description === "string" && Array.isArray(item.images))) {
-        setNewsItems(data.news);
+      try {
+        const response = await fetch(`${apiBaseUrl}/api/v1/news`, { signal: controller.signal });
+        if (!response.ok) return;
+        const data: { news?: FaerieEvent[] } = await response.json();
+        if (Array.isArray(data.news) && data.news.every((item) =>
+          typeof item.date === "string" && typeof item.title === "string" &&
+          typeof item.description === "string" && Array.isArray(item.images))) {
+          setNewsItems(data.news);
+        }
+      } finally {
+        setNewsLoading(false);
       }
     };
 
@@ -595,7 +687,7 @@ export default function Home() {
       window.removeEventListener("scroll", updateProgress);
       window.removeEventListener("resize", updateProgress);
     };
-  }, [tab]);
+  }, [tab, selectedStoryKey]);
 
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
@@ -617,7 +709,7 @@ export default function Home() {
 
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
-  }, [tab, year, role, query]);
+  }, [tab, year, role, query, selectedStoryKey]);
 
   const members = useMemo(
     () =>
@@ -630,7 +722,32 @@ export default function Home() {
     [currentMembers, role, query],
   );
 
+  const selectedStory = newsItems.find((story) => newsStoryKey(story) === selectedStoryKey);
+
+  const closeStory = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("story");
+    window.history.replaceState(null, "", url);
+    setSelectedStoryKey(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const openStory = (story: FaerieEvent) => {
+    const key = newsStoryKey(story);
+    const url = new URL(window.location.href);
+    url.searchParams.set("story", key);
+    window.history.pushState(null, "", url);
+    setSelectedStoryKey(key);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const switchTab = (nextTab: Tab) => {
+    if (selectedStoryKey) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("story");
+      window.history.replaceState(null, "", url);
+      setSelectedStoryKey(null);
+    }
     setTab(nextTab);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -930,6 +1047,8 @@ export default function Home() {
             )}
           </section>
         </div>
+      ) : tab === "news" && selectedStoryKey ? (
+        <NewsStoryPage story={selectedStory} loading={newsLoading} onBack={closeStory} />
       ) : tab === "news" ? (
         <div role="tabpanel" className="news-page tactical-page page-enter">
           <section className="news-hero section-shell">
@@ -941,22 +1060,31 @@ export default function Home() {
           <section className="news-feed section-shell" aria-label="Tin tức Faerie">
             {newsItems.map((event) => (
               <article className="news-card" key={event.id ?? `${event.year}-${event.date}-${event.title}`} data-reveal>
-                <div className="news-card-image">
-                  {event.images?.[0] ? (
-                    <img src={event.images[0]} alt={`Faerie — ${event.title}, ${event.date}.${event.year}`} loading="lazy" decoding="async" />
-                  ) : (
-                    <span className="news-card-image-placeholder">FAERIE NEWS</span>
-                  )}
-                </div>
-                <div className="news-card-copy">
-                  <div className="news-card-meta">
-                    <time dateTime={`${event.year}-${event.date.slice(3, 5)}-${event.date.slice(0, 2)}`}>{event.date}.{event.year}</time>
-                    <span>{event.tag}</span>
+                <a className="news-card-link" href={`?story=${encodeURIComponent(newsStoryKey(event))}`}
+                  onClick={(eventClick) => {
+                    if (eventClick.metaKey || eventClick.ctrlKey || eventClick.shiftKey || eventClick.altKey) return;
+                    eventClick.preventDefault();
+                    openStory(event);
+                  }}
+                  aria-label={`Đọc bài viết ${event.title}`}>
+                  <div className="news-card-image">
+                    {event.images?.[0] ? (
+                      <img src={event.images[0]} alt={`Faerie — ${event.title}, ${event.date}.${event.year}`} loading="lazy" decoding="async" />
+                    ) : (
+                      <span className="news-card-image-placeholder">FAERIE NEWS</span>
+                    )}
                   </div>
-                  <h2>{event.title}</h2>
-                  <p>{event.description}</p>
-                  <small>{event.location}</small>
-                </div>
+                  <div className="news-card-copy">
+                    <div className="news-card-meta">
+                      <time dateTime={`${event.year}-${event.date.slice(3, 5)}-${event.date.slice(0, 2)}`}>{event.date}.{event.year}</time>
+                      <span>{event.tag}</span>
+                    </div>
+                    <h2>{event.title}</h2>
+                    <p>{event.description}</p>
+                    <small>{event.location}</small>
+                    <span className="news-card-read">Đọc bài viết <span aria-hidden="true">↗</span></span>
+                  </div>
+                </a>
               </article>
             ))}
           </section>
