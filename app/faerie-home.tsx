@@ -89,7 +89,7 @@ function NewsStoryPage({ story, loading, onBack }: { story?: FaerieEvent; loadin
         <div className="news-story-aside"><span>01 / CÂU CHUYỆN</span><strong>{story.date}.{story.year}</strong><small>{story.location}</small></div>
         <div className="news-story-prose">
           {richBlocks.length ? richBlocks.map((block, blockIndex) => (
-            <p key={blockIndex} className={blockIndex === 0 ? "lead" : ""}>
+            <p key={blockIndex}>
               {block.runs.slice(0, 200).filter((run) => typeof run?.text === "string").map((run, runIndex) => {
                 const size = Number.isInteger(run.size) && (run.size ?? 0) >= 1 && (run.size ?? 0) <= 7 ? run.size : 0;
                 const bold = run.bold ? <strong>{run.text}</strong> : run.text;
