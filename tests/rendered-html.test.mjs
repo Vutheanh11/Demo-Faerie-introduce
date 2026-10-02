@@ -49,6 +49,7 @@ test("renders the Faerie website and its current navigation", async () => {
   assert.match(html, /property="og:image"/);
   assert.match(html, /Made by Vu The Anh ↗<\/a>/);
   assert.match(html, /https:\/\/www\.facebook\.com\/vu\.bootloop/);
+  assert.doesNotMatch(html, /site-watermark-overlay|faerie-credit-watermark/);
   assert.doesNotMatch(html, /Your site is taking shape|Codex is working/);
 });
 
