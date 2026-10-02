@@ -46,10 +46,27 @@ test("shows the full name, role, introduction and supplied Facebook profile", ()
 
 test("shows honest pending labels without a fake link for missing details", () => {
   const html = render({ introduction: "   " });
-  assert.equal((html.match(/Đang cập nhật/g) || []).length, 5);
+  assert.equal((html.match(/Đang cập nhật/g) || []).length, 4);
   assert.doesNotMatch(html, /<a\b/);
   assert.match(html, /aria-labelledby="member-profile-name"/);
   assert.match(html, /aria-label="Đóng hồ sơ thành viên"/);
+});
+
+test("shows cohort, quote and approved certificates without unsafe links", () => {
+  const html = render({
+    cohort: "2026",
+    birthDate: "2006-04-12",
+    message: "Cùng nhau tiến bộ.",
+    certificates: [
+      { title: "Hoạt động cộng đồng", url: "https://example.org/certificate" },
+      { title: "Không hợp lệ", url: "javascript:alert(1)" },
+    ],
+  });
+  assert.match(html, /THẾ HỆ FAERIE 2026/);
+  assert.match(html, /12\/04\/2006/);
+  assert.match(html, /<blockquote[^>]*>“Cùng nhau tiến bộ\.”<\/blockquote>/);
+  assert.match(html, /href="https:\/\/example\.org\/certificate"/);
+  assert.doesNotMatch(html, /Không hợp lệ|javascript:/);
 });
 
 test("does not turn unsafe or unrelated URLs into profile links", () => {

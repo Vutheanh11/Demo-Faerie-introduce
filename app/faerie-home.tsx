@@ -50,11 +50,11 @@ const eventStories: Record<string, string> = {
   "04.09-Welcome Day 2": "Ngày thứ hai của Welcome Day tiếp nối lời chào mà Faerie dành cho các tân sinh viên. Thêm những cuộc gặp gỡ, thêm hoạt động và thêm những gương mặt góp mặt trong câu chuyện của nhà.\n\nTừ ngày đầu tiên đến ngày thứ hai, điều đáng nhớ vẫn là những kết nối được tạo ra. Cùng nhìn lại những hình ảnh và kỷ niệm của Welcome Day 2.",
 };
 
-function NewsStoryPage({ story, loading, error, onBack }: { story?: FaerieEvent; loading: boolean; error: boolean; onBack: () => void }) {
+function NewsStoryPage({ story, loading, error, onBack, backLabel }: { story?: FaerieEvent; loading: boolean; error: boolean; onBack: () => void; backLabel: string }) {
   if (!story) {
     return (
       <div className="news-story-page news-story-empty page-enter">
-        <div className="section-shell"><button type="button" className="news-story-back" onClick={onBack}>← Trở về News</button>
+        <div className="section-shell"><button type="button" className="news-story-back" onClick={onBack}>← Trở về {backLabel}</button>
           <h1>{loading ? "ĐANG TẢI BÀI VIẾT..." : error ? "CHƯA KẾT NỐI ĐƯỢC TIN MỚI." : "KHÔNG TÌM THẤY BÀI VIẾT."}</h1>
           {!loading && <p>{error ? "Máy chủ tin tức có thể đang khởi động. Vui lòng thử tải lại sau ít phút." : "Bài viết này có thể đã được gỡ hoặc đường dẫn không còn đúng."}</p>}
           {error && <button type="button" className="news-story-back" onClick={() => window.location.reload()}>Thử tải lại ↻</button>}
@@ -71,7 +71,7 @@ function NewsStoryPage({ story, loading, error, onBack }: { story?: FaerieEvent;
   return (
     <article className="news-story-page page-enter">
       <header className="news-story-header section-shell">
-        <button type="button" className="news-story-back" onClick={onBack}>← Trở về News</button>
+        <button type="button" className="news-story-back" onClick={onBack}>← Trở về {backLabel}</button>
         <div className="news-story-heading">
           <p className="tactical-kicker"><span>FAERIE STORY</span> / {story.tag}</p>
           <h1>{story.title}</h1>
@@ -614,8 +614,8 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const year: RosterYear = 2026;
   const [currentMembers, setCurrentMembers] = useState<MemberProfile[]>(roster2026);
-  const [currentEvents, setCurrentEvents] = useState<FaerieEvent[]>(events2026);
   const [newsItems, setNewsItems] = useState<FaerieEvent[]>([...events2026].reverse());
+  const [archiveYear, setArchiveYear] = useState("2026");
   const [selectedStoryKey, setSelectedStoryKey] = useState<string | null>(null);
   const [newsLoading, setNewsLoading] = useState(true);
   const [newsError, setNewsError] = useState(false);
@@ -625,6 +625,12 @@ export default function Home() {
   const [selectedMember, setSelectedMember] = useState<MemberProfile | null>(null);
   const closeMemberProfile = useCallback(() => setSelectedMember(null), []);
   const totalMembers = currentMembers.length;
+  const archiveYears = useMemo(() => [...new Set(newsItems.map((story) => story.year))].sort((first, second) => Number(second) - Number(first)), [newsItems]);
+  const selectedArchiveYear = archiveYears.includes(archiveYear) ? archiveYear : archiveYears[0] || "2026";
+  const archiveStories = useMemo(() => newsItems.filter((story) => story.year === selectedArchiveYear).sort((first, second) => {
+    const dateNumber = (story: FaerieEvent) => Number(`${story.year}${story.date.slice(3, 5)}${story.date.slice(0, 2)}`);
+    return dateNumber(first) - dateNumber(second);
+  }), [newsItems, selectedArchiveYear]);
 
   useEffect(() => {
     const syncStoryFromUrl = () => {
@@ -653,17 +659,6 @@ export default function Home() {
       }
     };
 
-    const loadEvents = async () => {
-      const response = await fetch(`${apiBaseUrl}/api/v1/events?year=2026`, { signal: controller.signal });
-      if (!response.ok) return;
-      const data: { events?: FaerieEvent[] } = await response.json();
-      if (Array.isArray(data.events) && data.events.every((event) =>
-        typeof event.date === "string" && typeof event.title === "string" &&
-        typeof event.description === "string" && Array.isArray(event.images))) {
-        setCurrentEvents(data.events);
-      }
-    };
-
     const loadNews = async () => {
       try {
         const response = await fetch(`${apiBaseUrl}/api/v1/news`, { signal: controller.signal });
@@ -682,7 +677,7 @@ export default function Home() {
       }
     };
 
-    void Promise.allSettled([loadMembers(), loadEvents(), loadNews()]).finally(() => window.clearTimeout(timeout));
+    void Promise.allSettled([loadMembers(), loadNews()]).finally(() => window.clearTimeout(timeout));
     return () => {
       mounted = false;
       controller.abort();
@@ -760,7 +755,8 @@ export default function Home() {
     url.searchParams.delete("story");
     window.history.replaceState(null, "", url);
     setSelectedStoryKey(null);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (tab === "Introduce") window.requestAnimationFrame(() => document.getElementById("events")?.scrollIntoView({ behavior: "smooth" }));
+    else window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const openStory = (story: FaerieEvent) => {
@@ -826,7 +822,9 @@ export default function Home() {
         </svg>
       </div>
 
-      {tab === "Introduce" ? (
+      {selectedStoryKey ? (
+        <NewsStoryPage story={selectedStory} loading={newsLoading} error={newsError} onBack={closeStory} backLabel={tab === "Introduce" ? "Stories" : "News"} />
+      ) : tab === "Introduce" ? (
         <div className="valorant-intro page-enter">
           <section className="v-hero" aria-labelledby="faerie-hero-title">
             <img
@@ -857,7 +855,7 @@ export default function Home() {
                   <button className="v-button" onClick={() => switchTab("members")}>
                     <span>Xem thành viên Faerie</span><b aria-hidden="true">↗</b>
                   </button>
-                  <a className="v-text-link" href="#events" onClick={() => setNavSection("stories")}>Xem hoạt động 2026 <span aria-hidden="true">↓</span></a>
+                  <a className="v-text-link" href="#events" onClick={() => setNavSection("stories")}>Khám phá Stories <span aria-hidden="true">↓</span></a>
                 </div>
               </div>
             </div>
@@ -872,7 +870,7 @@ export default function Home() {
             <div className="v-signal-lead"><span aria-hidden="true">✦</span> ONE HOUSE. MANY STORIES.</div>
             <div><small>THẾ HỆ</small><strong>3</strong><span>tiếp nối</span></div>
             <div><small>THÀNH VIÊN</small><strong>{totalMembers}</strong><span>mảnh ghép</span></div>
-            <div><small>NĂM 2026</small><strong>{currentEvents.length.toString().padStart(2, "0")}</strong><span>hoạt động</span></div>
+            <div><small>NĂM {selectedArchiveYear}</small><strong>{archiveStories.length.toString().padStart(2, "0")}</strong><span>câu chuyện</span></div>
           </section>
 
           <section className="v-events section-shell" id="events">
@@ -880,24 +878,33 @@ export default function Home() {
             <div className="v-section-heading" data-reveal>
               <div>
                 <p className="v-kicker"><span>STORIES</span> What&apos;s happening</p>
-                <h2 className="v-story-title">FAERIE<br /><em>STORY 2026</em></h2>
+                <h2 className="v-story-title">FAERIE<br /><em>STORY {selectedArchiveYear}</em></h2>
               </div>
               <p>
-                Mỗi sự kiện là một tọa độ trong hành trình chung — nơi chúng mình gặp gỡ,
+                Mỗi câu chuyện là một tọa độ trong hành trình chung — nơi chúng mình gặp gỡ,
                 thử sức và biến những ngày bình thường thành ký ức đáng nhớ.
               </p>
             </div>
 
+            <div className="story-year-filter" aria-label="Lọc hành trình Faerie theo năm">
+              <span>JOURNEY / ARCHIVE</span>
+              {archiveYears.map((yearOption) => (
+                <button type="button" key={yearOption} className={selectedArchiveYear === yearOption ? "active" : ""} aria-pressed={selectedArchiveYear === yearOption} onClick={() => setArchiveYear(yearOption)}>
+                  {yearOption} <small>{newsItems.filter((story) => story.year === yearOption).length.toString().padStart(2, "0")}</small>
+                </button>
+              ))}
+            </div>
+
             <div className="v-event-grid">
-                {currentEvents.map((event, index) => (
+                {archiveStories.map((event, index) => (
                   <article
                     className={`v-event-card ${index === 0 ? "featured" : ""}`}
                     key={`${event.year}-${event.date}-${event.title}`}
                     data-reveal
                     style={{ transitionDelay: `${index * 90}ms` }}
                   >
-                    <div className={`v-event-media ${event.tone} ${event.images ? "has-photos" : ""}`}>
-                      {event.images ? (
+                    <div className={`v-event-media ${event.tone} ${event.images?.length ? "has-photos" : ""}`}>
+                      {event.images?.length ? (
                         <EventPhotoGallery images={event.images} title={`${event.title} ${event.year}`} />
                       ) : (
                         <div className="v-event-symbol" aria-hidden="true">{index === 0 ? "✦" : "∞"}</div>
@@ -912,6 +919,7 @@ export default function Home() {
                         <h3>{event.title}</h3>
                         <p>{event.description}</p>
                         <small><span aria-hidden="true">⌖</span> {event.location}</small>
+                        <button type="button" className="v-event-read" onClick={() => openStory(event)}>Xem câu chuyện <span aria-hidden="true">↗</span></button>
                       </div>
                     </div>
                   </article>
@@ -946,11 +954,30 @@ export default function Home() {
             </div>
           </section>
 
+          <section className="student-guide section-shell" id="new-students" aria-labelledby="student-guide-title">
+            <div className="student-guide-intro" data-reveal>
+              <p className="v-kicker"><span>04</span> Dành cho tân sinh viên</p>
+              <h2 id="student-guide-title">BẮT ĐẦU TỪ<br /><em>MỘT LỜI CHÀO.</em></h2>
+              <p>Bạn mới đến Đại học FPT TP.HCM? Brosis là những sinh viên đi trước sẵn sàng chia sẻ trải nghiệm và đồng hành trong những ngày đầu. Hãy khám phá câu chuyện của Faerie, gặp các thành viên và kết nối với nhà khi cần hỏi thêm.</p>
+              <div className="student-guide-actions">
+                <button type="button" onClick={() => switchTab("members")}>Gặp các thành viên <span aria-hidden="true">↗</span></button>
+                <a href="https://www.facebook.com/profile.php?id=61577779404694" target="_blank" rel="noopener noreferrer">Nhắn Faerie trên Facebook <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <div className="student-faq" aria-label="Câu hỏi thường gặp cho tân sinh viên" data-reveal>
+              <h3>HỎI NHANH / FAQ</h3>
+              <details><summary>Faerie là gì?</summary><p>Faerie là một nhà Brothers &amp; Sisters tại Đại học FPT TP.HCM, nơi các thế hệ sinh viên kết nối và cùng tham gia hoạt động.</p></details>
+              <details><summary>Brosis có thể đồng hành với mình thế nào?</summary><p>Brosis là những sinh viên đi trước chia sẻ kinh nghiệm, giải đáp thắc mắc và cùng tân sinh viên làm quen với môi trường học tập, sinh hoạt.</p></details>
+              <details><summary>Mình xem hoạt động của nhà ở đâu?</summary><p>Vào mục Stories để xem hành trình theo năm; News lưu các bài viết và hình ảnh của từng hoạt động.</p></details>
+              <details><summary>Mình liên hệ Faerie bằng cách nào?</summary><p>Nhắn qua <a href="https://www.facebook.com/profile.php?id=61577779404694" target="_blank" rel="noopener noreferrer">Facebook Faerie</a> hoặc gửi email đến <a href="mailto:faeriesolace@gmail.com">faeriesolace@gmail.com</a>.</p></details>
+            </div>
+          </section>
+
           <section className="v-manifesto">
             <img src="images/events/2026/team-building/TeamBuilding_7.webp" alt="Các thành viên Faerie chụp ảnh cùng nhau tại Team Building 2026" loading="lazy" decoding="async" />
             <div className="v-manifesto-wash" aria-hidden="true" />
             <div className="v-manifesto-copy section-shell" data-reveal>
-              <p className="v-kicker"><span>04</span> Ready for the next chapter?</p>
+              <p className="v-kicker"><span>05</span> Ready for the next chapter?</p>
               <blockquote>FAERIE ĐOÀN KẾT<br /><em>CHẤP HẾT GIAN NAN</em></blockquote>
               <button className="v-button v-button-light" onClick={() => switchTab("members")}>
                 <span>Khám phá thành viên</span><b aria-hidden="true">→</b>
@@ -986,7 +1013,7 @@ export default function Home() {
                 <p className="tactical-kicker"><span>02</span> Select your roster</p>
                 <h2>CHOOSE YOUR<br /><em>CREW.</em></h2>
               </div>
-              <p>Tìm kiếm từng gương mặt, vai trò và thế hệ đã cùng tạo nên hành trình Faerie.</p>
+              <p>Tìm kiếm từng gương mặt, vai trò và câu chuyện của các thành viên Faerie 2026.</p>
             </div>
 
             <div className="directory-toolbar" data-reveal>
@@ -1025,7 +1052,7 @@ export default function Home() {
             </div>
 
             <div className="directory-title" data-reveal>
-              <h2>Faerie class of <em>{year}</em></h2>
+              <h2>Our People <em>{year}</em></h2>
               <span>{members.length.toString().padStart(2, "0")} kết quả</span>
             </div>
 
@@ -1033,7 +1060,7 @@ export default function Home() {
               <div className="member-grid">
                 {members.map((person) => (
                   <article
-                    className="member-card"
+                    className={`member-card ${person.message?.trim() ? "has-quote" : ""}`}
                     key={`${year}-${person.name}`}
                     data-reveal
                     style={{ transitionDelay: `${Math.min(person.index % 8, 7) * 45}ms` }}
@@ -1059,8 +1086,10 @@ export default function Home() {
                           <small>{(person.index + 1).toString().padStart(2, "0")}</small>
                         </div>
                         <div className="member-front-info">
+                          <span className="member-front-cohort">FAERIE / {person.cohort?.trim() || year}</span>
                           <strong>{person.name}</strong>
                           <span className="member-front-role">{person.title}</span>
+                          {person.message?.trim() && <p className="member-front-quote">“{person.message.trim()}”</p>}
                           <span className="member-front-meta">Xem hồ sơ <i aria-hidden="true">↗</i></span>
                         </div>
                       </div>
@@ -1073,12 +1102,10 @@ export default function Home() {
             )}
           </section>
         </div>
-      ) : tab === "news" && selectedStoryKey ? (
-        <NewsStoryPage story={selectedStory} loading={newsLoading} error={newsError} onBack={closeStory} />
       ) : tab === "news" ? (
         <div className="news-page tactical-page page-enter">
           <section className="news-hero section-shell">
-            <p className="tactical-kicker"><span>01</span> Faerie House · 2026</p>
+            <p className="tactical-kicker"><span>01</span> Faerie House · Journal</p>
             <h1>FAERIE<br /><em>NEWS.</em></h1>
             <p>Những hoạt động gần đây của nhà Faerie, từ khoảnh khắc mới nhất trở về ngày đầu tiên.</p>
             <span className="news-total">{newsItems.length.toString().padStart(2, "0")} CÂU CHUYỆN</span>

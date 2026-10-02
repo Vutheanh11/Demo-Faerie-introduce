@@ -36,7 +36,11 @@ test("renders the Faerie website and its current navigation", async () => {
     assert.match(html, new RegExp(`>${label}<\\/button>`));
   }
   assert.doesNotMatch(html, /Introduce <span>02<\/span>|Members <span>34<\/span>|News <span>07<\/span>/);
-  assert.match(html, /<h2 class="v-story-title">FAERIE<br\/><em>STORY 2026<\/em><\/h2>/);
+  assert.match(html, /<h2 class="v-story-title">FAERIE<br\/><em>STORY (?:<!-- -->)?2026<\/em><\/h2>/);
+  assert.match(html, /JOURNEY \/ ARCHIVE/);
+  assert.match(html, /id="new-students"/);
+  assert.match(html, /HỎI NHANH \/ FAQ/);
+  assert.match(html, /Brosis có thể đồng hành với mình thế nào/);
   assert.doesNotMatch(html, /Chọn năm sự kiện|MISSION NOT STARTED/);
   assert.match(html, /images\/events\/2026\/team-building\/TeamBuilding_1\.webp/);
   assert.match(html, /Kick Off — 02\/07/);

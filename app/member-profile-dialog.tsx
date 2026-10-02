@@ -11,6 +11,8 @@ export type MemberDetails = {
   birthDate?: string;
   interests?: string;
   message?: string;
+  cohort?: string;
+  certificates?: { title: string; url: string }[];
 };
 
 function facebookLink(value?: string) {
@@ -25,6 +27,20 @@ function facebookLink(value?: string) {
   } catch {
     return null;
   }
+}
+
+function certificateLink(value?: string) {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" ? url.href : null;
+  } catch { return null; }
+}
+
+function displayBirthDate(value?: string) {
+  const date = value?.trim() || "";
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  return iso ? `${iso[3]}/${iso[2]}/${iso[1]}` : date || "Đang cập nhật";
 }
 
 export default function MemberProfileDialog({
@@ -44,6 +60,7 @@ export default function MemberProfileDialog({
   const [isClosing, setIsClosing] = useState(false);
   const fullName = member.fullName || member.name;
   const facebook = facebookLink(member.facebookUrl);
+  const certificates = Array.isArray(member.certificates) ? member.certificates.filter((item) => typeof item?.title === "string" && item.title.trim() && certificateLink(item.url)) : [];
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -128,13 +145,14 @@ export default function MemberProfileDialog({
               {fullName.split(" ").slice(-2).map((part) => part[0]).join("")}
             </span>
           )}
-          <span className="member-profile-year">FAERIE / {year}</span>
+          <span className="member-profile-year">FAERIE / {member.cohort?.trim() || year}</span>
         </div>
 
         <div className="member-profile-info">
           <p className="member-profile-kicker">MEET THE FAMILY <span aria-hidden="true">✦</span></p>
           <h2 id="member-profile-name">{fullName}</h2>
           <p className="member-profile-role">{member.title}</p>
+          <p className="member-profile-cohort">THẾ HỆ FAERIE {member.cohort?.trim() || year}</p>
 
           <section className="member-profile-section" aria-labelledby="member-profile-intro-heading">
             <h3 id="member-profile-intro-heading">Giới thiệu</h3>
@@ -146,7 +164,7 @@ export default function MemberProfileDialog({
           <div className="member-profile-details">
             <section className="member-profile-section" aria-labelledby="member-profile-birth-heading">
               <h3 id="member-profile-birth-heading">Ngày sinh</h3>
-              <p className={!member.birthDate?.trim() ? "member-profile-pending" : undefined}>{member.birthDate?.trim() || "Đang cập nhật"}</p>
+              <p className={!member.birthDate?.trim() ? "member-profile-pending" : undefined}>{displayBirthDate(member.birthDate)}</p>
             </section>
             <section className="member-profile-section" aria-labelledby="member-profile-interests-heading">
               <h3 id="member-profile-interests-heading">Sở thích</h3>
@@ -154,10 +172,15 @@ export default function MemberProfileDialog({
             </section>
           </div>
 
-          <section className="member-profile-section" aria-labelledby="member-profile-message-heading">
-            <h3 id="member-profile-message-heading">Thông điệp</h3>
-            <p className={!member.message?.trim() ? "member-profile-pending" : undefined}>{member.message?.trim() || "Đang cập nhật"}</p>
-          </section>
+          {member.message?.trim() && <section className="member-profile-section" aria-labelledby="member-profile-message-heading">
+            <h3 id="member-profile-message-heading">Một lời từ {member.name}</h3>
+            <blockquote className="member-profile-quote">“{member.message.trim()}”</blockquote>
+          </section>}
+
+          {certificates.length > 0 && <section className="member-profile-section" aria-labelledby="member-profile-certificates-heading">
+            <h3 id="member-profile-certificates-heading">Chứng nhận</h3>
+            <ul className="member-profile-certificates">{certificates.map((item, index) => <li key={`${item.title}-${index}`}><a href={certificateLink(item.url) ?? undefined} target="_blank" rel="noopener noreferrer">{item.title} <span aria-hidden="true">↗</span></a></li>)}</ul>
+          </section>}
 
           <section className="member-profile-section" aria-labelledby="member-profile-facebook-heading">
             <h3 id="member-profile-facebook-heading">Facebook</h3>
