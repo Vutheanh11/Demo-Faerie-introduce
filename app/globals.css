@@ -1091,7 +1091,7 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   position: absolute;
   inset: 0;
   z-index: -3;
-  background: url("../images/faerie-banner.jpg") center 46% / cover no-repeat;
+  background: url("/images/faerie-banner.jpg") center 46% / cover no-repeat;
   filter: saturate(.55) contrast(1.13);
   transform: scale(1.03);
   animation: tactical-photo-breathe 14s ease-in-out infinite alternate;
@@ -2110,3 +2110,27 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
 
 @keyframes member-mobile-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @keyframes member-mobile-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(8px); } }
+
+/* Release navigation: keep destinations separate from the statistics below the hero. */
+.menu-toggle { display: none; }
+.main-nav button[aria-current="page"] { font-weight: 900; }
+#about, #events { scroll-margin-top: 92px; }
+.members-top-link { width: fit-content; display: inline-flex; align-items: center; gap: 14px; margin-top: 16px; padding: 12px 16px; border: 1px solid currentColor; background: transparent; color: inherit; font-weight: 800; cursor: pointer; }
+.members-top-link:hover { background: var(--t-neon); color: #111; }
+.members-top-link:focus-visible, .menu-toggle:focus-visible, .main-nav button:focus-visible { outline: 3px solid #c8f76b; outline-offset: 3px; }
+.news-sync-status { margin: 14px 0 0; color: #b5c9ba; font-size: 13px; line-height: 1.5; }
+.not-found-page { min-height: 100svh; display: grid; place-items: center; padding: 30px; background: #102017; color: #f6f3eb; }
+.not-found-page > div { width: min(100%, 850px); }
+.not-found-code { color: #c8f76b; font-size: 12px; font-weight: 800; letter-spacing: .18em; }
+.not-found-page h1 { margin: 18px 0; font: 900 clamp(50px, 10vw, 110px)/.95 var(--font-sans); letter-spacing: -.07em; }
+.not-found-page h1 em { color: #c8f76b; font-style: normal; }
+.not-found-page p { max-width: 540px; line-height: 1.7; }
+.not-found-page a { display: inline-flex; gap: 20px; margin-top: 20px; padding: 14px 18px; border: 1px solid #c8f76b; color: #c8f76b; font-weight: 800; }
+@media (max-width: 760px) {
+  .site-header.is-tactical { position: sticky; }
+  .menu-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-width: 84px; min-height: 42px; margin-left: auto; border: 1px solid rgba(244,241,232,.45); background: transparent; color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
+  .site-header.is-tactical .main-nav { display: none; position: absolute; top: 100%; right: 0; left: 0; z-index: 40; padding: 10px 16px 16px; border: 0; border-radius: 0; background: #102017; box-shadow: 0 18px 25px rgba(0,0,0,.3); }
+  .site-header.is-tactical .main-nav.is-open { display: grid; grid-template-columns: 1fr; gap: 3px; }
+  .site-header.is-tactical .main-nav button { justify-content: flex-start; width: 100%; min-height: 43px; padding: 11px 14px; font-size: 14px; text-align: left; }
+  #about, #events { scroll-margin-top: 76px; }
+}

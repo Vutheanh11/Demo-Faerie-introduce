@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import MemberProfileDialog, { type MemberDetails } from "./member-profile-dialog";
 
 type Tab = "Introduce" | "members" | "top20" | "news";
+type NavSection = "home" | "about" | "members" | "stories" | "news";
 type RosterYear = 2023 | 2024 | 2025 | 2026;
 type MemberGroup = "Mentor" | "Supporter" | "Leadership" | "Member";
 
@@ -26,33 +27,37 @@ type FaerieEvent = {
   images?: string[];
 };
 
+const displayDate = (date: string, year: string) => `${date.replace(".", "/")}/${year}`;
+
 const apiBaseUrl = (process.env.NEXT_PUBLIC_FAERIE_API_URL ?? "https://faerienews-backend.onrender.com").replace(/\/$/, "");
 
 function newsStoryKey(story: FaerieEvent) {
   if (story.id) return story.id;
-  const title = story.title.toLocaleLowerCase("vi").normalize("NFD")
+  const stableTitle = /^Kick Off\s*[—–-]/i.test(story.title) ? "Kick Off" : story.title;
+  const title = stableTitle.toLocaleLowerCase("vi").normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d")
     .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   return `${story.year}-${story.date.replace(".", "-")}-${title}`;
 }
 
 const eventStories: Record<string, string> = {
-  "02.07-Kick Off": "Faerie 2026 bắt đầu bằng một buổi gặp gỡ để các thành viên trong đội ngũ điều hành nhìn về cùng một hướng. Đây là dịp cả nhà làm quen, chia sẻ tinh thần chung và mở ra chương đầu tiên của hành trình mới.\n\nTừ điểm khởi đầu ấy, những kế hoạch được đặt xuống bàn và câu chuyện Faerie 2026 dần thành hình. Bộ ảnh ghi lại những gương mặt, cuộc gặp gỡ và không khí của ngày mở màn.",
+  "02.07-Kick Off — 02/07": "Faerie 2026 bắt đầu bằng một buổi gặp gỡ để các thành viên trong đội ngũ điều hành nhìn về cùng một hướng. Đây là dịp cả nhà làm quen, chia sẻ tinh thần chung và mở ra chương đầu tiên của hành trình mới.\n\nTừ điểm khởi đầu ấy, những kế hoạch được đặt xuống bàn và câu chuyện Faerie 2026 dần thành hình. Bộ ảnh ghi lại những gương mặt, cuộc gặp gỡ và không khí của ngày mở màn.",
   "15.07-Họp Offline lần đầu": "Sau những lần trò chuyện qua màn hình, Faerie có buổi họp trực tiếp đầu tiên. Những cái tên quen thuộc nay có thể ngồi cạnh nhau, cùng trao đổi và bắt đầu hiểu nhau nhiều hơn.\n\nBuổi gặp gỡ không chỉ để nói về kế hoạch phía trước mà còn là một bước nhỏ để tập thể trở nên gần gũi. Những khung hình bên dưới lưu lại khoảnh khắc đầu tiên ấy.",
   "16.08-Team Building": "Team Building là một ngày dành cho việc cùng nhau thử thách và phối hợp. Mỗi hoạt động là cơ hội để thành viên Faerie quan sát, lắng nghe và tìm ra cách đồng hành với nhau.\n\nĐiều còn lại sau một ngày kết nối là sự thấu hiểu và tinh thần đồng đội. Cùng nhìn lại những khoảnh khắc đã góp phần đưa cả nhà gần nhau hơn.",
-  "25.08-Kick Off": "Chặng đường mới của Faerie được khởi động trong buổi Kick Off ngày 25/8. Cả nhà cùng gặp gỡ, chia sẻ những mục tiêu trước mắt và chuẩn bị tinh thần cho các hoạt động tiếp theo.\n\nMỗi dấu mốc bắt đầu đều mang theo sự háo hức riêng. Những bức ảnh ở đây là lát cắt của ngày cả tập thể cùng hướng về một hành trình mới.",
+  "25.08-Kick Off — 25/08": "Chặng đường mới của Faerie được khởi động trong buổi Kick Off ngày 25/8. Cả nhà cùng gặp gỡ, chia sẻ những mục tiêu trước mắt và chuẩn bị tinh thần cho các hoạt động tiếp theo.\n\nMỗi dấu mốc bắt đầu đều mang theo sự háo hức riêng. Những bức ảnh ở đây là lát cắt của ngày cả tập thể cùng hướng về một hành trình mới.",
   "02.09-Chào Mừng Quốc Khánh": "Trong không khí Quốc khánh, Faerie cùng lưu giữ những khoảnh khắc mang sắc màu Việt Nam. Đây là dịp để cả nhà hòa chung niềm vui và thể hiện niềm tự hào theo cách của mình.\n\nCùng xem lại những hình ảnh của hoạt động Chào Mừng Quốc Khánh, nơi tinh thần tập thể Faerie gặp gỡ không khí của ngày lễ.",
   "03.09-Welcome Day 1": "Welcome Day đầu tiên mở ra những cuộc gặp gỡ giữa Faerie và các gương mặt mới tại FPTU HCMC. Từ lời chào, nụ cười đến những tương tác ban đầu, mỗi khoảnh khắc đều góp phần tạo nên không khí ngày hội.\n\nVới Faerie, đây là điểm bắt đầu của những kết nối mới. Bộ ảnh bên dưới ghi lại năng lượng và những dấu ấn đầu tiên của Welcome Day.",
   "04.09-Welcome Day 2": "Ngày thứ hai của Welcome Day tiếp nối lời chào mà Faerie dành cho các tân sinh viên. Thêm những cuộc gặp gỡ, thêm hoạt động và thêm những gương mặt góp mặt trong câu chuyện của nhà.\n\nTừ ngày đầu tiên đến ngày thứ hai, điều đáng nhớ vẫn là những kết nối được tạo ra. Cùng nhìn lại những hình ảnh và kỷ niệm của Welcome Day 2.",
 };
 
-function NewsStoryPage({ story, loading, onBack }: { story?: FaerieEvent; loading: boolean; onBack: () => void }) {
+function NewsStoryPage({ story, loading, error, onBack }: { story?: FaerieEvent; loading: boolean; error: boolean; onBack: () => void }) {
   if (!story) {
     return (
-      <div role="tabpanel" className="news-story-page news-story-empty page-enter">
+      <div className="news-story-page news-story-empty page-enter">
         <div className="section-shell"><button type="button" className="news-story-back" onClick={onBack}>← Trở về News</button>
-          <h1>{loading ? "ĐANG TẢI BÀI VIẾT..." : "KHÔNG TÌM THẤY BÀI VIẾT."}</h1>
-          {!loading && <p>Bài viết này có thể đã được gỡ hoặc đường dẫn không còn đúng.</p>}
+          <h1>{loading ? "ĐANG TẢI BÀI VIẾT..." : error ? "CHƯA KẾT NỐI ĐƯỢC TIN MỚI." : "KHÔNG TÌM THẤY BÀI VIẾT."}</h1>
+          {!loading && <p>{error ? "Máy chủ tin tức có thể đang khởi động. Vui lòng thử tải lại sau ít phút." : "Bài viết này có thể đã được gỡ hoặc đường dẫn không còn đúng."}</p>}
+          {error && <button type="button" className="news-story-back" onClick={() => window.location.reload()}>Thử tải lại ↻</button>}
         </div>
       </div>
     );
@@ -64,14 +69,14 @@ function NewsStoryPage({ story, loading, onBack }: { story?: FaerieEvent; loadin
     Array.isArray(block?.runs) && block.runs.some((run) => typeof run?.text === "string" && run.text.trim())) : [];
   const images = story.images ?? [];
   return (
-    <article role="tabpanel" className="news-story-page page-enter">
+    <article className="news-story-page page-enter">
       <header className="news-story-header section-shell">
         <button type="button" className="news-story-back" onClick={onBack}>← Trở về News</button>
         <div className="news-story-heading">
           <p className="tactical-kicker"><span>FAERIE STORY</span> / {story.tag}</p>
           <h1>{story.title}</h1>
           <div className="news-story-meta">
-            <time dateTime={`${story.year}-${story.date.slice(3, 5)}-${story.date.slice(0, 2)}`}>{story.date}.{story.year}</time>
+            <time dateTime={`${story.year}-${story.date.slice(3, 5)}-${story.date.slice(0, 2)}`}>{displayDate(story.date, story.year)}</time>
             <span>{story.location}</span>
             <span>{images.length.toString().padStart(2, "0")} hình ảnh</span>
           </div>
@@ -86,7 +91,7 @@ function NewsStoryPage({ story, loading, onBack }: { story?: FaerieEvent; loadin
         <div className="news-story-cover news-story-cover-empty"><span>FAERIE NEWS</span></div>
       )}
       <section className="news-story-article section-shell" aria-label={`Bài viết ${story.title}`}>
-        <div className="news-story-aside"><span>01 / CÂU CHUYỆN</span><strong>{story.date}.{story.year}</strong><small>{story.location}</small></div>
+        <div className="news-story-aside"><span>01 / CÂU CHUYỆN</span><strong>{displayDate(story.date, story.year)}</strong><small>{story.location}</small></div>
         <div className="news-story-prose">
           {richBlocks.length ? richBlocks.map((block, blockIndex) => (
             <p key={blockIndex}>
@@ -239,7 +244,7 @@ const events2026: FaerieEvent[] = [
     {
       date: "02.07",
       year: "2026",
-      title: "Kick Off",
+      title: "Kick Off — 02/07",
       description:
         "Cột mốc mở đầu hành trình Faerie 2026 — gặp gỡ đội ngũ điều hành, thống nhất tinh thần và cùng nhau viết chương đầu tiên.",
       tag: "Opening",
@@ -297,7 +302,7 @@ const events2026: FaerieEvent[] = [
     {
       date: "25.08",
       year: "2026",
-      title: "Kick Off",
+      title: "Kick Off — 25/08",
       description:
         "Cột mốc khởi động chặng đường mới, nơi cả nhà cùng gặp gỡ, chia sẻ mục tiêu và sẵn sàng tạo nên những dấu ấn tiếp theo.",
       tag: "Kick Off",
@@ -605,12 +610,15 @@ const avatarTones = ["sage", "sun", "sky", "lilac", "coral", "lime"];
 
 export default function Home() {
   const [tab, setTab] = useState<Tab>("Introduce");
+  const [navSection, setNavSection] = useState<NavSection>("home");
+  const [menuOpen, setMenuOpen] = useState(false);
   const year: RosterYear = 2026;
   const [currentMembers, setCurrentMembers] = useState<MemberProfile[]>(roster2026);
   const [currentEvents, setCurrentEvents] = useState<FaerieEvent[]>(events2026);
   const [newsItems, setNewsItems] = useState<FaerieEvent[]>([...events2026].reverse());
   const [selectedStoryKey, setSelectedStoryKey] = useState<string | null>(null);
   const [newsLoading, setNewsLoading] = useState(true);
+  const [newsError, setNewsError] = useState(false);
   const [role, setRole] = useState<MemberGroup | "All">("All");
   const [query, setQuery] = useState("");
   const progressRef = useRef<HTMLSpanElement>(null);
@@ -622,7 +630,7 @@ export default function Home() {
     const syncStoryFromUrl = () => {
       const storyKey = new URL(window.location.href).searchParams.get("story");
       setSelectedStoryKey(storyKey);
-      if (storyKey) setTab("news");
+      if (storyKey) { setTab("news"); setNavSection("news"); }
     };
     syncStoryFromUrl();
     window.addEventListener("popstate", syncStoryFromUrl);
@@ -631,6 +639,7 @@ export default function Home() {
 
   useEffect(() => {
     const controller = new AbortController();
+    let mounted = true;
     const timeout = window.setTimeout(() => controller.abort(), 90_000);
 
     const loadMembers = async () => {
@@ -658,23 +667,33 @@ export default function Home() {
     const loadNews = async () => {
       try {
         const response = await fetch(`${apiBaseUrl}/api/v1/news`, { signal: controller.signal });
-        if (!response.ok) return;
+        if (!response.ok) throw new Error("News API unavailable");
         const data: { news?: FaerieEvent[] } = await response.json();
         if (Array.isArray(data.news) && data.news.every((item) =>
           typeof item.date === "string" && typeof item.title === "string" &&
           typeof item.description === "string" && Array.isArray(item.images))) {
           setNewsItems(data.news);
-        }
+          setNewsError(false);
+        } else setNewsError(true);
+      } catch {
+        if (mounted) setNewsError(true);
       } finally {
-        setNewsLoading(false);
+        if (mounted) setNewsLoading(false);
       }
     };
 
     void Promise.allSettled([loadMembers(), loadEvents(), loadNews()]).finally(() => window.clearTimeout(timeout));
     return () => {
+      mounted = false;
       controller.abort();
       window.clearTimeout(timeout);
     };
+  }, []);
+
+  useEffect(() => {
+    const closeMenuOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setMenuOpen(false); };
+    window.addEventListener("keydown", closeMenuOnEscape);
+    return () => window.removeEventListener("keydown", closeMenuOnEscape);
   }, []);
 
   useEffect(() => {
@@ -753,7 +772,7 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const switchTab = (nextTab: Tab) => {
+  const switchTab = (nextTab: Tab, section?: "home" | "about" | "stories") => {
     if (selectedStoryKey) {
       const url = new URL(window.location.href);
       url.searchParams.delete("story");
@@ -761,14 +780,20 @@ export default function Home() {
       setSelectedStoryKey(null);
     }
     setTab(nextTab);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setMenuOpen(false);
+    setNavSection(section ?? (nextTab === "Introduce" ? "home" : nextTab === "top20" ? "members" : nextTab));
+    if (section === "about" || section === "stories") {
+      window.requestAnimationFrame(() => document.getElementById(section === "about" ? "about" : "events")?.scrollIntoView({ behavior: "smooth" }));
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
     <main className={`app-shell tab-${tab.toLowerCase()}`}>
       <header className="site-header is-tactical">
         <span ref={progressRef} className="site-progress" style={{ transform: "scaleX(0)" }} aria-hidden="true" />
-        <button className="brand" onClick={() => switchTab("Introduce")} aria-label="Faerie home">
+        <button className="brand" onClick={() => switchTab("Introduce", "home")} aria-label="Về đầu trang Faerie">
           <span className="brand-mark" aria-hidden="true"><img src="images/faerie-icon.png" alt="" /></span>
           <span>
             <strong>FAERIE</strong>
@@ -776,39 +801,15 @@ export default function Home() {
           </span>
         </button>
 
-        <nav className="main-nav" aria-label="Điều hướng chính" role="tablist">
-          <button
-            role="tab"
-            aria-selected={tab === "Introduce"}
-            className={tab === "Introduce" ? "active" : ""}
-            onClick={() => switchTab("Introduce")}
-          >
-            Introduce <span>02</span>
-          </button>
-          <button
-            role="tab"
-            aria-selected={tab === "members"}
-            className={tab === "members" ? "active" : ""}
-            onClick={() => switchTab("members")}
-          >
-            Members <span>{totalMembers}</span>
-          </button>
-          <button
-            role="tab"
-            aria-selected={tab === "top20"}
-            className={tab === "top20" ? "active" : ""}
-            onClick={() => switchTab("top20")}
-          >
-            Top 20 <span>★</span>
-          </button>
-          <button
-            role="tab"
-            aria-selected={tab === "news"}
-            className={tab === "news" ? "active" : ""}
-            onClick={() => switchTab("news")}
-          >
-            News <span>{newsItems.length.toString().padStart(2, "0")}</span>
-          </button>
+        <button className="menu-toggle" type="button" aria-controls="site-main-nav" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>
+          {menuOpen ? "Đóng" : "Menu"} <span aria-hidden="true">{menuOpen ? "×" : "☰"}</span>
+        </button>
+        <nav id="site-main-nav" className={`main-nav ${menuOpen ? "is-open" : ""}`} aria-label="Điều hướng chính">
+          <button type="button" className={navSection === "home" ? "active" : ""} aria-current={navSection === "home" ? "page" : undefined} onClick={() => switchTab("Introduce", "home")}>Home</button>
+          <button type="button" className={navSection === "about" ? "active" : ""} aria-current={navSection === "about" ? "page" : undefined} onClick={() => switchTab("Introduce", "about")}>About</button>
+          <button type="button" className={navSection === "members" ? "active" : ""} aria-current={navSection === "members" ? "page" : undefined} onClick={() => switchTab("members")}>Members</button>
+          <button type="button" className={navSection === "stories" ? "active" : ""} aria-current={navSection === "stories" ? "page" : undefined} onClick={() => switchTab("Introduce", "stories")}>Stories</button>
+          <button type="button" className={navSection === "news" ? "active" : ""} aria-current={navSection === "news" ? "page" : undefined} onClick={() => switchTab("news")}>News</button>
         </nav>
 
         <div className="header-note">EST. 2024 · TP.HCM</div>
@@ -826,7 +827,7 @@ export default function Home() {
       </div>
 
       {tab === "Introduce" ? (
-        <div role="tabpanel" className="valorant-intro page-enter">
+        <div className="valorant-intro page-enter">
           <section className="v-hero" aria-labelledby="faerie-hero-title">
             <img
               className="v-hero-background"
@@ -840,7 +841,7 @@ export default function Home() {
             <span className="v-coordinate v-coordinate-side" aria-hidden="true">FAERIE // FPTU HCMC // 2026</span>
 
             <div className="v-hero-content section-shell">
-              <p className="v-kicker"><span>01</span> Brothers &amp; Sisters · FPTU HCMC</p>
+              <p className="v-kicker"><span>01</span> Faerie · Brothers &amp; Sisters · FPTU HCMC</p>
               <h1 id="faerie-hero-title">
                 <span>FIND</span>
                 <span className="v-title-accent">YOUR</span>
@@ -848,14 +849,15 @@ export default function Home() {
               </h1>
               <div className="v-hero-bottom">
                 <p>
-                  Faerie là nơi mỗi tân sinh viên tìm thấy một người đồng hành,
-                  một đội để sát cánh và một mái nhà để luôn muốn quay về.
+                  Faerie là nhà Brothers &amp; Sisters (Brosis) tại Đại học FPT TP.HCM:
+                  những sinh viên đi trước đồng hành cùng tân sinh viên. Gặp các thành viên,
+                  khám phá hoạt động và đọc câu chuyện mới của nhà tại đây.
                 </p>
                 <div className="v-actions">
                   <button className="v-button" onClick={() => switchTab("members")}>
-                    <span>Gặp nhà Faerie</span><b aria-hidden="true">↗</b>
+                    <span>Xem thành viên Faerie</span><b aria-hidden="true">↗</b>
                   </button>
-                  <a className="v-text-link" href="#events">Khám phá hành trình <span aria-hidden="true">↓</span></a>
+                  <a className="v-text-link" href="#events" onClick={() => setNavSection("stories")}>Xem hoạt động 2026 <span aria-hidden="true">↓</span></a>
                 </div>
               </div>
             </div>
@@ -905,7 +907,7 @@ export default function Home() {
                       <span className="v-corner" aria-hidden="true" />
                     </div>
                     <div className="v-event-copy">
-                      <div className="v-event-date"><strong>{event.date}</strong><span>{event.year}</span></div>
+                      <div className="v-event-date"><strong>{event.date.replace(".", "/")}</strong><span>{event.year}</span></div>
                       <div>
                         <h3>{event.title}</h3>
                         <p>{event.description}</p>
@@ -917,14 +919,14 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="v-about section-shell">
+          <section className="v-about section-shell" id="about">
             <div className="v-about-word" aria-hidden="true">TOGETHER</div>
             <div className="v-about-copy" data-reveal>
               <p className="v-kicker"><span>03</span> Our mission</p>
               <h2>KHÔNG CHỈ<br />LÀ NGƯỜI<br /><em>DẪN ĐƯỜNG.</em></h2>
               <p className="v-about-lead">
-                Brothers &amp; Sisters kết nối những người đi trước với tân sinh viên trong những ngày đầu tại FPTU.
-                Ở Faerie, sự đồng hành đi xa hơn một lời chỉ dẫn: đó là học cùng, chơi cùng và lớn lên cùng nhau.
+                Brothers &amp; Sisters (Brosis) là những sinh viên đi trước hỗ trợ tân sinh viên trong những ngày đầu tại Đại học FPT TP.HCM.
+                Faerie là một nhà Brosis trong cộng đồng ấy: cùng giải đáp, tham gia hoạt động, học hỏi và xây dựng những kết nối lâu dài.
               </p>
             </div>
 
@@ -958,7 +960,7 @@ export default function Home() {
           </section>
         </div>
       ) : tab === "members" ? (
-        <div role="tabpanel" className="members-page tactical-page valorant-members page-enter">
+        <div className="members-page tactical-page valorant-members page-enter">
           <section className="members-hero tactical-hero section-shell">
             <div className="tactical-grid" aria-hidden="true" />
             <div className="tactical-hero-word" aria-hidden="true">MEMBERS</div>
@@ -969,10 +971,11 @@ export default function Home() {
             </div>
             <div className="members-intro" data-reveal>
               <p>
-                Mỗi thế hệ là một màu sắc riêng, cùng góp lại thành câu chuyện Faerie.
-                Tìm những gương mặt đã đồng hành với ngôi nhà qua từng năm.
+                Mỗi thành viên là một màu sắc riêng, cùng góp lại thành câu chuyện Faerie 2026.
+                Tìm những gương mặt đang đồng hành với ngôi nhà trong năm nay.
               </p>
               <div className="members-stat"><strong>{totalMembers}</strong><span>members<br />&amp; growing</span></div>
+              <button className="members-top-link" type="button" onClick={() => switchTab("top20")}>Khám phá Top 20 <span aria-hidden="true">↗</span></button>
             </div>
 
           </section>
@@ -1071,14 +1074,15 @@ export default function Home() {
           </section>
         </div>
       ) : tab === "news" && selectedStoryKey ? (
-        <NewsStoryPage story={selectedStory} loading={newsLoading} onBack={closeStory} />
+        <NewsStoryPage story={selectedStory} loading={newsLoading} error={newsError} onBack={closeStory} />
       ) : tab === "news" ? (
-        <div role="tabpanel" className="news-page tactical-page page-enter">
+        <div className="news-page tactical-page page-enter">
           <section className="news-hero section-shell">
             <p className="tactical-kicker"><span>01</span> Faerie House · 2026</p>
             <h1>FAERIE<br /><em>NEWS.</em></h1>
             <p>Những hoạt động gần đây của nhà Faerie, từ khoảnh khắc mới nhất trở về ngày đầu tiên.</p>
             <span className="news-total">{newsItems.length.toString().padStart(2, "0")} CÂU CHUYỆN</span>
+            <p className="news-sync-status" role="status" aria-live="polite">{newsLoading ? "Đang đồng bộ tin mới từ Faerie…" : newsError ? "Tin mới tạm thời chưa kết nối; đang hiển thị các hoạt động có sẵn." : "Tin tức đã được cập nhật."}</p>
           </section>
           <section className="news-feed section-shell" aria-label="Tin tức Faerie">
             {newsItems.map((event) => (
@@ -1092,14 +1096,14 @@ export default function Home() {
                   aria-label={`Đọc bài viết ${event.title}`}>
                   <div className="news-card-image">
                     {event.images?.[0] ? (
-                      <img src={event.images[0]} alt={`Faerie — ${event.title}, ${event.date}.${event.year}`} loading="lazy" decoding="async" />
+                      <img src={event.images[0]} alt={`Faerie — ${event.title}, ${displayDate(event.date, event.year)}`} loading="lazy" decoding="async" />
                     ) : (
                       <span className="news-card-image-placeholder">FAERIE NEWS</span>
                     )}
                   </div>
                   <div className="news-card-copy">
                     <div className="news-card-meta">
-                      <time dateTime={`${event.year}-${event.date.slice(3, 5)}-${event.date.slice(0, 2)}`}>{event.date}.{event.year}</time>
+                      <time dateTime={`${event.year}-${event.date.slice(3, 5)}-${event.date.slice(0, 2)}`}>{displayDate(event.date, event.year)}</time>
                       <span>{event.tag}</span>
                     </div>
                     <h2>{event.title}</h2>
@@ -1113,7 +1117,7 @@ export default function Home() {
           </section>
         </div>
       ) : (
-        <div role="tabpanel" className="top-page tactical-page valorant-top page-enter">
+        <div className="top-page tactical-page valorant-top page-enter">
           <section className="top-hero tactical-hero section-shell">
             <div className="tactical-grid" aria-hidden="true" />
             <div className="tactical-hero-word" aria-hidden="true">WHO&apos;S NEXT</div>
