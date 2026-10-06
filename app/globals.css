@@ -1916,9 +1916,9 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
 .v-events, .valorant-members .directory { scroll-margin-top: 82px; }
 .v-photo-main figcaption { font-size: 12px; letter-spacing: .08em; }
 .event-gallery-dots { gap: 2px; padding: 4px 6px; }
-.event-gallery-dots button { position: relative; width: 24px; height: 28px; border: 0; background: transparent; }
+.event-gallery-dots button { position: relative; width: 34px; height: 34px; border: 0; background: transparent; }
 .event-gallery-dots button::after { content: ""; position: absolute; top: 50%; left: 50%; width: 7px; height: 7px; background: rgba(246,243,235,.8); transform: translate(-50%, -50%); }
-.event-gallery-dots button.active { width: 30px; background: transparent; }
+.event-gallery-dots button.active { width: 38px; background: transparent; }
 .event-gallery-dots button.active::after { width: 18px; background: var(--v-neon); }
 
 @media (max-width: 760px) {
@@ -2169,4 +2169,88 @@ footer button { justify-self: end; padding: 11px 0; border: 0; border-bottom: 1p
   .student-guide-intro h2 { font-size: clamp(43px,11vw,68px); }
   .student-guide-intro > p:not(.v-kicker) { font-size: 16px; }
   .valorant-members .member-card.has-quote { height: 390px; }
+  .valorant-members .member-front-info strong {
+    display: -webkit-box;
+    min-height: 2.5em;
+    overflow: hidden;
+    line-height: 1.22;
+    white-space: normal;
+    text-overflow: clip;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .valorant-members .role-filter button {
+    min-height: 40px;
+    padding: 10px 14px;
+  }
+  .footer-contact a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 6px 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .valorant-members .member-front-info strong { min-height: 2.7em; }
+  .valorant-members .role-filter button {
+    min-height: 42px;
+    font-size: 11px;
+  }
+  .footer-contact a { min-height: 40px; }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .v-hero { min-height: calc(100svh - 72px); }
+  .v-hero-content {
+    min-height: calc(100svh - 72px);
+    padding-top: 96px;
+    padding-bottom: 52px;
+  }
+  .v-hero-wordmark {
+    right: 0;
+    bottom: -.01em;
+    font-size: min(18vw, 180px);
+  }
+  .v-about-word {
+    right: 0;
+    font-size: min(14vw, 170px);
+  }
+  .tactical-hero-word {
+    right: 8px;
+    bottom: 0;
+    font-size: min(18vw, 190px);
+    animation: none;
+  }
+  .valorant-members .members-hero,
+  .valorant-top .top-hero,
+  .news-hero {
+    min-height: auto;
+    padding-top: 84px;
+    padding-bottom: 56px;
+  }
+  .valorant-members .members-intro,
+  .valorant-top .top-hero-copy > p:last-child {
+    margin-top: 0;
+  }
+  .valorant-members .member-front-info strong {
+    display: -webkit-box;
+    min-height: 2.4em;
+    font-size: 16px;
+    overflow: hidden;
+    line-height: 1.2;
+    white-space: normal;
+    text-overflow: clip;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .valorant-members .role-filter button {
+    min-height: 40px;
+    padding: 10px 14px;
+  }
+  .footer-contact a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+  }
 }

@@ -828,35 +828,34 @@ export default function Home() {
             <span className="v-coordinate v-coordinate-side" aria-hidden="true">FAERIE // FPTU HCMC // 2026</span>
 
             <div className="v-hero-content section-shell">
-              <p className="v-kicker"><span>01</span> Faerie · Brothers &amp; Sisters · FPTU HCMC</p>
+              <p className="v-kicker"><span>01</span> Website chính thức của nhà Faerie · Brosis FPTU TP.HCM</p>
               <h1 id="faerie-hero-title">
-                <span>FIND</span>
-                <span className="v-title-accent">YOUR</span>
-                <span>PEOPLE.</span>
+                <span>WELCOME</span>
+                <span>TO</span>
+                <span className="v-title-accent">FAERIE</span>
+                
               </h1>
               <div className="v-hero-bottom">
                 <p>
-                  Faerie là nhà Brothers &amp; Sisters (Brosis) tại Đại học FPT TP.HCM:
-                  những sinh viên đi trước đồng hành cùng tân sinh viên. Gặp các thành viên,
-                  khám phá hoạt động và đọc câu chuyện mới của nhà tại đây.
+                  Faerie là một mảnh ghép của dự án Brothers & Sisters tại Đại học FPT TP.HCM, nơi các anh chị đồng hành, kết nối và hỗ trợ tân sinh viên. Tại đây, bạn có thể tìm hiểu thành viên của nhà, xem các hoạt động nổi bật và đọc những câu chuyện của Faerie.
                 </p>
                 <div className="v-actions">
                   <button className="v-button" onClick={() => switchTab("members")}>
-                    <span>Xem thành viên Faerie</span><b aria-hidden="true">↗</b>
+                    <span>Xem thành viên nhà Faerie</span><b aria-hidden="true"></b>
                   </button>
-                  <a className="v-text-link" href="#events" onClick={() => setNavSection("stories")}>Khám phá Stories <span aria-hidden="true">↓</span></a>
+                  <button className="v-button" onClick={() => switchTab("Introduce", "stories")}>
+                    <span>Xem stories của Faerie</span><b aria-hidden="true"></b>
+                  </button>
                 </div>
               </div>
             </div>
 
             <div className="v-hero-wordmark" aria-hidden="true">FAERIE</div>
-            <a className="v-scroll-cue" href="#mission" aria-label="Cuộn đến câu chuyện Faerie">
-              <span>SCROLL TO DISCOVER</span><i aria-hidden="true" />
-            </a>
+
           </section>
 
           <section className="v-signal" id="mission" aria-label="Những con số của Faerie">
-            <div className="v-signal-lead"><span aria-hidden="true">✦</span> ONE HOUSE. MANY STORIES.</div>
+            <div className="v-signal-lead"><span aria-hidden="true"></span> ONE HOUSE. MANY STORIES.</div>
             <div><small>THẾ HỆ</small><strong>3</strong><span>tiếp nối</span></div>
             <div><small>THÀNH VIÊN</small><strong>{totalMembers}</strong><span>mảnh ghép</span></div>
             <div><small>NĂM {selectedArchiveYear}</small><strong>{archiveStories.length.toString().padStart(2, "0")}</strong><span>câu chuyện</span></div>
@@ -870,7 +869,7 @@ export default function Home() {
                 <h2 className="v-story-title">FAERIE<br /><em>STORY {selectedArchiveYear}</em></h2>
               </div>
               <p>
-                Mỗi câu chuyện là một tọa độ trong hành trình chung — nơi chúng mình gặp gỡ,
+                Mỗi câu chuyện là một tọa độ trong hành trình chung - nơi chúng mình gặp gỡ,
                 thử sức và biến những ngày bình thường thành ký ức đáng nhớ.
               </p>
             </div>
