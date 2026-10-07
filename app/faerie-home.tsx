@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import EventPromoDialog from "./event-promo-dialog";
+import EventPromoDialog, { type PromoSettings } from "./event-promo-dialog";
 import MemberProfileDialog, { type MemberDetails } from "./member-profile-dialog";
 
 type Tab = "Introduce" | "members" | "top20" | "news";
@@ -619,6 +619,8 @@ export default function Home() {
   const [archiveYear, setArchiveYear] = useState("2026");
   const [selectedStoryKey, setSelectedStoryKey] = useState<string | null>(null);
   const [promoVisible, setPromoVisible] = useState(true);
+  const [promoReady, setPromoReady] = useState(false);
+  const [promoSettings, setPromoSettings] = useState<PromoSettings | null>(null);
   const [newsLoading, setNewsLoading] = useState(true);
   const [newsError, setNewsError] = useState(false);
   const [role, setRole] = useState<MemberGroup | "All">("All");
@@ -679,7 +681,21 @@ export default function Home() {
       }
     };
 
-    void Promise.allSettled([loadMembers(), loadNews()]).finally(() => window.clearTimeout(timeout));
+    const loadPopup = async () => {
+      try {
+        const response = await fetch(`${apiBaseUrl}/api/v1/popup`, { signal: controller.signal });
+        if (!response.ok) return;
+        const data: { popup?: PromoSettings } = await response.json();
+        const popup = data.popup;
+        if (mounted && popup && typeof popup.enabled === "boolean" &&
+            [popup.title, popup.description, popup.image, popup.facebookUrl].every((value) => typeof value === "string")) {
+          setPromoSettings(popup);
+        }
+      } catch { /* Keep the most recent built-in event if the API is unavailable. */ }
+      finally { if (mounted) setPromoReady(true); }
+    };
+
+    void Promise.allSettled([loadMembers(), loadNews(), loadPopup()]).finally(() => window.clearTimeout(timeout));
     return () => {
       mounted = false;
       controller.abort();
@@ -1189,9 +1205,10 @@ export default function Home() {
         />
       )}
 
-      {promoVisible && (
+      {promoReady && promoVisible && promoSettings?.enabled !== false && (
         <EventPromoDialog
           event={promoEvent}
+          settings={promoSettings}
           onDismiss={() => setPromoVisible(false)}
           onRead={() => {
             setPromoVisible(false);
