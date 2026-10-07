@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import EventPromoDialog from "./event-promo-dialog";
 import MemberProfileDialog, { type MemberDetails } from "./member-profile-dialog";
 
 type Tab = "Introduce" | "members" | "top20" | "news";
@@ -617,6 +618,7 @@ export default function Home() {
   const [newsItems, setNewsItems] = useState<FaerieEvent[]>([...events2026].reverse());
   const [archiveYear, setArchiveYear] = useState("2026");
   const [selectedStoryKey, setSelectedStoryKey] = useState<string | null>(null);
+  const [promoVisible, setPromoVisible] = useState(true);
   const [newsLoading, setNewsLoading] = useState(true);
   const [newsError, setNewsError] = useState(false);
   const [role, setRole] = useState<MemberGroup | "All">("All");
@@ -749,6 +751,7 @@ export default function Home() {
   );
 
   const selectedStory = newsItems.find((story) => newsStoryKey(story) === selectedStoryKey);
+  const promoEvent = newsItems.find((story) => !story.id && story.images?.length) ?? events2026[events2026.length - 1];
 
   const closeStory = () => {
     const url = new URL(window.location.href);
@@ -1184,6 +1187,17 @@ export default function Home() {
           photo={selectedMember.photo || memberPhoto(year, selectedMember.name)}
           year={year}
           onDismiss={closeMemberProfile}
+        />
+      )}
+
+      {promoVisible && (
+        <EventPromoDialog
+          event={promoEvent}
+          onDismiss={() => setPromoVisible(false)}
+          onRead={() => {
+            setPromoVisible(false);
+            openStory(promoEvent);
+          }}
         />
       )}
 

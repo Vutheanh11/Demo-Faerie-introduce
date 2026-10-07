@@ -39,6 +39,10 @@ test("renders the Faerie website and its current navigation", async () => {
   assert.match(html, /<h2 class="v-story-title">FAERIE<br\/><em>STORY (?:<!-- -->)?2026<\/em><\/h2>/);
   assert.match(html, /JOURNEY \/ ARCHIVE/);
   assert.match(html, /id="new-students"/);
+  assert.match(html, /class="event-promo-dialog"/);
+  assert.match(html, /class="event-promo-close"[^>]*disabled=""/);
+  assert.match(html, /Đóng sau 3s/);
+  assert.match(html, /Xem sự kiện/);
   assert.match(html, /HỎI NHANH \/ FAQ/);
   assert.match(html, /Brosis có thể đồng hành với mình thế nào/);
   assert.doesNotMatch(html, /Chọn năm sự kiện|MISSION NOT STARTED/);
