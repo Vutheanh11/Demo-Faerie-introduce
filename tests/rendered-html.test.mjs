@@ -30,7 +30,7 @@ test("renders the Faerie website and its current navigation", async () => {
 
   const html = await response.text();
   assert.match(html, /<html lang="vi">/);
-  assert.match(html, /<title>Faerie House — One House\. Many Stories\.<\/title>/);
+  assert.match(html, /<title>Faerie House [-—] One House\. Many Stories\.<\/title>/);
   assert.match(html, /id="site-main-nav"/);
   for (const label of ["Home", "About", "Members", "Stories", "News"]) {
     assert.match(html, new RegExp(`>${label}<\\/button>`));
@@ -49,7 +49,7 @@ test("renders the Faerie website and its current navigation", async () => {
   assert.match(html, /images\/events\/2026\/team-building\/TeamBuilding_1\.webp/);
   assert.match(html, /Kick Off — 02\/07/);
   assert.match(html, /Kick Off — 25\/08/);
-  assert.match(html, /Faerie là nhà Brothers/);
+  assert.match(html, /Faerie là một mảnh ghép/);
   assert.match(html, /property="og:image"/);
   assert.match(html, /Made by Vu The Anh ↗<\/a>/);
   assert.match(html, /https:\/\/www\.facebook\.com\/vu\.bootloop/);
